@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticker Snapshot</title>
+    <link rel="preconnect" href="https://api.coingecko.com">
+    <link rel="preconnect" href="https://www.alphavantage.co">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{
+            --bg:#0a0a0f;--bg2:#15151f;--bg3:#1a1a28;--text:#fff;--text2:#a0a0b0;
+            --accent:#5b7cff;--accent2:#4a6aee;--green:#22c55e;--red:#ef4444;--border:#2a2a3a;
+        }
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh;padding:16px}
+        header{text-align:center;margin-bottom:24px;padding:24px 16px 16px}
+        h1{font-size:2.2rem;font-weight:700;margin-bottom:6px;background:linear-gradient(135deg,var(--accent) 0%,#8b5cf6 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .subtitle{color:var(--text2);font-size:1rem}
+        .carousel-container{max-width:1200px;margin:0 auto 32px;overflow:hidden}
+        .carousel-wrapper{display:flex;gap:16px;overflow-x:auto;scroll-behavior:smooth;padding:12px 8px;scrollbar-width:thin;scrollbar-color:var(--accent) var(--bg2);scroll-snap-type:x mandatory}
+        .carousel-wrapper::-webkit-scrollbar{height:6px}
+        .carousel-wrapper::-webkit-scrollbar-track{background:var(--bg2);border-radius:3px}
+        .carousel-wrapper::-webkit-scrollbar-thumb{background:var(--accent);border-radius:3px}
+        .carousel-item{min-width:240px;max-width:240px;flex-shrink:0;cursor:pointer;transition:transform .2s;scroll-snap-align:start}
+        .carousel-item:hover{transform:translateY(-4px)}
+        .carousel-widget{width:240px;height:240px;background:linear-gradient(135deg,var(--bg3) 0%,#252538 100%);border-radius:12px;padding:20px;display:flex;flex-direction:column;justify-content:space-between;border:1px solid var(--border);box-shadow:0 8px 24px rgba(0,0,0,.3);position:relative;overflow:hidden}
+        .carousel-widget::before{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(180deg,rgba(91,124,255,.04) 0%,transparent 100%);pointer-events:none}
+        .widget-header{position:relative;z-index:1}
+        .asset-name{font-size:.95rem;font-weight:600;margin-bottom:2px;color:var(--text2)}
+        .asset-symbol{font-size:.75rem;color:var(--text2);opacity:.6}
+        .widget-price{position:relative;z-index:1;text-align:center;margin:12px 0}
+        .price-value{font-size:1.8rem;font-weight:700;line-height:1;margin-bottom:4px}
+        .price-currency{font-size:.75rem;color:var(--text2);font-weight:500}
+        .widget-chart{position:relative;z-index:1;height:70px;margin:12px 0}
+        .chart-canvas{width:100%;height:100%;border-radius:4px}
+        .widget-footer{position:relative;z-index:1}
+        .timestamp{font-size:.65rem;color:var(--text2);margin-bottom:8px;text-align:center}
+        .branding{text-align:center;font-size:.7rem;color:var(--text2);opacity:.4;font-weight:500}
+        .carousel-loading{width:240px;height:240px;background:var(--bg2);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--text2);border:1px solid var(--border);font-size:.9rem;flex-shrink:0}
+        .container{max-width:600px;margin:0 auto}
+        .input-section{background:var(--bg2);padding:24px;border-radius:12px;margin-bottom:24px;border:1px solid var(--border)}
+        .type-selector{display:flex;gap:10px;margin-bottom:16px}
+        .type-btn{flex:1;padding:12px;background:var(--bg3);border:2px solid var(--border);border-radius:8px;color:var(--text2);font-size:.95rem;font-weight:600;cursor:pointer;transition:all .2s}
+        .type-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+        .type-btn:hover:not(.active){border-color:var(--accent)}
+        .search-container{position:relative}
+        .search-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--text2);font-size:1.1rem;pointer-events:none}
+        input[type="text"]{width:100%;padding:14px 16px 14px 46px;background:var(--bg3);border:2px solid var(--border);border-radius:8px;color:var(--text);font-size:1rem;transition:border-color .2s}
+        input[type="text"]:focus{outline:none;border-color:var(--accent)}
+        input[type="text"]::placeholder{color:var(--text2)}
+        .suggestions{position:absolute;top:100%;left:0;right:0;background:var(--bg3);border:2px solid var(--border);border-top:none;border-radius:0 0 8px 8px;max-height:280px;overflow-y:auto;z-index:1000;display:none;margin-top:-2px}
+        .suggestions.active{display:block}
+        .suggestion-item{padding:12px 16px 12px 46px;cursor:pointer;transition:background .15s;border-bottom:1px solid var(--border)}
+        .suggestion-item:last-child{border-bottom:none}
+        .suggestion-item:hover{background:var(--bg2)}
+        .suggestion-symbol{font-weight:600;color:var(--text);display:block}
+        .suggestion-name{font-size:.85rem;color:var(--text2);display:block;margin-top:2px}
+        .widget-container{display:none;margin-bottom:24px}
+        .widget-container.visible{display:block;animation:fadeIn .4s}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+        #priceWidget{width:100%;max-width:480px;height:480px;background:linear-gradient(135deg,var(--bg3) 0%,#252538 100%);border-radius:16px;padding:32px;display:flex;flex-direction:column;justify-content:space-between;border:2px solid var(--border);box-shadow:0 16px 48px rgba(0,0,0,.4);margin:0 auto 16px;position:relative;overflow:hidden}
+        #priceWidget::before{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(180deg,rgba(91,124,255,.05) 0%,transparent 100%);pointer-events:none}
+        #priceWidget .widget-header{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:flex-start}
+        #priceWidget .widget-header-left{flex:1}
+        #priceWidget .asset-name{font-size:1.2rem;font-weight:600;margin-bottom:4px;color:var(--text2)}
+        #priceWidget .asset-symbol{font-size:.9rem;color:var(--text2);opacity:.7}
+        #priceWidget .widget-price{position:relative;z-index:1;text-align:center;margin:16px 0}
+        #priceWidget .price-value{font-size:3rem;font-weight:700;line-height:1;margin-bottom:6px}
+        #priceWidget .price-currency{font-size:.95rem;color:var(--text2);font-weight:500}
+        #priceWidget .widget-chart{position:relative;z-index:1;height:120px;margin:16px 0}
+        #chartCanvas{width:100%;height:100%;border-radius:6px}
+        #priceWidget .widget-footer{position:relative;z-index:1}
+        #priceWidget .timestamp{font-size:.8rem;color:var(--text2);margin-bottom:12px;text-align:center}
+        #priceWidget .branding{text-align:center;font-size:.85rem;color:var(--text2);opacity:.5;font-weight:500}
+        .chart-toggle{display:flex;gap:4px;background:var(--bg3);border-radius:6px;padding:4px;border:1px solid var(--border)}
+        .chart-toggle-btn{padding:6px 12px;background:transparent;border:none;border-radius:4px;color:var(--text2);font-size:.75rem;font-weight:600;cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:.5px}
+        .chart-toggle-btn.active{background:var(--accent);color:#fff}
+        .chart-toggle-btn:hover:not(.active){background:rgba(91,124,255,.1)}
+        button{padding:14px 24px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;transition:all .2s;width:100%}
+        button:hover:not(:disabled){background:var(--accent2);transform:translateY(-2px);box-shadow:0 6px 16px rgba(91,124,255,.3)}
+        button:disabled{opacity:.5;cursor:not-allowed}
+        .export-btn{background:var(--green);display:flex;align-items:center;justify-content:center;gap:6px}
+        .export-btn:hover:not(:disabled){background:#16a34a;box-shadow:0 6px 16px rgba(34,197,94,.3)}
+        .error{background:rgba(239,68,68,.1);border:1px solid var(--red);border-radius:8px;padding:16px;margin-bottom:16px;color:var(--red);text-align:center;font-size:.9rem}
+        .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;display:inline-block}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        @media(max-width:600px){
+            body{padding:12px}
+            h1{font-size:1.8rem}
+            .subtitle{font-size:.9rem}
+            header{margin-bottom:20px;padding:20px 12px 12px}
+            .input-section{padding:20px}
+            #priceWidget{height:auto;min-height:400px;padding:28px 24px}
+            #priceWidget .price-value{font-size:2.4rem}
+            .carousel-item{min-width:200px;max-width:200px}
+            .carousel-widget{width:200px;height:200px;padding:16px}
+            .carousel-widget .price-value{font-size:1.6rem}
+            .carousel-loading{width:200px;height:200px}
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Ticker Snapshot</h1>
+        <p class="subtitle">Instant market prices, shareable as images</p>
+    </header>
+    <div class="carousel-container">
+        <div class="carousel-wrapper" id="carouselWrapper"></div>
+    </div>
+    <div class="container">
+        <div class="input-section">
+            <div class="type-selector">
+                <button class="type-btn active" data-type="stock">Stocks</button>
+                <button class="type-btn" data-type="crypto">Crypto</button>
+            </div>
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="symbolInput" placeholder="Search symbol..." autocomplete="off">
+                <div class="suggestions" id="suggestions"></div>
+            </div>
+        </div>
+        <div id="errorMessage" class="error" style="display:none"></div>
+        <div class="widget-container" id="widgetContainer">
+            <div id="priceWidget">
+                <div class="widget-header">
+                    <div class="widget-header-left">
+                        <div class="asset-name" id="assetName">Loading...</div>
+                        <div class="asset-symbol" id="assetSymbol"></div>
+                    </div>
+                    <div class="chart-toggle">
+                        <button class="chart-toggle-btn active" data-chart="candle">Candle</button>
+                        <button class="chart-toggle-btn" data-chart="line">Line</button>
+                    </div>
+                </div>
+                <div class="widget-price">
+                    <div class="price-value" id="priceValue">$0.00</div>
+                    <div class="price-currency">USD</div>
+                </div>
+                <div class="widget-chart">
+                    <canvas id="chartCanvas"></canvas>
+                </div>
+                <div class="widget-footer">
+                    <div class="timestamp" id="timestamp">Snapshot taken: ---</div>
+                    <div class="branding">Ticker Snapshot</div>
+                </div>
+            </div>
+            <button id="exportBtn" class="export-btn"><span>💾</span><span>Save as Image</span></button>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+    <script>
+        const state={currentSymbol:'',currentType:'stock',chartData:[],assetInfo:{},searchCache:new Map(),priceCache:new Map(),chartType:'candle'};
+        const API={alphaVantageKey:'demo',coinGeckoBase:'https://api.coingecko.com/api/v3',cacheDuration:60000};
+        const CAROUSEL=[{symbol:'NVDA',type:'stock',name:'NVIDIA'},{symbol:'TSLA',type:'stock',name:'Tesla'},{symbol:'BTC',type:'crypto',name:'Bitcoin'},{symbol:'ETH',type:'crypto',name:'Ethereum'}];
+        const el={symbolInput:document.getElementById('symbolInput'),exportBtn:document.getElementById('exportBtn'),widgetContainer:document.getElementById('widgetContainer'),priceWidget:document.getElementById('priceWidget'),assetName:document.getElementById('assetName'),assetSymbol:document.getElementById('assetSymbol'),priceValue:document.getElementById('priceValue'),timestamp:document.getElementById('timestamp'),chartCanvas:document.getElementById('chartCanvas'),errorMessage:document.getElementById('errorMessage'),suggestions:document.getElementById('suggestions'),carouselWrapper:document.getElementById('carouselWrapper'),typeBtns:document.querySelectorAll('.type-btn'),chartToggleBtns:document.querySelectorAll('.chart-toggle-btn')};
+
+```
+    document.addEventListener('DOMContentLoaded',init);
+
+    function init(){
+        initCarousel();
+        initSearch();
+        initTypeSelector();
+        initChartToggle();
+        el.exportBtn.addEventListener('click',exportAsImage);
+    }
+
+    function initTypeSelector(){
+        el.typeBtns.forEach(btn=>{
+            btn.addEventListener('click',()=>{
+                el.typeBtns.forEach(b=>b.classList.remove('active'));
+                btn.classList.add('active');
+                state.currentType=btn.dataset.type;
+                el.suggestions.classList.remove('active');
+            });
+        });
+    }
+
+    function initChartToggle(){
+        el.chartToggleBtns.forEach(btn=>{
+            btn.addEventListener('click',()=>{
+                el.chartToggleBtns.forEach(b=>b.classList.remove('active'));
+                btn.classList.add('active');
+                state.chartType=btn.dataset.chart;
+                if(state.chartData&&state.chartData.length>0)drawChart(state.chartData);
+            });
+        });
+    }
+
+    async function initCarousel(){
+        el.carouselWrapper.innerHTML=CAROUSEL.map(()=>'<div class="carousel-loading">Loading...</div>').join('');
+        for(let i=0;i<CAROUSEL.length;i++){
+            const item=CAROUSEL[i];
+            try{
+                const data=item.type==='crypto'?await fetchCryptoData(item.symbol):await fetchStockData(item.symbol);
+                renderCarouselItem(data,item.type,i);
+            }catch(error){console.error(`Failed ${item.symbol}:`,error)}
+            await sleep(1000);
+        }
+    }
+
+    function renderCarouselItem(data,type,index){
+        const item=document.createElement('div');
+        item.className='carousel-item';
+        item.onclick=()=>{
+            el.symbolInput.value=data.symbol;
+            state.currentType=type;
+            el.typeBtns.forEach(btn=>btn.classList.toggle('active',btn.dataset.type===type));
+            generateSnapshot();
+            window.scrollTo({top:0,behavior:'smooth'});
+        };
+        item.innerHTML=`<div class="carousel-widget"><div class="widget-header"><div class="asset-name">${data.name}</div><div class="asset-symbol">(${data.symbol})</div></div><div class="widget-price"><div class="price-value">$${formatPrice(data.price)}</div><div class="price-currency">USD</div></div><div class="widget-chart"><canvas class="chart-canvas"></canvas></div><div class="widget-footer"><div class="timestamp">${formatTimestamp(new Date())}</div><div class="branding">Ticker Snapshot</div></div></div>`;
+        el.carouselWrapper.children[index].replaceWith(item);
+        drawChartOnCanvas(item.querySelector('.chart-canvas'),data.chartData,'candle');
+    }
+
+    let searchTimeout;
+    function initSearch(){
+        el.symbolInput.addEventListener('input',e=>{
+            clearTimeout(searchTimeout);
+            const query=e.target.value.trim();
+            if(query.length<2){el.suggestions.classList.remove('active');return}
+            searchTimeout=setTimeout(()=>performSearch(query),300);
+        });
+        el.symbolInput.addEventListener('focus',e=>{if(e.target.value.length>=2)performSearch(e.target.value)});
+        el.symbolInput.addEventListener('keypress',e=>{if(e.key==='Enter'){const query=el.symbolInput.value.trim().toUpperCase();if(query){el.suggestions.classList.remove('active');generateSnapshot()}}});
+        document.addEventListener('click',e=>{if(!el.symbolInput.contains(e.target)&&!el.suggestions.contains(e.target))el.suggestions.classList.remove('active')});
+    }
+
+    async function performSearch(query){
+        const type=state.currentType;
+        const cacheKey=`${type}-${query}`;
+        if(state.searchCache.has(cacheKey)){displaySuggestions(state.searchCache.get(cacheKey));return}
+        try{
+            const results=type==='crypto'?await searchCrypto(query):await searchStock(query);
+            state.searchCache.set(cacheKey,results);
+            displaySuggestions(results);
+        }catch(error){console.error('Search error:',error)}
+    }
+
+    async function searchCrypto(query){
+        const url=`${API.coinGeckoBase}/search?query=${encodeURIComponent(query)}`;
+        const response=await fetch(url);
+        const data=await response.json();
+        return data.coins.slice(0,10).map(coin=>({symbol:coin.symbol.toUpperCase(),name:coin.name,id:coin.id}));
+    }
+
+    async function searchStock(query){
+        const url=`https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${encodeURIComponent(query)}&apikey=${API.alphaVantageKey}`;
+        const response=await fetch(url);
+        const data=await response.json();
+        if(data.bestMatches)return data.bestMatches.slice(0,10).map(match=>({symbol:match['1. symbol'],name:match['2. name']}));
+        return[];
+    }
+
+    function displaySuggestions(results){
+        if(!results||results.length===0){el.suggestions.classList.remove('active');return}
+        el.suggestions.innerHTML=results.map(item=>`<div class="suggestion-item" onclick="selectSuggestion('${item.symbol}')"><span class="suggestion-symbol">${item.symbol}</span><span class="suggestion-name">${item.name}</span></div>`).join('');
+        el.suggestions.classList.add('active');
+    }
+
+    function selectSuggestion(symbol){
+        el.symbolInput.value=symbol;
+        el.suggestions.classList.remove('active');
+        generateSnapshot();
+    }
+
+    async function generateSnapshot(){
+        const symbol=el.symbolInput.value.trim().toUpperCase();
+        const type=state.currentType;
+        if(!symbol){showError('Please enter a symbol');return}
+        hideError();
+        el.widgetContainer.classList.remove('visible');
+        el.suggestions.classList.remove('active');
+        try{
+            state.currentSymbol=symbol;
+            state.currentType=type;
+            const data=type==='crypto'?await fetchCryptoData(symbol):await fetchStockData(symbol);
+            updateWidget(data);
+            el.widgetContainer.classList.add('visible');
+        }catch(error){console.error('Error:',error);showError(error.message||'Failed to fetch data. Try another symbol.')}
+    }
+
+    async function fetchCryptoData(symbol){
+        const cacheKey=`crypto-${symbol}`;
+        const cached=state.priceCache.get(cacheKey);
+        if(cached&&Date.now()-cached.timestamp<API.cacheDuration)return cached.data;
+        const coinId=getCoinId(symbol);
+        const priceUrl=`${API.coinGeckoBase}/simple/price?ids=${coinId}&vs_currencies=usd`;
+        const priceResponse=await fetch(priceUrl);
+        if(!priceResponse.ok)throw new Error('Crypto not found');
+        const priceData=await priceResponse.json();
+        const currentPrice=priceData[coinId]?.usd;
+        if(!currentPrice)throw new Error('Price unavailable');
+        const ohlcUrl=`${API.coinGeckoBase}/coins/${coinId}/ohlc?vs_currency=usd&days=1`;
+        const ohlcResponse=await fetch(ohlcUrl);
+        const ohlcData=await ohlcResponse.json();
+        const data={name:getCoinName(symbol),symbol:symbol,price:currentPrice,chartData:ohlcData.slice(-24)};
+        state.priceCache.set(cacheKey,{data,timestamp:Date.now()});
+        return data;
+    }
+
+    async function fetchStockData(symbol){
+        const cacheKey=`stock-${symbol}`;
+        const cached=state.priceCache.get(cacheKey);
+        if(cached&&Date.now()-cached.timestamp<API.cacheDuration)return cached.data;
+        const baseUrl='https://www.alphavantage.co/query';
+        const quoteUrl=`${baseUrl}?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${API.alphaVantageKey}`;
+        const quoteResponse=await fetch(quoteUrl);
+        const quoteData=await quoteResponse.json();
+        if(quoteData['Error Message']||quoteData['Note'])throw new Error('Stock not found or API limit. Try crypto.');
+        const quote=quoteData['Global Quote'];
+        if(!quote||!quote['05. price'])throw new Error('Stock data unavailable');
+        const intradayUrl=`${baseUrl}?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=30min&apikey=${API.alphaVantageKey}`;
+        const intradayResponse=await fetch(intradayUrl);
+        const intradayData=await intradayResponse.json();
+        const timeSeries=intradayData['Time Series (30min)']||{};
+        const chartData=Object.entries(timeSeries).slice(0,12).reverse().map(([time,values])=>[new Date(time).getTime(),parseFloat(values['1. open']),parseFloat(values['2. high']),parseFloat(values['3. low']),parseFloat(values['4. close'])]);
+        const data={name:symbol,symbol:symbol,price:parseFloat(quote['05. price']),chartData:chartData};
+        state.priceCache.set(cacheKey,{data,timestamp:Date.now()});
+        return data;
+    }
+
+    function updateWidget(data){
+        state.assetInfo=data;
+        state.chartData=data.chartData;
+        el.assetName.textContent=data.name;
+        el.assetSymbol.textContent=`(${data.symbol})`;
+        el.priceValue.textContent=`$${formatPrice(data.price)}`;
+        el.timestamp.textContent=`Snapshot taken: ${formatTimestamp(new Date())}`;
+        drawChart(data.chartData);
+    }
+
+    function drawChart(data){drawChartOnCanvas(el.chartCanvas,data,state.chartType)}
+
+    function drawChartOnCanvas(canvas,data,chartType='candle'){
+        const ctx=canvas.getContext('2d',{alpha:true});
+        const rect=canvas.getBoundingClientRect();
+        const dpr=window.devicePixelRatio||1;
+        canvas.width=rect.width*dpr;canvas.height=rect.height*dpr;
+        ctx.scale(dpr,dpr);
+        const width=rect.width,height=rect.height;
+        ctx.clearRect(0,0,width,height);
+        if(!data||data.length===0){ctx.fillStyle='#a0a0b0';ctx.font='13px sans-serif';ctx.textAlign='center';ctx.fillText('Chart unavailable',width/2,height/2);return}
+        const prices=data.map(d=>({open:d[1],high:d[2],low:d[3],close:d[4]}));
+        const allPrices=prices.flatMap(p=>[p.high,p.low]);
+        const minPrice=Math.min(...allPrices),maxPrice=Math.max(...allPrices),priceRange=maxPrice-minPrice;
+        const padding={top:8,bottom:8,left:8,right:8};
+        const chartWidth=width-padding.left-padding.right,chartHeight=height-padding.top-padding.bottom;
+        if(chartType==='line'){
+            ctx.strokeStyle='#5b7cff';ctx.lineWidth=2;ctx.beginPath();
+            prices.forEach((price,i)=>{
+                const x=padding.left+(i/(prices.length-1))*chartWidth;
+                const y=padding.top+((maxPrice-price.close)/priceRange)*chartHeight;
+                i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+            });
+            ctx.stroke();
+            ctx.lineTo(width-padding.right,height-padding.bottom);
+            ctx.lineTo(padding.left,height-padding.bottom);
+            ctx.closePath();
+            const gradient=ctx.createLinearGradient(0,padding.top,0,height-padding.bottom);
+            gradient.addColorStop(0,'rgba(91,124,255,0.2)');gradient.addColorStop(1,'rgba(91,124,255,0)');
+            ctx.fillStyle=gradient;ctx.fill();
+        }else{
+            const candleWidth=Math.max(2,Math.floor(chartWidth/prices.length)-2);
+            const spacing=chartWidth/prices.length;
+            prices.forEach((price,i)=>{
+                const x=padding.left+(i*spacing)+(spacing/2);
+                const yHigh=padding.top+((maxPrice-price.high)/priceRange)*chartHeight;
+                const yLow=padding.top+((maxPrice-price.low)/priceRange)*chartHeight;
+                const yOpen=padding.top+((maxPrice-price.open)/priceRange)*chartHeight;
+                const yClose=padding.top+((maxPrice-price.close)/priceRange)*chartHeight;
+                const isUp=price.close>=price.open;
+                ctx.strokeStyle=isUp?'#22c55e':'#ef4444';ctx.fillStyle=isUp?'#22c55e':'#ef4444';
+                ctx.beginPath();ctx.moveTo(x,yHigh);ctx.lineTo(x,yLow);ctx.lineWidth=1;ctx.stroke();
+                const bodyTop=Math.min(yOpen,yClose),bodyHeight=Math.abs(yClose-yOpen);
+                if(bodyHeight<1){ctx.beginPath();ctx.moveTo(x-candleWidth/2,bodyTop);ctx.lineTo(x+candleWidth/2,bodyTop);ctx.lineWidth=2;ctx.stroke()}
+                else ctx.fillRect(x-candleWidth/2,bodyTop,candleWidth,bodyHeight);
+            });
+        }
+    }
+
+    async function exportAsImage(){
+        if(!window.html2canvas){showError('Export library not loaded. Refresh page.');return}
+        el.exportBtn.disabled=true;el.exportBtn.innerHTML='<span class="spinner"></span> Saving...';
+        try{
+            const canvas=await html2canvas(el.priceWidget,{backgroundColor:null,scale:2,logging:false,useCORS:true});
+            canvas.toBlob(blob=>{
+                const url=URL.createObjectURL(blob);
+                const link=document.createElement('a');
+                link.href=url;link.download=`ticker-${state.currentSymbol}-${formatDateForFilename()}.png`;
+                link.click();URL.revokeObjectURL(url);
+                el.exportBtn.disabled=false;el.exportBtn.innerHTML='<span>💾</span><span>Save as Image</span>';
+            },'image/png',0.95);
+        }catch(error){console.error('Export error:',error);showError('Export failed. Try again.');el.exportBtn.disabled=false;el.exportBtn.innerHTML='<span>💾</span><span>Save as Image</span>'}
+    }
+
+    function formatPrice(price){
+        if(price>=1)return price.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+        if(price>=0.01)return price.toLocaleString('en-US',{minimumFractionDigits:4,maximumFractionDigits:4});
+        return price.toLocaleString('en-US',{minimumFractionDigits:6,maximumFractionDigits:6});
+    }
+    function formatTimestamp(date){
+        const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        const month=months[date.getMonth()],day=date.getDate(),year=date.getFullYear();
+        let hours=date.getHours();
+        const minutes=date.getMinutes().toString().padStart(2,'0'),ampm=hours>=12?'PM':'AM';
+        hours=hours%12||12;
+        return`${month} ${day}, ${year} · ${hours}:${minutes} ${ampm} EST`;
+    }
+    function formatDateForFilename(){
+        const date=new Date(),year=date.getFullYear();
+        const month=(date.getMonth()+1).toString().padStart(2,'0'),day=date.getDate().toString().padStart(2,'0');
+        return`${year}-${month}-${day}`;
+    }
+    function getCoinId(symbol){
+        const map={'BTC':'bitcoin','ETH':'ethereum','USDT':'tether','BNB':'binancecoin','SOL':'solana','XRP':'ripple','USDC':'usd-coin','ADA':'cardano','DOGE':'dogecoin','AVAX':'avalanche-2','DOT':'polkadot','MATIC':'matic-network','LINK':'chainlink','UNI':'uniswap','ATOM':'cosmos'};
+        return map[symbol]||symbol.toLowerCase();
+    }
+    function getCoinName(symbol){
+        const map={'BTC':'Bitcoin','ETH':'Ethereum','USDT':'Tether','BNB':'Binance Coin','SOL':'Solana','XRP':'Ripple','USDC':'USD Coin','ADA':'Cardano','DOGE':'Dogecoin','AVAX':'Avalanche','DOT':'Polkadot','MATIC':'Polygon','LINK':'Chainlink','UNI':'Uniswap','ATOM':'Cosmos'};
+        return map[symbol]||symbol;
+    }
+    function showError(message){el.errorMessage.textContent=message;el.errorMessage.style.display='block'}
+    function hideError(){el.errorMessage.style.display='none'}
+    function sleep(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
+</script>
+```
+
+</body>
+</html>
