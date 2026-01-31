@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticker Snapshot</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a0f;color:#fff;padding:20px;min-height:100vh}
+        header{text-align:center;margin-bottom:40px}
+        h1{font-size:2.5rem;font-weight:800;background:linear-gradient(135deg,#5b7cff,#8b5cf6,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px}
+        .subtitle{color:#a0a0b0;font-size:1.1rem}
+
+```
+    .carousel{max-width:1200px;margin:0 auto 60px;overflow-x:auto;padding:20px 0}
+    .carousel-inner{display:flex;gap:20px}
+    .card{min-width:280px;height:280px;background:linear-gradient(135deg,#1a1a28,#252538);border:1px solid #2a2a3a;border-radius:16px;padding:30px;cursor:pointer;transition:all 0.3s;flex-shrink:0}
+    .card:hover{transform:translateY(-5px);border-color:#5b7cff;box-shadow:0 10px 30px rgba(91,124,255,0.2)}
+    .card-header{margin-bottom:20px}
+    .card-name{font-size:1.1rem;font-weight:700;margin-bottom:5px}
+    .card-symbol{font-size:0.9rem;color:#5b7cff}
+    .card-price{text-align:center;margin:20px 0}
+    .card-price-value{font-size:2.2rem;font-weight:800}
+    .card-chart{height:90px;margin:20px 0}
+    .card-chart canvas{width:100%;height:100%}
+    .card-footer{text-align:center;font-size:0.75rem;color:#666;margin-top:10px}
+    
+    .container{max-width:650px;margin:0 auto}
+    .section-title{text-align:center;font-size:1.6rem;font-weight:700;margin-bottom:10px}
+    .section-subtitle{text-align:center;color:#a0a0b0;margin-bottom:30px}
+    
+    .input-box{background:#15151f;padding:35px;border-radius:16px;border:1px solid #2a2a3a;margin-bottom:40px}
+    .tabs{display:flex;gap:15px;margin-bottom:25px}
+    .tab{flex:1;padding:16px;background:transparent;border:2px solid #2a2a3a;border-radius:10px;color:#a0a0b0;font-weight:700;text-transform:uppercase;cursor:pointer;transition:all 0.3s;font-size:1rem}
+    .tab.active{border-color:#5b7cff;color:#5b7cff;box-shadow:0 0 20px rgba(91,124,255,0.15)}
+    .tab:hover{border-color:#5b7cff}
+    
+    .search-wrapper{position:relative}
+    .search-input{width:100%;padding:18px 20px 18px 55px;background:#1a1a28;border:2px solid #2a2a3a;border-radius:10px;color:#fff;font-size:1.1rem;transition:all 0.3s}
+    .search-input:focus{outline:none;border-color:#5b7cff;box-shadow:0 0 0 4px rgba(91,124,255,0.1)}
+    .search-icon{position:absolute;left:20px;top:50%;transform:translateY(-50%);font-size:1.3rem}
+    .dropdown{position:absolute;top:calc(100% + 5px);left:0;right:0;background:#1a1a28;border:2px solid:#5b7cff;border-radius:10px;max-height:350px;overflow-y:auto;z-index:1000;display:none}
+    .dropdown.show{display:block}
+    .dropdown-item{padding:15px 20px 15px 55px;cursor:pointer;border-bottom:1px solid #2a2a3a;transition:background 0.2s}
+    .dropdown-item:hover{background:rgba(91,124,255,0.1)}
+    .dropdown-item:last-child{border-bottom:none}
+    .dropdown-symbol{font-weight:700;display:block;margin-bottom:3px}
+    .dropdown-name{font-size:0.9rem;color:#a0a0b0}
+    
+    .result{display:none;margin-bottom:40px}
+    .result.show{display:block}
+    .widget{max-width:550px;height:550px;margin:0 auto 25px;background:linear-gradient(135deg,#1a1a28,#252538);border:2px solid #2a2a3a;border-radius:20px;padding:45px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+    .widget-header{display:flex;justify-content:space-between;align-items:flex-start}
+    .widget-name{font-size:1.5rem;font-weight:800;margin-bottom:8px}
+    .widget-symbol{font-size:1.1rem;color:#5b7cff;font-weight:700}
+    .chart-toggle{display:flex;gap:8px;background:#1a1a28;padding:5px;border-radius:8px;border:1px solid #2a2a3a}
+    .toggle-btn{padding:10px 16px;background:transparent;border:none;color:#a0a0b0;font-weight:700;cursor:pointer;border-radius:6px;transition:all 0.3s;text-transform:uppercase;font-size:0.8rem}
+    .toggle-btn.active{background:#5b7cff;color:#fff}
+    .widget-price{text-align:center;margin:30px 0}
+    .widget-price-value{font-size:3.8rem;font-weight:900;line-height:1}
+    .widget-price-currency{font-size:1.1rem;color:#a0a0b0;margin-top:10px}
+    .widget-chart{height:160px;margin:30px 0}
+    .widget-chart canvas{width:100%;height:100%}
+    .widget-time{text-align:center;color:#666;font-size:0.9rem;margin-bottom:15px}
+    .widget-brand{text-align:center;color:#666;font-size:0.9rem;font-weight:700}
+    
+    .export-btn{width:100%;padding:18px;background:linear-gradient(135deg,#22c55e,#16a34a);border:none;color:#fff;font-size:1.1rem;font-weight:700;border-radius:10px;cursor:pointer;text-transform:uppercase;transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:10px}
+    .export-btn:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(34,197,94,0.3)}
+    
+    .error{background:rgba(239,68,68,0.1);border:1px solid #ef4444;padding:20px;border-radius:10px;color:#ef4444;text-align:center;margin-bottom:30px;display:none}
+    .error.show{display:block}
+    
+    @media(max-width:700px){
+        .card{min-width:240px;height:240px;padding:25px}
+        .widget{height:auto;min-height:500px;padding:35px}
+        .widget-price-value{font-size:3rem}
+    }
+</style>
+```
+
+</head>
+<body>
+    <header>
+        <h1>Ticker Snapshot</h1>
+        <p class="subtitle">Instant market prices, shareable as images</p>
+    </header>
+
+```
+<div class="carousel">
+    <div class="carousel-inner" id="carousel"></div>
+</div>
+
+<div class="container">
+    <h2 class="section-title">Generate Snapshot</h2>
+    <p class="section-subtitle">Search any stock or cryptocurrency</p>
+    
+    <div class="input-box">
+        <div class="tabs">
+            <button class="tab active" onclick="switchType('stock')">Stocks</button>
+            <button class="tab" onclick="switchType('crypto')">Crypto</button>
+        </div>
+        <div class="search-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" id="searchInput" placeholder="Try: AAPL, BTC, TSLA, ETH..." autocomplete="off">
+            <div class="dropdown" id="dropdown"></div>
+        </div>
+    </div>
+
+    <div class="error" id="error"></div>
+
+    <div class="result" id="result">
+        <div class="widget" id="widget">
+            <div class="widget-header">
+                <div>
+                    <div class="widget-name" id="wName">---</div>
+                    <div class="widget-symbol" id="wSymbol">---</div>
+                </div>
+                <div class="chart-toggle">
+                    <button class="toggle-btn active" onclick="setChartType('candle')">Candle</button>
+                    <button class="toggle-btn" onclick="setChartType('line')">Line</button>
+                </div>
+            </div>
+            <div class="widget-price">
+                <div class="widget-price-value" id="wPrice">$0.00</div>
+                <div class="widget-price-currency">USD</div>
+            </div>
+            <div class="widget-chart">
+                <canvas id="wChart"></canvas>
+            </div>
+            <div>
+                <div class="widget-time" id="wTime">---</div>
+                <div class="widget-brand">TICKER SNAPSHOT</div>
+            </div>
+        </div>
+        <button class="export-btn" onclick="exportImage()">
+            <span>💾</span>
+            <span>Save as Image</span>
+        </button>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+```
+
+let currentType=‘stock’;
+let chartType=‘candle’;
+let chartData=[];
+
+const COINS=[
+{symbol:‘BTC’,name:‘Bitcoin’,id:‘bitcoin’},
+{symbol:‘ETH’,name:‘Ethereum’,id:‘ethereum’},
+{symbol:‘SOL’,name:‘Solana’,id:‘solana’},
+{symbol:‘BNB’,name:‘Binance’,id:‘binancecoin’}
+];
+
+// Load carousel when page loads
+window.addEventListener(‘DOMContentLoaded’,()=>{
+console.log(‘Page loaded, loading carousel…’);
+loadCarousel();
+});
+
+async function loadCarousel(){
+const carousel=document.getElementById(‘carousel’);
+console.log(‘Starting carousel load…’);
+
+```
+for(const coin of COINS){
+    try{
+        console.log('Loading',coin.symbol);
+        const priceRes=await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${coin.id}&vs_currencies=usd`);
+        const priceData=await priceRes.json();
+        const price=priceData[coin.id].usd;
+        
+        const ohlcRes=await fetch(`https://api.coingecko.com/api/v3/coins/${coin.id}/ohlc?vs_currency=usd&days=1`);
+        const ohlcData=await ohlcRes.json();
+        
+        console.log('Loaded',coin.symbol,price);
+        
+        const card=document.createElement('div');
+        card.className='card';
+        card.onclick=()=>{
+            document.getElementById('searchInput').value=coin.symbol;
+            switchType('crypto');
+            generate();
+        };
+        
+        card.innerHTML=`
+            <div class="card-header">
+                <div class="card-name">${coin.name}</div>
+                <div class="card-symbol">${coin.symbol}</div>
+            </div>
+            <div class="card-price">
+                <div class="card-price-value">$${formatPrice(price)}</div>
+            </div>
+            <div class="card-chart">
+                <canvas id="chart-${coin.id}"></canvas>
+            </div>
+            <div class="card-footer">${getTime()}</div>
+        `;
+        
+        carousel.appendChild(card);
+        
+        // Draw chart
+        setTimeout(()=>{
+            const canvas=document.getElementById(`chart-${coin.id}`);
+            if(canvas)drawLineChart(canvas,ohlcData.slice(-24));
+        },100);
+        
+    }catch(e){
+        console.error('Failed to load',coin.symbol,e);
+    }
+}
+```
+
+}
+
+function drawLineChart(canvas,data){
+const ctx=canvas.getContext(‘2d’);
+const w=canvas.width=canvas.offsetWidth*2;
+const h=canvas.height=canvas.offsetHeight*2;
+
+```
+if(!data||data.length===0)return;
+
+const prices=data.map(d=>d[4]);
+const min=Math.min(...prices);
+const max=Math.max(...prices);
+const range=max-min;
+
+ctx.strokeStyle='#5b7cff';
+ctx.lineWidth=3;
+ctx.beginPath();
+
+prices.forEach((price,i)=>{
+    const x=20+(i/(prices.length-1))*(w-40);
+    const y=20+((max-price)/range)*(h-40);
+    if(i===0)ctx.moveTo(x,y);
+    else ctx.lineTo(x,y);
+});
+
+ctx.stroke();
+```
+
+}
+
+function switchType(type){
+currentType=type;
+document.querySelectorAll(’.tab’).forEach(tab=>{
+tab.classList.remove(‘active’);
+});
+event.target.classList.add(‘active’);
+document.getElementById(‘dropdown’).classList.remove(‘show’);
+}
+
+let searchTimeout;
+document.getElementById(‘searchInput’).addEventListener(‘input’,e=>{
+clearTimeout(searchTimeout);
+const query=e.target.value.trim();
+if(query.length<2){
+document.getElementById(‘dropdown’).classList.remove(‘show’);
+return;
+}
+searchTimeout=setTimeout(()=>search(query),300);
+});
+
+document.getElementById(‘searchInput’).addEventListener(‘keypress’,e=>{
+if(e.key===‘Enter’)generate();
+});
+
+async function search(query){
+try{
+let results=[];
+
+```
+    if(currentType==='crypto'){
+        const res=await fetch(`https://api.coingecko.com/api/v3/search?query=${query}`);
+        const data=await res.json();
+        results=data.coins.slice(0,10).map(c=>({
+            symbol:c.symbol.toUpperCase(),
+            name:c.name,
+            id:c.id
+        }));
+    }else{
+        const res=await fetch(`https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${query}&apikey=demo`);
+        const data=await res.json();
+        if(data.bestMatches){
+            results=data.bestMatches.slice(0,10).map(m=>({
+                symbol:m['1. symbol'],
+                name:m['2. name']
+            }));
+        }
+    }
+    
+    const dropdown=document.getElementById('dropdown');
+    if(results.length>0){
+        dropdown.innerHTML=results.map(r=>`
+            <div class="dropdown-item" onclick="selectItem('${r.symbol}')">
+                <span class="dropdown-symbol">${r.symbol}</span>
+                <span class="dropdown-name">${r.name}</span>
+            </div>
+        `).join('');
+        dropdown.classList.add('show');
+    }else{
+        dropdown.classList.remove('show');
+    }
+}catch(e){
+    console.error('Search failed',e);
+}
+```
+
+}
+
+function selectItem(symbol){
+document.getElementById(‘searchInput’).value=symbol;
+document.getElementById(‘dropdown’).classList.remove(‘show’);
+generate();
+}
+
+async function generate(){
+const symbol=document.getElementById(‘searchInput’).value.trim().toUpperCase();
+if(!symbol)return;
+
+```
+document.getElementById('error').classList.remove('show');
+document.getElementById('result').classList.remove('show');
+
+try{
+    let data;
+    
+    if(currentType==='crypto'){
+        const coinId=symbol==='BTC'?'bitcoin':symbol==='ETH'?'ethereum':symbol==='SOL'?'solana':symbol==='BNB'?'binancecoin':symbol.toLowerCase();
+        
+        const priceRes=await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=usd`);
+        const priceData=await priceRes.json();
+        const price=priceData[coinId].usd;
+        
+        const ohlcRes=await fetch(`https://api.coingecko.com/api/v3/coins/${coinId}/ohlc?vs_currency=usd&days=1`);
+        const ohlcData=await ohlcRes.json();
+        
+        data={name:symbol,symbol:symbol,price:price,chart:ohlcData.slice(-24)};
+    }else{
+        const quoteRes=await fetch(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=demo`);
+        const quoteData=await quoteRes.json();
+        
+        if(!quoteData['Global Quote'])throw new Error('Stock not found');
+        
+        const intradayRes=await fetch(`https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=30min&apikey=demo`);
+        const intradayData=await intradayRes.json();
+        
+        const ts=intradayData['Time Series (30min)']||{};
+        const chart=Object.entries(ts).slice(0,12).reverse().map(([t,v])=>[
+            Date.parse(t),
+            parseFloat(v['1. open']),
+            parseFloat(v['2. high']),
+            parseFloat(v['3. low']),
+            parseFloat(v['4. close'])
+        ]);
+        
+        data={
+            name:symbol,
+            symbol:symbol,
+            price:parseFloat(quoteData['Global Quote']['05. price']),
+            chart:chart
+        };
+    }
+    
+    chartData=data.chart;
+    
+    document.getElementById('wName').textContent=data.name;
+    document.getElementById('wSymbol').textContent=data.symbol;
+    document.getElementById('wPrice').textContent='$'+formatPrice(data.price);
+    document.getElementById('wTime').textContent=getTime();
+    
+    drawMainChart();
+    document.getElementById('result').classList.add('show');
+    
+}catch(e){
+    document.getElementById('error').textContent='Failed: '+e.message;
+    document.getElementById('error').classList.add('show');
+}
+```
+
+}
+
+function setChartType(type){
+chartType=type;
+document.querySelectorAll(’.toggle-btn’).forEach(btn=>btn.classList.remove(‘active’));
+event.target.classList.add(‘active’);
+drawMainChart();
+}
+
+function drawMainChart(){
+const canvas=document.getElementById(‘wChart’);
+const ctx=canvas.getContext(‘2d’);
+const w=canvas.width=canvas.offsetWidth*2;
+const h=canvas.height=canvas.offsetHeight*2;
+
+```
+ctx.clearRect(0,0,w,h);
+
+if(!chartData||chartData.length===0)return;
+
+if(chartType==='line'){
+    const prices=chartData.map(d=>d[4]);
+    const min=Math.min(...prices);
+    const max=Math.max(...prices);
+    const range=max-min;
+    
+    ctx.strokeStyle='#5b7cff';
+    ctx.lineWidth=4;
+    ctx.beginPath();
+    
+    prices.forEach((price,i)=>{
+        const x=30+(i/(prices.length-1))*(w-60);
+        const y=30+((max-price)/range)*(h-60);
+        if(i===0)ctx.moveTo(x,y);
+        else ctx.lineTo(x,y);
+    });
+    
+    ctx.stroke();
+}else{
+    const prices=chartData.map(d=>({o:d[1],h:d[2],l:d[3],c:d[4]}));
+    const all=prices.flatMap(p=>[p.h,p.l]);
+    const min=Math.min(...all);
+    const max=Math.max(...all);
+    const range=max-min;
+    
+    const cw=Math.max(4,(w-60)/prices.length-4);
+    const spacing=(w-60)/prices.length;
+    
+    prices.forEach((p,i)=>{
+        const x=30+i*spacing+spacing/2;
+        const yh=30+((max-p.h)/range)*(h-60);
+        const yl=30+((max-p.l)/range)*(h-60);
+        const yo=30+((max-p.o)/range)*(h-60);
+        const yc=30+((max-p.c)/range)*(h-60);
+        
+        const isUp=p.c>=p.o;
+        ctx.strokeStyle=ctx.fillStyle=isUp?'#22c55e':'#ef4444';
+        
+        ctx.beginPath();
+        ctx.moveTo(x,yh);
+        ctx.lineTo(x,yl);
+        ctx.lineWidth=2;
+        ctx.stroke();
+        
+        const top=Math.min(yo,yc);
+        const ht=Math.abs(yc-yo);
+        
+        if(ht<2){
+            ctx.beginPath();
+            ctx.moveTo(x-cw/2,top);
+            ctx.lineTo(x+cw/2,top);
+            ctx.lineWidth=2;
+            ctx.stroke();
+        }else{
+            ctx.fillRect(x-cw/2,top,cw,ht);
+        }
+    });
+}
+```
+
+}
+
+async function exportImage(){
+const btn=event.target;
+btn.disabled=true;
+btn.innerHTML=’<span>⏳</span><span>Saving…</span>’;
+
+```
+try{
+    const canvas=await html2canvas(document.getElementById('widget'),{scale:2});
+    canvas.toBlob(blob=>{
+        const url=URL.createObjectURL(blob);
+        const a=document.createElement('a');
+        a.href=url;
+        a.download=`ticker-${document.getElementById('searchInput').value}-${new Date().toISOString().split('T')[0]}.png`;
+        a.click();
+        URL.revokeObjectURL(url);
+        btn.disabled=false;
+        btn.innerHTML='<span>💾</span><span>Save as Image</span>';
+    });
+}catch(e){
+    console.error(e);
+    btn.disabled=false;
+    btn.innerHTML='<span>💾</span><span>Save as Image</span>';
+}
+```
+
+}
+
+function formatPrice(p){
+if(p>=1)return p.toLocaleString(‘en-US’,{minimumFractionDigits:2,maximumFractionDigits:2});
+if(p>=0.01)return p.toLocaleString(‘en-US’,{minimumFractionDigits:4,maximumFractionDigits:4});
+return p.toLocaleString(‘en-US’,{minimumFractionDigits:6,maximumFractionDigits:6});
+}
+
+function getTime(){
+const d=new Date();
+const months=[‘Jan’,‘Feb’,‘Mar’,‘Apr’,‘May’,‘Jun’,‘Jul’,‘Aug’,‘Sep’,‘Oct’,‘Nov’,‘Dec’];
+let h=d.getHours();
+const m=d.getMinutes().toString().padStart(2,‘0’);
+const ap=h>=12?‘PM’:‘AM’;
+h=h%12||12;
+return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()} · ${h}:${m} ${ap}`;
+}
+</script>
+
+</body>
+</html>
