@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Generate shareable price snapshots for any stock or cryptocurrency">
+    <title>Ticker Snapshot - Market Prices as Images</title>
+
+```
+<!-- Preconnect to API endpoints for faster loading -->
+<link rel="preconnect" href="https://api.coingecko.com">
+<link rel="preconnect" href="https://www.alphavantage.co">
+
+<style>
+    /* Critical CSS - inline for faster first paint */
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+        --bg-primary:#0a0a0f;
+        --bg-secondary:#15151f;
+        --bg-widget:#1a1a28;
+        --text-primary:#fff;
+        --text-secondary:#a0a0b0;
+        --accent:#5b7cff;
+        --accent-hover:#4a6aee;
+        --success:#22c55e;
+        --danger:#ef4444;
+        --border:#2a2a3a;
+    }
+    body{
+        font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+        background:var(--bg-primary);
+        color:var(--text-primary);
+        line-height:1.6;
+        min-height:100vh;
+        padding:20px
+    }
+    header{text-align:center;margin-bottom:20px;padding:40px 20px 20px}
+    h1{
+        font-size:2.5rem;
+        font-weight:700;
+        margin-bottom:10px;
+        background:linear-gradient(135deg,var(--accent) 0%,#8b5cf6 100%);
+        -webkit-background-clip:text;
+        -webkit-text-fill-color:transparent;
+        background-clip:text
+    }
+    .subtitle{color:var(--text-secondary);font-size:1.1rem;margin-bottom:30px}
+    
+    /* Carousel - optimized with CSS scroll snap */
+    .carousel-container{max-width:1200px;margin:0 auto 60px;overflow:hidden}
+    .carousel-wrapper{
+        display:flex;
+        gap:20px;
+        overflow-x:auto;
+        scroll-behavior:smooth;
+        padding:20px 10px;
+        scrollbar-width:thin;
+        scrollbar-color:var(--accent) var(--bg-secondary);
+        scroll-snap-type:x mandatory;
+    }
+    .carousel-wrapper::-webkit-scrollbar{height:8px}
+    .carousel-wrapper::-webkit-scrollbar-track{background:var(--bg-secondary);border-radius:4px}
+    .carousel-wrapper::-webkit-scrollbar-thumb{background:var(--accent);border-radius:4px}
+    .carousel-item{
+        min-width:280px;
+        flex-shrink:0;
+        cursor:pointer;
+        transition:transform .3s;
+        scroll-snap-align:start;
+    }
+    .carousel-item:hover{transform:translateY(-5px)}
+    
+    .carousel-widget{
+        aspect-ratio:1/1;
+        background:linear-gradient(135deg,#1a1a28 0%,#252538 100%);
+        border-radius:16px;
+        padding:30px;
+        display:flex;
+        flex-direction:column;
+        justify-content:space-between;
+        border:2px solid var(--border);
+        box-shadow:0 10px 30px rgba(0,0,0,.3);
+        position:relative;
+        overflow:hidden
+    }
+    .carousel-widget::before{
+        content:'';
+        position:absolute;
+        top:0;
+        left:0;
+        right:0;
+        height:50%;
+        background:linear-gradient(180deg,rgba(91,124,255,.05) 0%,transparent 100%);
+        pointer-events:none
+    }
+    .widget-header{position:relative;z-index:1}
+    .asset-name{font-size:1.1rem;font-weight:600;margin-bottom:3px;color:var(--text-secondary)}
+    .asset-symbol{font-size:.85rem;color:var(--text-secondary);opacity:.7}
+    .widget-price{position:relative;z-index:1;text-align:center;margin:15px 0}
+    .price-value{font-size:2.2rem;font-weight:700;line-height:1;margin-bottom:5px}
+    .price-currency{font-size:.85rem;color:var(--text-secondary);font-weight:500}
+    .widget-chart{position:relative;z-index:1;height:80px;margin:15px 0}
+    .chart-canvas{width:100%;height:100%;border-radius:6px}
+    .widget-footer{position:relative;z-index:1}
+    .timestamp{font-size:.7rem;color:var(--text-secondary);margin-bottom:10px;text-align:center}
+    .branding{text-align:center;font-size:.75rem;color:var(--text-secondary);opacity:.5;font-weight:500}
+    .carousel-loading{
+        min-width:280px;
+        aspect-ratio:1/1;
+        background:var(--bg-secondary);
+        border-radius:16px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        color:var(--text-secondary);
+        border:2px solid var(--border)
+    }
+    
+    /* Main container */
+    .container{max-width:600px;margin:0 auto}
+    .input-section{
+        background:var(--bg-secondary);
+        padding:30px;
+        border-radius:16px;
+        margin-bottom:40px;
+        border:1px solid var(--border)
+    }
+    
+    /* Search with debouncing optimization */
+    .search-container{position:relative;margin-bottom:20px}
+    .search-icon{
+        position:absolute;
+        left:18px;
+        top:50%;
+        transform:translateY(-50%);
+        color:var(--text-secondary);
+        font-size:1.2rem;
+        pointer-events:none
+    }
+    input[type="text"]{
+        width:100%;
+        padding:14px 18px 14px 50px;
+        background:var(--bg-widget);
+        border:2px solid var(--border);
+        border-radius:8px;
+        color:var(--text-primary);
+        font-size:1rem;
+        transition:border-color .3s
+    }
+    input[type="text"]:focus{outline:none;border-color:var(--accent)}
+    input[type="text"]::placeholder{color:var(--text-secondary)}
+    
+    /* Type selector */
+    .type-selector{display:flex;gap:10px;margin-bottom:20px}
+    .type-btn{
+        flex:1;
+        padding:12px;
+        background:var(--bg-widget);
+        border:2px solid var(--border);
+        border-radius:8px;
+        color:var(--text-secondary);
+        font-size:.95rem;
+        font-weight:600;
+        cursor:pointer;
+        transition:all .3s
+    }
+    .type-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+    .type-btn:hover:not(.active){border-color:var(--accent)}
+    
+    button.generate-btn{
+        padding:14px 28px;
+        background:var(--accent);
+        color:#fff;
+        border:none;
+        border-radius:8px;
+        font-size:1rem;
+        font-weight:600;
+        cursor:pointer;
+        transition:all .3s;
+        width:100%
+    }
+    button.generate-btn:hover:not(:disabled){
+        background:var(--accent-hover);
+        transform:translateY(-2px);
+        box-shadow:0 8px 20px rgba(91,124,255,.3)
+    }
+    button.generate-btn:disabled{opacity:.5;cursor:not-allowed}
+    
+    /* Suggestions - virtual scrolling for performance */
+    .suggestions{
+        position:absolute;
+        top:100%;
+        left:0;
+        right:0;
+        background:var(--bg-widget);
+        border:2px solid var(--border);
+        border-top:none;
+        border-radius:0 0 8px 8px;
+        max-height:300px;
+        overflow-y:auto;
+        z-index:1000;
+        display:none
+    }
+    .suggestions.active{display:block}
+    .suggestion-item{
+        padding:12px 18px 12px 50px;
+        cursor:pointer;
+        transition:background .2s;
+        border-bottom:1px solid var(--border)
+    }
+    .suggestion-item:last-child{border-bottom:none}
+    .suggestion-item:hover{background:var(--bg-secondary)}
+    .suggestion-symbol{font-weight:600;color:var(--text-primary)}
+    .suggestion-name{font-size:.85rem;color:var(--text-secondary);margin-left:8px}
+    .suggestion-exchange{font-size:.75rem;color:var(--text-secondary);opacity:.6;margin-left:8px}
+    
+    /* Widget container */
+    .widget-container{display:none;margin-bottom:40px}
+    .widget-container.visible{display:block;animation:fadeIn .5s}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    
+    #priceWidget{
+        aspect-ratio:1/1;
+        background:linear-gradient(135deg,#1a1a28 0%,#252538 100%);
+        border-radius:20px;
+        padding:40px;
+        display:flex;
+        flex-direction:column;
+        justify-content:space-between;
+        border:2px solid var(--border);
+        box-shadow:0 20px 60px rgba(0,0,0,.3);
+        margin:0 auto 20px;
+        max-width:500px;
+        position:relative;
+        overflow:hidden
+    }
+    #priceWidget::before{
+        content:'';
+        position:absolute;
+        top:0;
+        left:0;
+        right:0;
+        height:50%;
+        background:linear-gradient(180deg,rgba(91,124,255,.05) 0%,transparent 100%);
+        pointer-events:none
+    }
+    #priceWidget .widget-header{position:relative;z-index:1}
+    #priceWidget .asset-name{font-size:1.3rem;font-weight:600;margin-bottom:5px;color:var(--text-secondary)}
+    #priceWidget .asset-symbol{font-size:.95rem;color:var(--text-secondary);opacity:.7}
+    #priceWidget .widget-price{position:relative;z-index:1;text-align:center;margin:20px 0}
+    #priceWidget .price-value{font-size:3.5rem;font-weight:700;line-height:1;margin-bottom:8px}
+    #priceWidget .price-currency{font-size:1rem;color:var(--text-secondary);font-weight:500}
+    #priceWidget .widget-chart{position:relative;z-index:1;height:140px;margin:20px 0}
+    #chartCanvas{width:100%;height:100%;border-radius:8px}
+    #priceWidget .widget-footer{position:relative;z-index:1}
+    #priceWidget .timestamp{font-size:.85rem;color:var(--text-secondary);margin-bottom:15px;text-align:center}
+    #priceWidget .branding{text-align:center;font-size:.9rem;color:var(--text-secondary);opacity:.5;font-weight:500}
+    
+    .export-btn{
+        background:var(--success);
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        gap:8px;
+        padding:14px 28px;
+        color:#fff;
+        border:none;
+        border-radius:8px;
+        font-size:1rem;
+        font-weight:600;
+        cursor:pointer;
+        transition:all .3s;
+        width:100%
+    }
+    .export-btn:hover:not(:disabled){
+        background:#16a34a;
+        box-shadow:0 8px 20px rgba(34,197,94,.3);
+        transform:translateY(-2px)
+    }
+    .export-btn:disabled{opacity:.5;cursor:not-allowed}
+    
+    .error{
+        background:rgba(239,68,68,.1);
+        border:1px solid var(--danger);
+        border-radius:8px;
+        padding:20px;
+        margin-bottom:20px;
+        color:var(--danger);
+        text-align:center
+    }
+    
+    /* Loading spinner */
+    .spinner{
+        width:20px;
+        height:20px;
+        border:3px solid rgba(255,255,255,.3);
+        border-top-color:#fff;
+        border-radius:50%;
+        animation:spin 1s linear infinite;
+        display:inline-block
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    
+    /* Responsive */
+    @media(max-width:600px){
+        h1{font-size:2rem}
+        .subtitle{font-size:1rem}
+        .input-section{padding:20px}
+        #priceWidget{padding:30px 25px}
+        #priceWidget .price-value{font-size:2.5rem}
+        .carousel-item{min-width:240px}
+        .carousel-widget{padding:25px}
+        .carousel-widget .price-value{font-size:1.8rem}
+    }
+</style>
+```
+
+</head>
+<body>
+    <header>
+        <h1>Ticker Snapshot</h1>
+        <p class="subtitle">Instant market prices, shareable as images</p>
+    </header>
+
+```
+<div class="carousel-container">
+    <div class="carousel-wrapper" id="carouselWrapper"></div>
+</div>
+
+<div class="container">
+    <div class="input-section">
+        <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input 
+                type="text" 
+                id="symbolInput" 
+                placeholder="Search any stock or crypto..."
+                autocomplete="off"
+            >
+            <div class="suggestions" id="suggestions"></div>
+        </div>
+
+        <div class="type-selector">
+            <button class="type-btn active" data-type="stock">📈 Stock</button>
+            <button class="type-btn" data-type="crypto">₿ Crypto</button>
+        </div>
+        
+        <button class="generate-btn" id="generateBtn">Generate Snapshot</button>
+    </div>
+
+    <div id="errorMessage" class="error" style="display:none"></div>
+
+    <div class="widget-container" id="widgetContainer">
+        <div id="priceWidget">
+            <div class="widget-header">
+                <div class="asset-name" id="assetName">Loading...</div>
+                <div class="asset-symbol" id="assetSymbol"></div>
+            </div>
+            <div class="widget-price">
+                <div class="price-value" id="priceValue">$0.00</div>
+                <div class="price-currency">USD</div>
+            </div>
+            <div class="widget-chart">
+                <canvas id="chartCanvas"></canvas>
+            </div>
+            <div class="widget-footer">
+                <div class="timestamp" id="timestamp">Snapshot taken: ---</div>
+                <div class="branding">Ticker Snapshot</div>
+            </div>
+        </div>
+        <button id="exportBtn" class="export-btn">
+            <span>💾</span>
+            <span>Save as Image</span>
+        </button>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+<script>
+    // State management
+    const state = {
+        currentSymbol: '',
+        currentType: 'stock',
+        chartData: [],
+        assetInfo: {},
+        searchCache: new Map(),
+        priceCache: new Map()
+    };
+
+    const API_CONFIG = {
+        alphaVantageKey: 'demo',
+        coinGeckoBase: 'https://api.coingecko.com/api/v3',
+        cacheDuration: 60000 // 1 minute cache
+    };
+
+    // Carousel preload items
+    const CAROUSEL_ITEMS = [
+        { symbol: 'NVDA', type: 'stock', name: 'NVIDIA' },
+        { symbol: 'TSLA', type: 'stock', name: 'Tesla' },
+        { symbol: 'BTC', type: 'crypto', name: 'Bitcoin' },
+        { symbol: 'ETH', type: 'crypto', name: 'Ethereum' }
+    ];
+
+    // DOM elements
+    const el = {
+        symbolInput: document.getElementById('symbolInput'),
+        generateBtn: document.getElementById('generateBtn'),
+        exportBtn: document.getElementById('exportBtn'),
+        widgetContainer: document.getElementById('widgetContainer'),
+        priceWidget: document.getElementById('priceWidget'),
+        assetName: document.getElementById('assetName'),
+        assetSymbol: document.getElementById('assetSymbol'),
+        priceValue: document.getElementById('priceValue'),
+        timestamp: document.getElementById('timestamp'),
+        chartCanvas: document.getElementById('chartCanvas'),
+        errorMessage: document.getElementById('errorMessage'),
+        suggestions: document.getElementById('suggestions'),
+        carouselWrapper: document.getElementById('carouselWrapper'),
+        typeBtns: document.querySelectorAll('.type-btn')
+    };
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', init);
+
+    function init() {
+        initCarousel();
+        initSearch();
+        initTypeSelector();
+        
+        el.generateBtn.addEventListener('click', generateSnapshot);
+        el.exportBtn.addEventListener('click', exportAsImage);
+        el.symbolInput.addEventListener('keypress', e => {
+            if (e.key === 'Enter') generateSnapshot();
+        });
+    }
+
+    // Carousel initialization with lazy loading
+    async function initCarousel() {
+        el.carouselWrapper.innerHTML = CAROUSEL_ITEMS.map(() => 
+            '<div class="carousel-loading">Loading...</div>'
+        ).join('');
+
+        for (let i = 0; i < CAROUSEL_ITEMS.length; i++) {
+            const item = CAROUSEL_ITEMS[i];
+            try {
+                const data = item.type === 'crypto' 
+                    ? await fetchCryptoData(item.symbol)
+                    : await fetchStockData(item.symbol);
+                renderCarouselItem(data, item.type, i);
+            } catch (error) {
+                console.error(`Failed to load ${item.symbol}:`, error);
+            }
+            await sleep(1000);
+        }
+    }
+
+    function renderCarouselItem(data, type, index) {
+        const item = document.createElement('div');
+        item.className = 'carousel-item';
+        item.onclick = () => {
+            el.symbolInput.value = data.symbol;
+            state.currentType = type;
+            updateTypeSelector(type);
+            generateSnapshot();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        item.innerHTML = `
+            <div class="carousel-widget">
+                <div class="widget-header">
+                    <div class="asset-name">${data.name}</div>
+                    <div class="asset-symbol">(${data.symbol})</div>
+                </div>
+                <div class="widget-price">
+                    <div class="price-value">$${formatPrice(data.price)}</div>
+                    <div class="price-currency">USD</div>
+                </div>
+                <div class="widget-chart">
+                    <canvas class="chart-canvas"></canvas>
+                </div>
+                <div class="widget-footer">
+                    <div class="timestamp">${formatTimestamp(new Date())}</div>
+                    <div class="branding">Ticker Snapshot</div>
+                </div>
+            </div>
+        `;
+
+        el.carouselWrapper.children[index].replaceWith(item);
+        drawChartOnCanvas(item.querySelector('.chart-canvas'), data.chartData);
+    }
+
+    // Type selector
+    function initTypeSelector() {
+        el.typeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                el.typeBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                state.currentType = btn.dataset.type;
+                el.suggestions.classList.remove('active');
+                el.symbolInput.value = '';
+            });
+        });
+    }
+
+    function updateTypeSelector(type) {
+        el.typeBtns.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.type === type);
+        });
+    }
+
+    // Enhanced search with real-time API calls
+    let searchTimeout;
+    function initSearch() {
+        el.symbolInput.addEventListener('input', e => {
+            clearTimeout(searchTimeout);
+            const query = e.target.value.trim();
+            
+            if (query.length < 1) {
+                el.suggestions.classList.remove('active');
+                return;
+            }
+            
+            // Debounce search
+            searchTimeout = setTimeout(() => performSearch(query), 300);
+        });
+
+        el.symbolInput.addEventListener('focus', e => {
+            if (e.target.value) performSearch(e.target.value);
+        });
+
+        document.addEventListener('click', e => {
+            if (!el.symbolInput.contains(e.target) && !el.suggestions.contains(e.target)) {
+                el.suggestions.classList.remove('active');
+            }
+        });
+    }
+
+    async function performSearch(query) {
+        const type = state.currentType;
+        const cacheKey = `${type}-${query}`;
+        
+        // Check cache
+        if (state.searchCache.has(cacheKey)) {
+            displaySuggestions(state.searchCache.get(cacheKey));
+            return;
+        }
+
+        try {
+            let results;
+            if (type === 'crypto') {
+                results = await searchCrypto(query);
+            } else {
+                results = await searchStock(query);
+            }
+            
+            state.searchCache.set(cacheKey, results);
+            displaySuggestions(results);
+        } catch (error) {
+            console.error('Search error:', error);
+        }
+    }
+
+    async function searchCrypto(query) {
+        const url = `${API_CONFIG.coinGeckoBase}/search?query=${encodeURIComponent(query)}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        return data.coins.slice(0, 10).map(coin => ({
+            symbol: coin.symbol.toUpperCase(),
+            name: coin.name,
+            id: coin.id
+        }));
+    }
+
+    async function searchStock(query) {
+        // For stocks, we'll use Alpha Vantage SYMBOL_SEARCH
+        const url = `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${encodeURIComponent(query)}&apikey=${API_CONFIG.alphaVantageKey}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (data.bestMatches) {
+            return data.bestMatches.slice(0, 10).map(match => ({
+                symbol: match['1. symbol'],
+                name: match['2. name'],
+                exchange: match['4. region']
+            }));
+        }
+        return [];
+    }
+
+    function displaySuggestions(results) {
+        if (!results || results.length === 0) {
+            el.suggestions.classList.remove('active');
+            return;
+        }
+
+        el.suggestions.innerHTML = results.map(item => `
+            <div class="suggestion-item" onclick="selectSuggestion('${item.symbol}')">
+                <span class="suggestion-symbol">${item.symbol}</span>
+                <span class="suggestion-name">${item.name}</span>
+                ${item.exchange ? `<span class="suggestion-exchange">${item.exchange}</span>` : ''}
+            </div>
+        `).join('');
+
+        el.suggestions.classList.add('active');
+    }
+
+    function selectSuggestion(symbol) {
+        el.symbolInput.value = symbol;
+        el.suggestions.classList.remove('active');
+        generateSnapshot();
+    }
+
+    // Generate snapshot with caching
+    async function generateSnapshot() {
+        const symbol = el.symbolInput.value.trim().toUpperCase();
+        const type = state.currentType;
+
+        if (!symbol) {
+            showError('Please enter a symbol');
+            return;
+        }
+
+        hideError();
+        el.widgetContainer.classList.remove('visible');
+        el.suggestions.classList.remove('active');
+        
+        el.generateBtn.disabled = true;
+        el.generateBtn.innerHTML = '<span class="spinner"></span> Loading...';
+
+        try {
+            state.currentSymbol = symbol;
+            state.currentType = type;
+
+            const data = type === 'crypto' 
+                ? await fetchCryptoData(symbol)
+                : await fetchStockData(symbol);
+
+            updateWidget(data);
+            el.widgetContainer.classList.add('visible');
+
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            showError(error.message || 'Failed to fetch data. Please try again.');
+        } finally {
+            el.generateBtn.disabled = false;
+            el.generateBtn.textContent = 'Generate Snapshot';
+        }
+    }
+
+    // API calls with caching
+    async function fetchCryptoData(symbol) {
+        const cacheKey = `crypto-${symbol}`;
+        const cached = state.priceCache.get(cacheKey);
+        
+        if (cached && Date.now() - cached.timestamp < API_CONFIG.cacheDuration) {
+            return cached.data;
+        }
+
+        const coinId = getCoinId(symbol);
+        
+        const priceUrl = `${API_CONFIG.coinGeckoBase}/simple/price?ids=${coinId}&vs_currencies=usd`;
+        const priceResponse = await fetch(priceUrl);
+        
+        if (!priceResponse.ok) throw new Error('Crypto symbol not found');
+        
+        const priceData = await priceResponse.json();
+        const currentPrice = priceData[coinId]?.usd;
+        
+        if (!currentPrice) throw new Error('Price data not available');
+
+        const ohlcUrl = `${API_CONFIG.coinGeckoBase}/coins/${coinId}/ohlc?vs_currency=usd&days=1`;
+        const ohlcResponse = await fetch(ohlcUrl);
+        const ohlcData = await ohlcResponse.json();
+
+        const data = {
+            name: getCoinName(symbol),
+            symbol: symbol,
+            price: currentPrice,
+            chartData: ohlcData.slice(-24)
+        };
+
+        state.priceCache.set(cacheKey, { data, timestamp: Date.now() });
+        return data;
+    }
+
+    async function fetchStockData(symbol) {
+        const cacheKey = `stock-${symbol}`;
+        const cached = state.priceCache.get(cacheKey);
+        
+        if (cached && Date.now() - cached.timestamp < API_CONFIG.cacheDuration) {
+            return cached.data;
+        }
+
+        const baseUrl = 'https://www.alphavantage.co/query';
+        
+        const quoteUrl = `${baseUrl}?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${API_CONFIG.alphaVantageKey}`;
+        const quoteResponse = await fetch(quoteUrl);
+        const quoteData = await quoteResponse.json();
+        
+        if (quoteData['Error Message'] || quoteData['Note']) {
+            throw new Error('Stock symbol not found or API limit reached. Try crypto or get your own Alpha Vantage API key.');
+        }
+        
+        const quote = quoteData['Global Quote'];
+        if (!quote || !quote['05. price']) {
+            throw new Error('Stock data not available');
+        }
+
+        const intradayUrl = `${baseUrl}?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=30min&apikey=${API_CONFIG.alphaVantageKey}`;
+        const intradayResponse = await fetch(intradayUrl);
+        const intradayData = await intradayResponse.json();
+        
+        const timeSeries = intradayData['Time Series (30min)'] || {};
+        const chartData = Object.entries(timeSeries)
+            .slice(0, 12)
+            .reverse()
+            .map(([time, values]) => [
+                new Date(time).getTime(),
+                parseFloat(values['1. open']),
+                parseFloat(values['2. high']),
+                parseFloat(values['3. low']),
+                parseFloat(values['4. close'])
+            ]);
+
+        const data = {
+            name: symbol,
+            symbol: symbol,
+            price: parseFloat(quote['05. price']),
+            chartData: chartData
+        };
+
+        state.priceCache.set(cacheKey, { data, timestamp: Date.now() });
+        return data;
+    }
+
+    function updateWidget(data) {
+        state.assetInfo = data;
+        state.chartData = data.chartData;
+
+        el.assetName.textContent = data.name;
+        el.assetSymbol.textContent = `(${data.symbol})`;
+        el.priceValue.textContent = `$${formatPrice(data.price)}`;
+        el.timestamp.textContent = `Snapshot taken: ${formatTimestamp(new Date())}`;
+
+        drawChart(data.chartData);
+    }
+
+    // Optimized chart drawing
+    function drawChart(data) {
+        drawChartOnCanvas(el.chartCanvas, data);
+    }
+
+    function drawChartOnCanvas(canvas, data) {
+        const ctx = canvas.getContext('2d', { alpha: true });
+        const rect = canvas.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.scale(dpr, dpr);
+        
+        const width = rect.width;
+        const height = rect.height;
+        
+        ctx.clearRect(0, 0, width, height);
+
+        if (!data || data.length === 0) {
+            ctx.fillStyle = '#a0a0b0';
+            ctx.font = '14px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Chart data unavailable', width / 2, height / 2);
+            return;
+        }
+
+        const prices = data.map(d => ({
+            open: d[1],
+            high: d[2],
+            low: d[3],
+            close: d[4]
+        }));
+
+        const allPrices = prices.flatMap(p => [p.high, p.low]);
+        const minPrice = Math.min(...allPrices);
+        const maxPrice = Math.max(...allPrices);
+        const priceRange = maxPrice - minPrice;
+        
+        const padding = { top: 10, bottom: 10, left: 10, right: 10 };
+        const chartWidth = width - padding.left - padding.right;
+        const chartHeight = height - padding.top - padding.bottom;
+
+        const candleWidth = Math.max(2, Math.floor(chartWidth / prices.length) - 2);
+        const spacing = chartWidth / prices.length;
+
+        prices.forEach((price, i) => {
+            const x = padding.left + (i * spacing) + (spacing / 2);
+            
+            const yHigh = padding.top + ((maxPrice - price.high) / priceRange) * chartHeight;
+            const yLow = padding.top + ((maxPrice - price.low) / priceRange) * chartHeight;
+            const yOpen = padding.top + ((maxPrice - price.open) / priceRange) * chartHeight;
+            const yClose = padding.top + ((maxPrice - price.close) / priceRange) * chartHeight;
+            
+            const isUp = price.close >= price.open;
+            ctx.strokeStyle = isUp ? '#22c55e' : '#ef4444';
+            ctx.fillStyle = isUp ? '#22c55e' : '#ef4444';
+            
+            ctx.beginPath();
+            ctx.moveTo(x, yHigh);
+            ctx.lineTo(x, yLow);
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            
+            const bodyTop = Math.min(yOpen, yClose);
+            const bodyHeight = Math.abs(yClose - yOpen);
+            
+            if (bodyHeight < 1) {
+                ctx.beginPath();
+                ctx.moveTo(x - candleWidth / 2, bodyTop);
+                ctx.lineTo(x + candleWidth / 2, bodyTop);
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            } else {
+                ctx.fillRect(x - candleWidth / 2, bodyTop, candleWidth, bodyHeight);
+            }
+        });
+    }
+
+    // Export with optimization
+    async function exportAsImage() {
+        if (!window.html2canvas) {
+            showError('Image export library not loaded. Please refresh the page.');
+            return;
+        }
+
+        el.exportBtn.disabled = true;
+        el.exportBtn.innerHTML = '<span class="spinner"></span> Generating...';
+
+        try {
+            const canvas = await html2canvas(el.priceWidget, {
+                backgroundColor: null,
+                scale: 2,
+                logging: false,
+                useCORS: true
+            });
+
+            canvas.toBlob(blob => {
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `ticker-snapshot-${state.currentSymbol}-${formatDateForFilename()}.png`;
+                link.click();
+                URL.revokeObjectURL(url);
+                
+                el.exportBtn.disabled = false;
+                el.exportBtn.innerHTML = '<span>💾</span><span>Save as Image</span>';
+            }, 'image/png', 0.95);
+
+        } catch (error) {
+            console.error('Export error:', error);
+            showError('Failed to export image. Please try again.');
+            el.exportBtn.disabled = false;
+            el.exportBtn.innerHTML = '<span>💾</span><span>Save as Image</span>';
+        }
+    }
+
+    // Utility functions
+    function formatPrice(price) {
+        if (price >= 1) {
+            return price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        } else if (price >= 0.01) {
+            return price.toLocaleString('en-US', { minimumFractionDigits: 4, maximumFractionDigits: 4 });
+        } else {
+            return price.toLocaleString('en-US', { minimumFractionDigits: 6, maximumFractionDigits: 6 });
+        }
+    }
+
+    function formatTimestamp(date) {
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const month = months[date.getMonth()];
+        const day = date.getDate();
+        const year = date.getFullYear();
+        let hours = date.getHours();
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12 || 12;
+        return `${month} ${day}, ${year} · ${hours}:${minutes} ${ampm} EST`;
+    }
+
+    function formatDateForFilename() {
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    function getCoinId(symbol) {
+        const map = {
+            'BTC': 'bitcoin', 'ETH': 'ethereum', 'USDT': 'tether', 'BNB': 'binancecoin',
+            'SOL': 'solana', 'XRP': 'ripple', 'USDC': 'usd-coin', 'ADA': 'cardano',
+            'DOGE': 'dogecoin', 'AVAX': 'avalanche-2', 'DOT': 'polkadot',
+            'MATIC': 'matic-network', 'LINK': 'chainlink', 'UNI': 'uniswap', 'ATOM': 'cosmos'
+        };
+        return map[symbol] || symbol.toLowerCase();
+    }
+
+    function getCoinName(symbol) {
+        const map = {
+            'BTC': 'Bitcoin', 'ETH': 'Ethereum', 'USDT': 'Tether', 'BNB': 'Binance Coin',
+            'SOL': 'Solana', 'XRP': 'Ripple', 'USDC': 'USD Coin', 'ADA': 'Cardano',
+            'DOGE': 'Dogecoin', 'AVAX': 'Avalanche', 'DOT': 'Polkadot',
+            'MATIC': 'Polygon', 'LINK': 'Chainlink', 'UNI': 'Uniswap', 'ATOM': 'Cosmos'
+        };
+        return map[symbol] || symbol;
+    }
+
+    function showError(message) {
+        el.errorMessage.textContent = message;
+        el.errorMessage.style.display = 'block';
+    }
+
+    function hideError() {
+        el.errorMessage.style.display = 'none';
+    }
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+</script>
+```
+
+</body>
+</html>
