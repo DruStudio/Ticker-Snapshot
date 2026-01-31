@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticker Snapshot</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--bg:#0a0a0f;--bg2:#15151f;--bg3:#1a1a28;--text:#fff;--text2:#a0a0b0;--accent:#5b7cff;--green:#22c55e;--red:#ef4444;--border:#2a2a3a;--glow:rgba(91,124,255,0.15)}
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh;padding:16px;background-image:radial-gradient(circle at 20% 50%,rgba(91,124,255,0.05) 0%,transparent 50%),radial-gradient(circle at 80% 80%,rgba(139,92,246,0.05) 0%,transparent 50%)}
+        header{text-align:center;margin-bottom:32px;padding:32px 16px 16px}
+        h1{font-size:2.5rem;font-weight:800;margin-bottom:8px;background:linear-gradient(135deg,#5b7cff 0%,#8b5cf6 50%,#ec4899 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.02em}
+        .subtitle{color:var(--text2);font-size:1.1rem}
+        .carousel-container{max-width:1200px;margin:0 auto 48px}
+        .carousel-wrapper{display:flex;gap:20px;overflow-x:auto;padding:16px 8px 24px;scroll-snap-type:x mandatory}
+        .carousel-item{min-width:260px;flex-shrink:0;cursor:pointer;transition:transform 0.3s;scroll-snap-align:start}
+        .carousel-item:hover{transform:translateY(-8px)}
+        .carousel-widget{width:260px;height:260px;background:linear-gradient(135deg,var(--bg3),#252538);border-radius:16px;padding:24px;display:flex;flex-direction:column;justify-content:space-between;border:1px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,.4);position:relative}
+        .carousel-item:hover .carousel-widget{border-color:var(--accent);box-shadow:0 12px 48px rgba(0,0,0,.5),0 0 20px var(--glow)}
+        .widget-header{position:relative;z-index:1}
+        .asset-name{font-size:1rem;font-weight:700;margin-bottom:3px;color:var(--text)}
+        .asset-symbol{font-size:.8rem;color:var(--accent);font-weight:600}
+        .widget-price{text-align:center;margin:16px 0}
+        .price-value{font-size:2rem;font-weight:800;line-height:1;margin-bottom:6px}
+        .price-currency{font-size:.8rem;color:var(--text2);font-weight:600}
+        .widget-chart{height:80px;margin:16px 0}
+        .chart-canvas{width:100%;height:100%}
+        .timestamp{font-size:.7rem;color:var(--text2);text-align:center;margin-bottom:10px;opacity:.7}
+        .branding{text-align:center;font-size:.75rem;color:var(--text2);opacity:.4;font-weight:600}
+        .carousel-loading{width:260px;height:260px;background:var(--bg2);border-radius:16px;display:flex;align-items:center;justify-content:center;color:var(--text2);border:1px solid var(--border);font-size:.9rem}
+        .container{max-width:600px;margin:0 auto}
+        .section-header{text-align:center;margin-bottom:20px}
+        .section-title{font-size:1.5rem;font-weight:700;margin-bottom:6px}
+        .section-subtitle{font-size:.9rem;color:var(--text2)}
+        .input-section{background:linear-gradient(135deg,var(--bg2),rgba(21,21,31,0.8));padding:32px;border-radius:20px;margin-bottom:32px;border:1px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+        .type-selector{display:flex;gap:12px;margin-bottom:20px}
+        .type-btn{flex:1;padding:14px 20px;background:transparent;border:2px solid var(--border);border-radius:12px;color:var(--text2);font-size:1rem;font-weight:700;cursor:pointer;transition:all 0.3s;text-transform:uppercase}
+        .type-btn.active{border-color:var(--accent);color:var(--accent);box-shadow:0 0 20px var(--glow)}
+        .type-btn:hover{border-color:var(--accent)}
+        .search-container{position:relative}
+        .search-icon{position:absolute;left:18px;top:50%;transform:translateY(-50%);font-size:1.2rem;z-index:2}
+        input{width:100%;padding:16px 20px 16px 52px;background:var(--bg3);border:2px solid var(--border);border-radius:12px;color:var(--text);font-size:1.05rem;transition:all 0.3s}
+        input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px var(--glow)}
+        .suggestions{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--bg3);border:2px solid var(--accent);border-radius:12px;max-height:320px;overflow-y:auto;z-index:1000;display:none;box-shadow:0 12px 40px rgba(0,0,0,.5)}
+        .suggestions.active{display:block}
+        .suggestion-item{padding:14px 20px 14px 52px;cursor:pointer;border-bottom:1px solid var(--border)}
+        .suggestion-item:last-child{border-bottom:none}
+        .suggestion-item:hover{background:rgba(91,124,255,0.15)}
+        .suggestion-symbol{font-weight:700;display:block}
+        .suggestion-name{font-size:.85rem;color:var(--text2);margin-top:2px}
+        .widget-container{display:none;margin-bottom:32px}
+        .widget-container.visible{display:block}
+        #priceWidget{width:100%;max-width:500px;height:500px;background:linear-gradient(135deg,var(--bg3),#252538);border-radius:24px;padding:40px;display:flex;flex-direction:column;justify-content:space-between;border:2px solid var(--border);box-shadow:0 20px 60px rgba(0,0,0,.5);margin:0 auto 20px;position:relative}
+        #priceWidget .widget-header{display:flex;justify-content:space-between;align-items:flex-start}
+        #priceWidget .asset-name{font-size:1.4rem;font-weight:800;margin-bottom:6px}
+        #priceWidget .asset-symbol{font-size:1rem;color:var(--accent);font-weight:700}
+        #priceWidget .widget-price{text-align:center;margin:24px 0}
+        #priceWidget .price-value{font-size:3.5rem;font-weight:900;line-height:1;margin-bottom:10px}
+        #priceWidget .widget-chart{height:140px;margin:24px 0}
+        #chartCanvas{width:100%;height:100%}
+        #priceWidget .timestamp{font-size:.85rem;margin-bottom:16px}
+        #priceWidget .branding{font-size:.9rem}
+        .chart-toggle{display:flex;gap:6px;background:var(--bg3);border-radius:8px;padding:4px;border:1px solid var(--border)}
+        .chart-toggle-btn{padding:8px 14px;background:transparent;border:none;border-radius:6px;color:var(--text2);font-size:.75rem;font-weight:700;cursor:pointer;transition:all 0.3s;text-transform:uppercase}
+        .chart-toggle-btn.active{background:var(--accent);color:#fff}
+        button{padding:16px 32px;background:linear-gradient(135deg,var(--accent),#8b5cf6);color:#fff;border:none;border-radius:12px;font-size:1.05rem;font-weight:700;cursor:pointer;transition:all 0.3s;width:100%;text-transform:uppercase}
+        button:hover:not(:disabled){transform:translateY(-3px);box-shadow:0 8px 30px rgba(91,124,255,.4)}
+        button:disabled{opacity:.5;cursor:not-allowed}
+        .export-btn{background:linear-gradient(135deg,var(--green),#16a34a);display:flex;align-items:center;justify-content:center;gap:8px}
+        .error{background:rgba(239,68,68,.1);border:1px solid var(--red);border-radius:12px;padding:18px;margin-bottom:20px;color:var(--red);text-align:center;font-weight:600}
+        .spinner{width:18px;height:18px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Ticker Snapshot</h1>
+        <p class="subtitle">Instant market prices, shareable as images</p>
+    </header>
+    <div class="carousel-container">
+        <div class="carousel-wrapper" id="carousel"></div>
+    </div>
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Generate Snapshot</h2>
+            <p class="section-subtitle">Search any stock or cryptocurrency</p>
+        </div>
+        <div class="input-section">
+            <div class="type-selector">
+                <button class="type-btn active" data-type="stock">Stocks</button>
+                <button class="type-btn" data-type="crypto">Crypto</button>
+            </div>
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="search" placeholder="Try: AAPL, BTC, TSLA, ETH..." autocomplete="off">
+                <div class="suggestions" id="suggestions"></div>
+            </div>
+        </div>
+        <div id="error" class="error" style="display:none"></div>
+        <div class="widget-container" id="widgetContainer">
+            <div id="priceWidget">
+                <div class="widget-header">
+                    <div>
+                        <div class="asset-name" id="assetName">Loading...</div>
+                        <div class="asset-symbol" id="assetSymbol"></div>
+                    </div>
+                    <div class="chart-toggle">
+                        <button class="chart-toggle-btn active" data-chart="candle">Candle</button>
+                        <button class="chart-toggle-btn" data-chart="line">Line</button>
+                    </div>
+                </div>
+                <div class="widget-price">
+                    <div class="price-value" id="price">$0.00</div>
+                    <div class="price-currency">USD</div>
+                </div>
+                <div class="widget-chart">
+                    <canvas id="chart"></canvas>
+                </div>
+                <div>
+                    <div class="timestamp" id="time">---</div>
+                    <div class="branding">TICKER SNAPSHOT</div>
+                </div>
+            </div>
+            <button id="export" class="export-btn"><span>💾</span><span>Save as Image</span></button>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+const API='https://api.coingecko.com/api/v3';
+const ITEMS=[{s:'BTC',n:'Bitcoin'},{s:'ETH',n:'Ethereum'},{s:'SOL',n:'Solana'},{s:'BNB',n:'Binance'}];
+let state={type:'stock',chartType:'candle',data:[]};
+
+const $=id=>document.getElementById(id);
+const $$=sel=>document.querySelectorAll(sel);
+
+// Load carousel on page load
+window.addEventListener(‘load’,async()=>{
+console.log(‘Loading carousel…’);
+for(let item of ITEMS){
+try{
+const id=item.s.toLowerCase()===‘bnb’?‘binancecoin’:item.s.toLowerCase();
+const [price,ohlc]=await Promise.all([
+fetch(`${API}/simple/price?ids=${id}&vs_currencies=usd`).then(r=>r.json()),
+fetch(`${API}/coins/${id}/ohlc?vs_currency=usd&days=1`).then(r=>r.json())
+]);
+renderCarouselItem({name:item.n,symbol:item.s,price:price[id].usd,chartData:ohlc.slice(-24)});
+}catch(e){
+console.error(‘Failed’,item.s,e);
+$(‘carousel’).innerHTML+=’<div class="carousel-loading">Failed<br>’+item.s+’</div>’;
+}
+}
+});
+
+function renderCarouselItem(data){
+const div=document.createElement(‘div’);
+div.className=‘carousel-item’;
+div.onclick=()=>{
+$(‘search’).value=data.symbol;
+state.type=‘crypto’;
+$$(’.type-btn’).forEach(b=>b.classList.toggle(‘active’,b.dataset.type===‘crypto’));
+generate();
+};
+div.innerHTML=`<div class="carousel-widget"><div class="widget-header"><div class="asset-name">${data.name}</div><div class="asset-symbol">${data.symbol}</div></div><div class="widget-price"><div class="price-value">$${fmt(data.price)}</div><div class="price-currency">USD</div></div><div class="widget-chart"><canvas class="chart-canvas"></canvas></div><div class="timestamp">${tstamp()}</div><div class="branding">TICKER SNAPSHOT</div></div>`;
+$(‘carousel’).appendChild(div);
+drawMini(div.querySelector(’.chart-canvas’),data.chartData);
+}
+
+function drawMini(canvas,data){
+const ctx=canvas.getContext(‘2d’);
+const w=canvas.width=canvas.offsetWidth*2;
+const h=canvas.height=canvas.offsetHeight*2;
+const prices=data.map(d=>d[4]);
+const min=Math.min(…prices),max=Math.max(…prices),range=max-min;
+ctx.strokeStyle=’#5b7cff’;ctx.lineWidth=3;ctx.beginPath();
+prices.forEach((p,i)=>{
+const x=20+(i/(prices.length-1))*(w-40);
+const y=20+((max-p)/range)*(h-40);
+i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+});
+ctx.stroke();
+}
+
+// Type selector
+$$(’.type-btn’).forEach(btn=>btn.onclick=()=>{
+$$(’.type-btn’).forEach(b=>b.classList.remove(‘active’));
+btn.classList.add(‘active’);
+state.type=btn.dataset.type;
+$(‘suggestions’).classList.remove(‘active’);
+});
+
+// Chart toggle
+$$(’.chart-toggle-btn’).forEach(btn=>btn.onclick=()=>{
+$$(’.chart-toggle-btn’).forEach(b=>b.classList.remove(‘active’));
+btn.classList.add(‘active’);
+state.chartType=btn.dataset.chart;
+if(state.data.length)drawChart(state.data);
+});
+
+// Search
+let timeout;
+$(‘search’).oninput=e=>{
+clearTimeout(timeout);
+const q=e.target.value.trim();
+if(q.length<2){$(‘suggestions’).classList.remove(‘active’);return}
+timeout=setTimeout(()=>search(q),300);
+};
+$(‘search’).onkeypress=e=>{if(e.key===‘Enter’&&$(‘search’).value)generate()};
+
+async function search(q){
+try{
+let results;
+if(state.type===‘crypto’){
+const data=await fetch(`${API}/search?query=${q}`).then(r=>r.json());
+results=data.coins.slice(0,10).map(c=>({symbol:c.symbol.toUpperCase(),name:c.name}));
+}else{
+const data=await fetch(`https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${q}&apikey=demo`).then(r=>r.json());
+results=data.bestMatches?data.bestMatches.slice(0,10).map(m=>({symbol:m[‘1. symbol’],name:m[‘2. name’]})):[];
+}
+if(results.length){
+$(‘suggestions’).innerHTML=results.map(r=>`<div class="suggestion-item" onclick="select('${r.symbol}')"><span class="suggestion-symbol">${r.symbol}</span><span class="suggestion-name">${r.name}</span></div>`).join(’’);
+$(‘suggestions’).classList.add(‘active’);
+}
+}catch(e){console.error(‘Search failed’,e)}
+}
+
+function select(symbol){
+$(‘search’).value=symbol;
+$(‘suggestions’).classList.remove(‘active’);
+generate();
+}
+
+async function generate(){
+const symbol=$(‘search’).value.trim().toUpperCase();
+if(!symbol)return;
+$(‘error’).style.display=‘none’;
+$(‘widgetContainer’).classList.remove(‘visible’);
+try{
+let data;
+if(state.type===‘crypto’){
+const id=symbol===‘BTC’?‘bitcoin’:symbol===‘ETH’?‘ethereum’:symbol===‘SOL’?‘solana’:symbol===‘BNB’?‘binancecoin’:symbol.toLowerCase();
+const [price,ohlc]=await Promise.all([
+fetch(`${API}/simple/price?ids=${id}&vs_currencies=usd`).then(r=>r.json()),
+fetch(`${API}/coins/${id}/ohlc?vs_currency=usd&days=1`).then(r=>r.json())
+]);
+data={name:symbol,symbol,price:price[id].usd,chartData:ohlc.slice(-24)};
+}else{
+const quote=await fetch(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=demo`).then(r=>r.json());
+if(!quote[‘Global Quote’])throw new Error(‘Not found’);
+const intraday=await fetch(`https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=30min&apikey=demo`).then(r=>r.json());
+const ts=intraday[‘Time Series (30min)’]||{};
+const chartData=Object.entries(ts).slice(0,12).reverse().map(([t,v])=>[Date.parse(t),+v[‘1. open’],+v[‘2. high’],+v[‘3. low’],+v[‘4. close’]]);
+data={name:symbol,symbol,price:+quote[‘Global Quote’][‘05. price’],chartData};
+}
+state.data=data.chartData;
+$(‘assetName’).textContent=data.name;
+$(‘assetSymbol’).textContent=data.symbol;
+$(‘price’).textContent=’$’+fmt(data.price);
+$(‘time’).textContent=’Snapshot: ’+tstamp();
+drawChart(data.chartData);
+$(‘widgetContainer’).classList.add(‘visible’);
+}catch(e){
+$(‘error’).textContent=’Failed: ’+e.message;
+$(‘error’).style.display=‘block’;
+}
+}
+
+function drawChart(data){
+const canvas=$(‘chart’),ctx=canvas.getContext(‘2d’);
+const w=canvas.width=canvas.offsetWidth*2;
+const h=canvas.height=canvas.offsetHeight*2;
+ctx.clearRect(0,0,w,h);
+if(!data||!data.length)return;
+const prices=data.map(d=>({o:d[1],h:d[2],l:d[3],c:d[4]}));
+const all=prices.flatMap(p=>[p.h,p.l]);
+const min=Math.min(…all),max=Math.max(…all),range=max-min;
+const pad=20,cw=w-pad*2,ch=h-pad*2;
+if(state.chartType===‘line’){
+ctx.strokeStyle=’#5b7cff’;ctx.lineWidth=4;ctx.beginPath();
+prices.forEach((p,i)=>{
+const x=pad+(i/(prices.length-1))*cw;
+const y=pad+((max-p.c)/range)*ch;
+i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+});
+ctx.stroke();
+}else{
+const cw2=Math.max(4,cw/prices.length-4);
+const sp=cw/prices.length;
+prices.forEach((p,i)=>{
+const x=pad+i*sp+sp/2;
+const yh=pad+((max-p.h)/range)*ch;
+const yl=pad+((max-p.l)/range)*ch;
+const yo=pad+((max-p.o)/range)*ch;
+const yc=pad+((max-p.c)/range)*ch;
+const up=p.c>=p.o;
+ctx.strokeStyle=ctx.fillStyle=up?’#22c55e’:’#ef4444’;
+ctx.beginPath();ctx.moveTo(x,yh);ctx.lineTo(x,yl);ctx.lineWidth=2;ctx.stroke();
+const top=Math.min(yo,yc),ht=Math.abs(yc-yo);
+if(ht<2){ctx.beginPath();ctx.moveTo(x-cw2/2,top);ctx.lineTo(x+cw2/2,top);ctx.stroke()}
+else ctx.fillRect(x-cw2/2,top,cw2,ht);
+});
+}
+}
+
+$(‘export’).onclick=async()=>{
+$(‘export’).disabled=true;
+$(‘export’).innerHTML=’<span class="spinner"></span><span>Saving…</span>’;
+try{
+const canvas=await html2canvas($(‘priceWidget’),{scale:2});
+canvas.toBlob(b=>{
+const a=document.createElement(‘a’);
+a.href=URL.createObjectURL(b);
+a.download=`ticker-${$('search').value}-${new Date().toISOString().split('T')[0]}.png`;
+a.click();
+$(‘export’).disabled=false;
+$(‘export’).innerHTML=’<span>💾</span><span>Save as Image</span>’;
+});
+}catch(e){
+$(‘export’).disabled=false;
+$(‘export’).innerHTML=’<span>💾</span><span>Save as Image</span>’;
+}
+};
+
+function fmt(p){
+if(p>=1)return p.toLocaleString(‘en-US’,{minimumFractionDigits:2,maximumFractionDigits:2});
+if(p>=0.01)return p.toLocaleString(‘en-US’,{minimumFractionDigits:4,maximumFractionDigits:4});
+return p.toLocaleString(‘en-US’,{minimumFractionDigits:6,maximumFractionDigits:6});
+}
+function tstamp(){
+const d=new Date(),m=[‘Jan’,‘Feb’,‘Mar’,‘Apr’,‘May’,‘Jun’,‘Jul’,‘Aug’,‘Sep’,‘Oct’,‘Nov’,‘Dec’];
+let h=d.getHours();
+const mm=d.getMinutes().toString().padStart(2,‘0’),ap=h>=12?‘PM’:‘AM’;
+h=h%12||12;
+return`${m[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()} · ${h}:${mm} ${ap}`;
+}
+</script>
+
+</body>
+</html>
