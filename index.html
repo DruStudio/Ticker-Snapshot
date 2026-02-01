@@ -140,7 +140,7 @@ font-weight:900;
 cursor:pointer;
 background:linear-gradient(135deg,var(--accent),#8b5cf6);
 color:white;
-margin-bottom:18px;
+margin-bottom:12px;
 }
 
 /* TRENDING */
@@ -238,33 +238,6 @@ color:var(--muted);
 text-align:center;
 }
 
-/* SHARE */
-.share-actions{
-display:flex;
-gap:14px;
-justify-content:center;
-}
-
-.share-btn{
-width:56px;
-height:56px;
-border-radius:14px;
-background:#10101a;
-border:1px solid var(--border);
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:1.4rem;
-cursor:pointer;
-}
-
-.share-btn.primary{
-width:100%;
-font-size:.9rem;
-font-weight:900;
-background:linear-gradient(135deg,var(--accent),#8b5cf6);
-}
-
 @media(max-width:900px){
 .main{grid-template-columns:1fr}
 h1{font-size:2.4rem}
@@ -277,7 +250,7 @@ h1{font-size:2.4rem}
 <canvas id="particles"></canvas>
 
 <div class="bottom-left">
-<div class="badge">v6.7.5</div>
+<div class="badge">v6.7.6</div>
 <div class="badge">FAQ</div>
 </div>
 
@@ -312,11 +285,8 @@ h1{font-size:2.4rem}
 
 <div class="section-title">SHARE</div>
 <div class="panel">
-<div class="share-actions">
-<div class="share-btn" onclick="App.shareX()">𝕏</div>
-<div class="share-btn" onclick="App.shareIG()">📸</div>
-</div>
 <button class="primary" onclick="App.save()">Save Image</button>
+<button class="primary" onclick="App.copyCaption()">Copy Caption</button>
 </div>
 </div>
 
@@ -363,6 +333,7 @@ tick();
 /* APP */
 const App={
 coins:[],
+current:null,
 
 fmtCap(v){
 if(v>=1e12)return'$'+(v/1e12).toFixed(2)+'T';
@@ -422,6 +393,7 @@ list.appendChild(li);
 
 build(c){
 const pos=c.price_change_percentage_24h>=0;
+this.current=c;
 return `
 <div class="widget ${pos?'positive':'negative'}" id="widget">
 <div class="header">
@@ -472,11 +444,16 @@ a.click();
 });
 },
 
-shareX(){
-window.open("https://twitter.com/intent/tweet?text=BlockState%20Snapshot","_blank");
-},
-shareIG(){
-alert("Save image, then upload to Instagram.");
+copyCaption(){
+if(!this.current)return;
+const c=this.current;
+const up=c.price_change_percentage_24h>=0;
+const text=
+`${c.name} is ${up?'up':'down'} ${Math.abs(c.price_change_percentage_24h).toFixed(2)}% in 24 hours.
+
+#${c.symbol.toUpperCase()} #BlockState`;
+navigator.clipboard.writeText(text);
+alert("Caption copied");
 }
 };
 
