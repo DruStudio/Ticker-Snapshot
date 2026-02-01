@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>BlockState — Crypto</title>
 
@@ -157,10 +157,6 @@ color:white;
 font-weight:800;
 cursor:pointer;
 }
-.secondary.copied{
-border-color:var(--up);
-color:var(--up);
-}
 
 /* TOGGLE */
 .toggle{
@@ -206,15 +202,16 @@ border-radius:50%;
 .widget{
 width:100%;
 max-width:420px;
-height:460px;
+height:480px;
 border-radius:28px;
 padding:22px;
 display:flex;
 flex-direction:column;
 justify-content:center;
-gap:8px;
+gap:10px;
 background:linear-gradient(180deg,#14142a,#0e0e1c);
 border:1px solid var(--border);
+text-align:center;
 }
 .widget.up{box-shadow:0 0 45px rgba(34,197,94,.35)}
 .widget.down{box-shadow:0 0 45px rgba(239,68,68,.35)}
@@ -226,8 +223,8 @@ align-items:center;
 gap:14px;
 }
 .asset img{
-width:44px;
-height:44px;
+width:48px;
+height:48px;
 border-radius:50%;
 }
 .asset-name{
@@ -246,10 +243,6 @@ font-weight:900;
 }
 
 .change{
-display:flex;
-justify-content:center;
-align-items:center;
-gap:10px;
 font-size:1.2rem;
 font-weight:900;
 }
@@ -258,14 +251,12 @@ font-weight:900;
 display:grid;
 grid-template-columns:1fr 1fr;
 gap:12px;
-margin-top:6px;
 }
 .stat{
 background:#0b0b18;
 border:1px solid var(--border);
 border-radius:16px;
 padding:12px;
-font-size:.9rem;
 }
 .stat span{
 display:block;
@@ -276,13 +267,12 @@ margin-bottom:4px;
 }
 
 .widget-footer{
-margin-top:8px;
+margin-top:6px;
 padding-top:8px;
 border-top:1px solid var(--border);
 font-size:.65rem;
 color:var(--muted);
 text-align:center;
-line-height:1.4;
 }
 
 /* SHARE */
@@ -297,10 +287,6 @@ border:1px solid var(--border);
 border-radius:16px;
 padding:14px;
 font-size:.85rem;
-}
-
-@media(max-width:900px){
-.main{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -366,7 +352,7 @@ font-size:.85rem;
 const canvas=document.getElementById("particles");
 const ctx=canvas.getContext("2d");
 let w,h,particles=[];
-function resize(){w=canvas.width=innerWidth;h=canvas.height=innerHeight;}
+function resize(){w=canvas.width=innerWidth;h=canvas.height=innerHeight}
 addEventListener("resize",resize);resize();
 for(let i=0;i<120;i++)particles.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,r:Math.random()*1.6+.4});
 (function tick(){
@@ -419,7 +405,7 @@ const c=this.coins.find(x=>x.id===id);
 if(!c)return;
 const b=document.createElement("button");
 b.textContent=c.symbol.toUpperCase();
-b.onclick=()=>this.show(c);
+b.onclick=()=>this.show(c,true);
 presets.appendChild(b);
 });
 },
@@ -435,7 +421,7 @@ li.innerHTML=`<div class="left">
 <span style="color:${c.price_change_percentage_24h>=0?'var(--up)':'var(--down)'}">
 ${c.price_change_percentage_24h.toFixed(2)}%
 </span>`;
-li.onclick=()=>this.show(c);
+li.onclick=()=>this.show(c,true);
 trendList.appendChild(li);
 });
 },
@@ -454,10 +440,10 @@ this.render([...this.coins].sort((a,b)=>a.price_change_percentage_24h-b.price_ch
 generate(){
 const v=search.value.toLowerCase();
 const c=this.coins.find(x=>v.includes(x.symbol)||v.includes(x.name.toLowerCase()));
-if(c)this.show(c);
+if(c)this.show(c,true);
 },
 
-show(c){
+show(c,scroll){
 this.current=c;
 const up=c.price_change_percentage_24h>=0;
 const delta=c.current_price*(c.price_change_percentage_24h/100);
@@ -486,9 +472,11 @@ ${up?'▲':'▼'} ${c.price_change_percentage_24h.toFixed(2)}%
 
 <div class="widget-footer">
 Captured • ${ts}<br>
-Data: CoinGecko • BlockState.Live
+Data provided using CoinGecko • BlockState.Live
 </div>
 </div>`;
+
+if(scroll)document.getElementById("widget").scrollIntoView({behavior:"smooth",block:"center"});
 },
 
 saveImage(){
