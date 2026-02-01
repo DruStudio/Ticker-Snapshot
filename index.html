@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>BlockState</title>
 
-<!-- OG (static fallback) -->
 <meta property="og:title" content="BlockState" />
 <meta property="og:description" content="Capture a single moment in crypto markets." />
 <meta property="og:image" content="https://blockstate.live/og.png" />
@@ -14,7 +13,6 @@
 <style>
 :root{
 --bg:#0a0a0f;
---bg2:#0f1020;
 --panel:#161625;
 --panel2:#12121d;
 --border:#2a2a3a;
@@ -26,52 +24,25 @@
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{
-background:radial-gradient(1200px 800px at 20% 10%, #141428, var(--bg)),
-radial-gradient(800px 600px at 80% 80%, #0f1025, var(--bg));
-background-attachment:fixed;
-color:var(--text);
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-}
+html,body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 
-/* ===== VERSION ===== */
 .version{
-position:fixed;
-top:14px;left:14px;
-z-index:9999;
-background:#10101a;
-border:1px solid var(--border);
-border-radius:10px;
-padding:8px 12px;
-font-size:.75rem;
-font-weight:700;
+position:fixed;top:14px;left:14px;z-index:9999;
+background:#10101a;border:1px solid var(--border);
+border-radius:10px;padding:8px 12px;font-size:.75rem;font-weight:700;
 }
 
-/* ===== PAGE ===== */
 .container{
-max-width:1100px;
-margin:0 auto;
-padding:70px 20px 120px;
-display:flex;
-flex-direction:column;
-align-items:center;
+max-width:1100px;margin:0 auto;padding:70px 20px 120px;
+display:flex;flex-direction:column;align-items:center;
 }
 
 h1{
-font-size:3rem;
-font-weight:900;
-text-align:center;
-background:linear-gradient(
-120deg,
-#6c7cff,
-#8b5cf6,
-#22c55e,
-#6c7cff
-);
+font-size:3rem;font-weight:900;text-align:center;
+background:linear-gradient(120deg,#6c7cff,#8b5cf6,#22c55e,#6c7cff);
 background-size:400% 400%;
 animation:titleFlow 180s linear infinite;
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
+-webkit-background-clip:text;-webkit-text-fill-color:transparent;
 }
 
 @keyframes titleFlow{
@@ -79,210 +50,105 @@ animation:titleFlow 180s linear infinite;
 100%{background-position:100% 50%}
 }
 
-.bio{
-margin-top:10px;
-text-align:center;
-color:var(--muted);
-max-width:600px;
-}
-
-.section{
-width:100%;
-margin-top:48px;
-display:flex;
-justify-content:center;
-}
+.bio{margin-top:10px;text-align:center;color:var(--muted);max-width:600px}
 
 .generator{
-display:grid;
-grid-template-columns:360px 420px;
-gap:40px;
-justify-content:center;
-width:100%;
+margin-top:48px;
+display:grid;grid-template-columns:360px 420px;
+gap:40px;justify-content:center;width:100%;
 }
 
 .panel{
 background:linear-gradient(135deg,var(--panel),#1f1f30);
 border:1px solid var(--border);
-border-radius:20px;
-padding:24px;
+border-radius:20px;padding:24px;
 }
 
-label{
-font-size:.75rem;
-font-weight:700;
-color:var(--muted);
-margin-bottom:8px;
-display:block;
-}
+label{font-size:.75rem;font-weight:700;color:var(--muted);margin-bottom:8px;display:block}
 
 input{
-width:100%;
-padding:14px;
-border-radius:12px;
+width:100%;padding:14px;border-radius:12px;
 border:2px solid var(--border);
-background:#10101a;
-color:white;
-margin-bottom:14px;
+background:#10101a;color:white;margin-bottom:14px;
 }
 
 .presets{
-display:grid;
-grid-template-columns:repeat(5,1fr);
-gap:8px;
-margin-bottom:16px;
+display:grid;grid-template-columns:repeat(5,1fr);
+gap:8px;margin-bottom:16px;
 }
 
 .presets button{
-padding:10px;
-border-radius:10px;
-border:1px solid var(--border);
-background:#10101a;
-color:white;
-font-weight:700;
-cursor:pointer;
+padding:10px;border-radius:10px;border:1px solid var(--border);
+background:#10101a;color:white;font-weight:700;cursor:pointer;
 }
 
 .primary{
-width:100%;
-padding:16px;
-border-radius:14px;
-border:none;
-font-weight:800;
-cursor:pointer;
+width:100%;padding:16px;border-radius:14px;border:none;
+font-weight:800;cursor:pointer;
 background:linear-gradient(135deg,var(--accent),#8b5cf6);
 color:white;
 }
 
-/* ===== WIDGET ===== */
+.howto{
+margin-top:18px;
+font-size:.8rem;
+color:var(--muted);
+line-height:1.5;
+}
+
 .widget{
 background:var(--panel2);
-border-radius:22px;
-padding:26px;
+border-radius:22px;padding:26px;
 border:2px solid var(--border);
-max-width:420px;
-width:100%;
-position:relative;
+max-width:420px;width:100%;position:relative;
 }
 
 .widget.positive{border-color:var(--green)}
 .widget.negative{border-color:var(--red)}
 
 .header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-border-bottom:1px solid var(--border);
-padding-bottom:14px;
-margin-bottom:16px;
+display:flex;justify-content:space-between;align-items:center;
+border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:16px;
 }
 
-.left{
-display:flex;
-gap:12px;
-align-items:center;
-}
+.left{display:flex;gap:12px;align-items:center}
 
-.coin-img{
-width:36px;
-height:36px;
-border-radius:50%;
-background:#000;
-}
+.coin-img{width:36px;height:36px;border-radius:50%}
 
 .name{font-size:1.3rem;font-weight:900}
 .symbol{font-size:.7rem;color:var(--accent)}
 
-.change{
-font-size:1.5rem;
-font-weight:900;
-}
+.change{font-size:1.5rem;font-weight:900}
 .change.positive{color:var(--green)}
 .change.negative{color:var(--red)}
 
-.price{
-text-align:center;
-font-size:3rem;
-font-weight:900;
-margin:16px 0;
-}
+.price{text-align:center;font-size:3rem;font-weight:900;margin:16px 0}
 
-.stats{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:12px;
-}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 
 .stat{
-background:#0d0d16;
-border-radius:14px;
-padding:12px;
-text-align:center;
+background:#0d0d16;border-radius:14px;padding:12px;text-align:center
 }
 
-.stat span{
-display:block;
-font-size:.65rem;
-color:var(--muted);
-margin-bottom:4px;
-}
+.stat span{display:block;font-size:.65rem;color:var(--muted);margin-bottom:4px}
 
 .footer{
 border-top:1px solid var(--border);
-padding-top:12px;
-margin-top:12px;
-font-size:.7rem;
-color:var(--muted);
-text-align:center;
+padding-top:12px;margin-top:12px;
+font-size:.7rem;color:var(--muted);text-align:center
 }
 
 .actions{
-position:absolute;
-bottom:12px;
-display:flex;
-gap:10px;
+position:absolute;bottom:12px;display:flex;gap:10px
 }
 .actions.left{left:12px}
 .actions.right{right:12px}
 
 .icon{
-width:32px;height:32px;
-border-radius:50%;
-border:none;
-background:#0d0d16;
-color:white;
-cursor:pointer;
+width:32px;height:32px;border-radius:50%;
+border:none;background:#0d0d16;color:white;cursor:pointer
 }
 
-/* ===== TRENDING ===== */
-.trending{
-max-width:420px;
-width:100%;
-}
-
-.trending select{
-width:100%;
-padding:10px;
-border-radius:10px;
-background:#10101a;
-border:1px solid var(--border);
-color:white;
-font-weight:700;
-margin-bottom:10px;
-}
-
-.row{
-display:flex;
-justify-content:space-between;
-padding:12px 14px;
-border-bottom:1px solid var(--border);
-cursor:pointer;
-font-weight:700;
-}
-
-.row:hover{background:#12121d}
-
-/* ===== MOBILE ===== */
 @media(max-width:900px){
 .generator{grid-template-columns:1fr}
 }
@@ -290,16 +156,13 @@ font-weight:700;
 </head>
 
 <body>
-<div class="version">v6.6.0</div>
+<div class="version">v6.6.1</div>
 
 <div class="container">
 <h1>BlockState</h1>
 <p class="bio">Capture a single moment in crypto markets.</p>
 
-<div class="section">
 <div class="generator">
-
-<!-- Generator -->
 <div class="panel">
 <label>Search Crypto (Top 250)</label>
 <input id="search" list="coins" placeholder="BTC, SOL, BONK">
@@ -308,30 +171,23 @@ font-weight:700;
 <div class="presets" id="presets"></div>
 
 <button class="primary" onclick="App.generate()">Generate BlockState</button>
+
+<div class="howto">
+<b>How it works</b><br>
+1. Select a crypto<br>
+2. Capture the current state<br>
+3. Export or share the image
+</div>
 </div>
 
-<!-- Output -->
 <div id="output"></div>
-
-</div>
-</div>
-
-<div class="section">
-<div class="trending panel">
-<select id="mode" onchange="App.renderTrending()">
-<option value="movers" selected>Biggest Movers</option>
-<option value="top">Top 10</option>
-<option value="random">Trending</option>
-</select>
-<div id="list"></div>
-</div>
 </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 const App={
-coins:[],current:null,
+coins:[],icons:{},current:null,
 
 fmtCap(v){
 if(v>=1e12) return '$'+(v/1e12).toFixed(2)+'T';
@@ -346,27 +202,33 @@ return v.toFixed(8);
 },
 
 async load(){
-const r=await fetch(
-'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1'
-);
+const r=await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1');
 this.coins=await r.json();
+await this.cacheIcons();
 this.populate();
-this.renderTrending();
 this.show(this.coins[0]); // BTC preload
+},
+
+async cacheIcons(){
+for(const c of this.coins){
+const blob=await fetch(c.image).then(r=>r.blob());
+this.icons[c.id]=await new Promise(res=>{
+const reader=new FileReader();
+reader.onload=()=>res(reader.result);
+reader.readAsDataURL(blob);
+});
+}
 },
 
 populate(){
 const dl=document.getElementById("coins");
 const p=document.getElementById("presets");
-dl.innerHTML=""; p.innerHTML="";
-
+dl.innerHTML="";p.innerHTML="";
 this.coins.forEach(c=>{
 const o=document.createElement("option");
 o.value=`${c.symbol.toUpperCase()} — ${c.name}`;
 dl.appendChild(o);
 });
-
-// Top 5 by market cap
 this.coins.slice(0,5).forEach(c=>{
 const b=document.createElement("button");
 b.textContent=c.symbol.toUpperCase();
@@ -382,7 +244,7 @@ return `
 <div class="widget ${pos?'positive':'negative'}" id="widget">
 <div class="header">
 <div class="left">
-<img class="coin-img" src="${c.image}">
+<img class="coin-img" src="${this.icons[c.id]}">
 <div>
 <div class="name">${c.name}</div>
 <div class="symbol">${c.symbol.toUpperCase()}</div>
@@ -406,32 +268,9 @@ ${pos?'▲':'▼'} ${c.price_change_percentage_24h.toFixed(2)}%
 Captured • ${new Date().toUTCString()}<br>BLOCKSTATE.LIVE
 </div>
 
-<div class="actions left">
-<button class="icon" onclick="App.share()">⤴</button>
-</div>
-<div class="actions right">
-<button class="icon" onclick="App.export()">⤓</button>
-</div>
+<div class="actions left"><button class="icon" onclick="App.share()">⤴</button></div>
+<div class="actions right"><button class="icon" onclick="App.export()">⤓</button></div>
 </div>`;
-},
-
-renderTrending(){
-const l=document.getElementById("list");
-l.innerHTML="";
-let arr=[...this.coins];
-const m=document.getElementById("mode").value;
-
-if(m==="movers") arr.sort((a,b)=>Math.abs(b.price_change_percentage_24h)-Math.abs(a.price_change_percentage_24h));
-if(m==="top") arr.sort((a,b)=>a.market_cap_rank-b.market_cap_rank);
-if(m==="random") arr.sort(()=>0.5-Math.random());
-
-arr.slice(0,10).forEach(c=>{
-const d=document.createElement("div");
-d.className="row";
-d.innerHTML=`<span>${c.name}</span><span>${c.price_change_percentage_24h.toFixed(2)}%</span>`;
-d.onclick=()=>this.show(c);
-l.appendChild(d);
-});
 },
 
 find(){
@@ -461,7 +300,7 @@ a.click();
 },
 
 async share(){
-if(!navigator.share) return alert("Sharing not supported");
+if(!navigator.share)return alert("Sharing not supported");
 const w=document.getElementById("widget");
 w.querySelectorAll(".actions").forEach(a=>a.style.display="none");
 await new Promise(r=>setTimeout(r,50));
@@ -473,7 +312,6 @@ navigator.share({files:[new File([blob],"blockstate.png",{type:"image/png"})]});
 };
 
 App.load();
-setInterval(()=>App.load(),120000);
 </script>
 </body>
 </html>
