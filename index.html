@@ -148,11 +148,22 @@ color:var(--muted);
 .trending li{
 display:flex;
 justify-content:space-between;
+align-items:center;
 padding:10px 6px;
 border-bottom:1px solid var(--border);
 cursor:pointer;
 }
 .trending li:last-child{border-bottom:none}
+.trending .left{
+display:flex;
+align-items:center;
+gap:8px;
+}
+.trending img{
+width:18px;
+height:18px;
+border-radius:50%;
+}
 .up{color:var(--green)}
 .down{color:var(--red)}
 
@@ -185,7 +196,6 @@ align-items:center;
 width:36px;
 height:36px;
 border-radius:50%;
-background:#000;
 }
 
 .name{font-size:1.25rem;font-weight:900}
@@ -258,7 +268,7 @@ h1{font-size:2.4rem}
 <canvas id="particles"></canvas>
 
 <div class="bottom-left">
-<div class="badge">v6.8.2</div>
+<div class="badge">v6.8.3</div>
 <div class="badge" onclick="FAQ.open()">FAQ</div>
 </div>
 
@@ -299,18 +309,7 @@ h1{font-size:2.4rem}
 </div>
 </div>
 
-<div class="faq-modal" id="faq" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);align-items:center;justify-content:center;z-index:20">
-<div class="panel" style="max-width:460px">
-<h3>What is BlockState?</h3>
-<p>BlockState creates verifiable snapshots of crypto market conditions you can save and share.</p>
-<h3>How do I share?</h3>
-<p>Click “Generate Shareables” to save the image and auto-generate a caption.</p>
-<button class="primary" onclick="FAQ.close()">Close</button>
-</div>
-</div>
-
 <script>
-/* IMAGE → BASE64 FIX */
 async function toBase64(url){
 const r = await fetch(url);
 const b = await r.blob();
@@ -321,10 +320,10 @@ reader.readAsDataURL(b);
 });
 }
 
-/* APP */
 const App={
 coins:[],
 current:null,
+imageCache:{},
 
 fmt(v){
 if(v>=1)return v.toFixed(2);
@@ -341,9 +340,16 @@ return'$'+v.toLocaleString();
 async load(){
 const r=await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1");
 this.coins=await r.json();
+await this.preloadImages();
 this.populate();
 this.renderTrending();
 this.show(this.coins[0]);
+},
+
+async preloadImages(){
+for(const c of this.coins){
+this.imageCache[c.id] = await toBase64(c.image);
+}
 },
 
 populate(){
@@ -372,7 +378,11 @@ list.innerHTML="";
 .slice(0,10)
 .forEach(c=>{
 const li=document.createElement("li");
-li.innerHTML=`<span>${c.name}</span>
+li.innerHTML=`
+<div class="left">
+<img src="${this.imageCache[c.id]}">
+<span>${c.name}</span>
+</div>
 <span class="${c.price_change_percentage_24h>=0?'up':'down'}">
 ${c.price_change_percentage_24h>=0?'▲':'▼'} ${c.price_change_percentage_24h.toFixed(2)}%
 </span>`;
@@ -381,15 +391,14 @@ list.appendChild(li);
 });
 },
 
-async build(c){
+build(c){
 this.current=c;
-const img = await toBase64(c.image);
 const up=c.price_change_percentage_24h>=0;
 return `
 <div class="widget ${up?'positive':'negative'}" id="widget">
 <div class="header">
 <div class="left">
-<img class="coin-img" src="${img}">
+<img class="coin-img" src="${this.imageCache[c.id]}">
 <div>
 <div class="name">${c.name}</div>
 <div class="symbol">${c.symbol.toUpperCase()}</div>
@@ -415,8 +424,8 @@ Captured • ${new Date().toUTCString()}<br>BLOCKSTATE.LIVE
 </div>`;
 },
 
-async show(c){
-document.getElementById("output").innerHTML = await this.build(c);
+show(c){
+document.getElementById("output").innerHTML=this.build(c);
 },
 
 generate(){
@@ -425,18 +434,16 @@ const c=this.coins.find(x=>v.includes(x.symbol)||v.includes(x.name.toLowerCase()
 if(c)this.show(c);
 },
 
-generateShareables(){
-this.saveImage();
-this.showCaption();
-},
-
-saveImage(){
+async generateShareables(){
+await document.fonts.ready;
+await new Promise(r=>requestAnimationFrame(r));
 html2canvas(document.getElementById("widget"),{backgroundColor:null}).then(c=>{
 const a=document.createElement("a");
 a.download="blockstate.png";
 a.href=c.toDataURL();
 a.click();
 });
+this.showCaption();
 },
 
 showCaption(){
@@ -458,12 +465,6 @@ close(){document.getElementById("faq").style.display="none"}
 
 document.addEventListener("DOMContentLoaded",()=>App.load());
 </script>
-
-<!--
-Version History
-v6.8.2 – Fixed coin images not rendering/saving in exports (base64 conversion)
-v6.8.1 – Stable widget + sharing flow
--->
 
 </body>
 </html>
