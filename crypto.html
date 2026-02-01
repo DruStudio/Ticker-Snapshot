@@ -113,24 +113,25 @@ padding:22px;
 /* INPUT */
 input{
 width:100%;
-padding:14px;
-border-radius:14px;
+padding:16px;
+border-radius:16px;
 border:1px solid var(--border);
 background:#0b0c1b;
 color:white;
-margin-bottom:14px;
+margin-bottom:16px;
+font-size:.9rem;
 }
 
 /* PRESETS */
 .presets{
 display:grid;
 grid-template-columns:repeat(5,1fr);
-gap:8px;
-margin-bottom:14px;
+gap:10px;
+margin-bottom:18px;
 }
 .presets button{
-padding:10px;
-border-radius:10px;
+padding:12px 0;
+border-radius:14px;
 border:1px solid var(--border);
 background:#0b0c1b;
 color:white;
@@ -138,46 +139,35 @@ font-weight:900;
 cursor:pointer;
 }
 
-/* BUTTONS */
-.primary,.secondary{
-padding:14px;
-border-radius:14px;
-font-weight:900;
-cursor:pointer;
-border:1px solid var(--border);
-background:#0b0c1b;
-color:white;
-}
+/* PRIMARY CTA (FIXED) */
 .primary{
-background:linear-gradient(135deg,var(--accent),#8b5cf6);
+width:100%;
+padding:16px;
+border-radius:18px;
 border:none;
-}
-.actions{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
-margin-bottom:12px;
-}
-.secondary.copied{
-border-color:var(--up);
-color:var(--up);
+font-weight:900;
+font-size:.95rem;
+cursor:pointer;
+background:linear-gradient(135deg,var(--accent),#8b5cf6);
+color:white;
+margin-bottom:18px;
 }
 
 /* TOGGLE */
 .toggle{
 display:flex;
-gap:8px;
-margin-bottom:10px;
+gap:10px;
+margin-bottom:14px;
 }
 .toggle button{
 flex:1;
-padding:8px;
-border-radius:10px;
+padding:12px 0;
+border-radius:14px;
 border:1px solid var(--border);
 background:#0b0c1b;
 color:white;
-font-weight:800;
-font-size:.65rem;
+font-weight:900;
+font-size:.7rem;
 cursor:pointer;
 }
 .toggle button.active{background:var(--accent)}
@@ -188,18 +178,18 @@ cursor:pointer;
 display:flex;
 justify-content:space-between;
 align-items:center;
-padding:10px 6px;
+padding:14px 6px;
 border-bottom:1px solid var(--border);
 cursor:pointer;
 }
 .trending .left{
 display:flex;
 align-items:center;
-gap:8px;
+gap:10px;
 }
 .trending img{
-width:18px;
-height:18px;
+width:22px;
+height:22px;
 border-radius:50%;
 }
 
@@ -208,29 +198,29 @@ border-radius:50%;
 width:420px;
 height:500px;
 border-radius:28px;
-padding:26px;
+padding:28px;
 background:linear-gradient(180deg,#12132b,#0a0b1a);
 border:1px solid var(--border);
 display:flex;
 flex-direction:column;
 justify-content:center;
-gap:10px;
+gap:12px;
 margin:0 auto;
 }
-.widget.up{box-shadow:0 0 28px rgba(34,197,94,.25)}
-.widget.down{box-shadow:0 0 28px rgba(239,68,68,.25)}
+.widget.up{box-shadow:0 0 22px rgba(34,197,94,.22)}
+.widget.down{box-shadow:0 0 22px rgba(239,68,68,.22)}
 
 .asset{
 display:flex;
 flex-direction:column;
 align-items:center;
-gap:6px;
+gap:4px;
 }
 .asset img{
-width:54px;
-height:54px;
+width:56px;
+height:56px;
 border-radius:50%;
-margin-bottom:-6px;
+margin-bottom:-2px;
 }
 .asset-name{
 font-size:2.2rem;
@@ -248,7 +238,7 @@ font-weight:900;
 }
 
 .change{
-font-size:1.3rem;
+font-size:1.25rem;
 font-weight:900;
 }
 
@@ -256,12 +246,12 @@ font-weight:900;
 margin-top:18px;
 display:grid;
 grid-template-columns:1fr 1fr;
-gap:14px;
+gap:16px;
 }
 .stat{
 background:#0b0c1b;
 border-radius:18px;
-padding:16px 10px;
+padding:18px 10px;
 border:1px solid var(--border);
 }
 .stat span{
@@ -269,10 +259,10 @@ display:block;
 font-size:.65rem;
 letter-spacing:.18em;
 color:var(--muted);
-margin-bottom:6px;
+margin-bottom:8px;
 }
 .stat strong{
-font-size:1.35rem;
+font-size:1.45rem;
 font-weight:900;
 }
 
@@ -284,11 +274,30 @@ line-height:1.4;
 }
 
 /* SHARE */
+.actions{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px;
+margin-bottom:12px;
+}
+.secondary{
+padding:16px;
+border-radius:18px;
+border:1px solid var(--border);
+background:#0b0c1b;
+color:white;
+font-weight:900;
+cursor:pointer;
+}
+.secondary.copied{
+border-color:var(--up);
+color:var(--up);
+}
 .caption{
 background:#0b0c1b;
 border:1px solid var(--border);
-border-radius:16px;
-padding:14px;
+border-radius:18px;
+padding:16px;
 font-size:.85rem;
 }
 
@@ -367,7 +376,7 @@ z-index:20;
 <div class="section">CAPTURE</div>
 <div id="output"></div>
 
-<div class="section" style="margin-top:34px;">SHARE</div>
+<div class="section" style="margin-top:36px;">SHARE</div>
 <div class="panel">
 <div class="actions">
 <button class="primary" onclick="App.save()">Save BlockState</button>
@@ -388,11 +397,11 @@ z-index:20;
 <div class="modal" id="faq">
 <div class="panel">
 <h3>What is a Crypto BlockState?</h3>
-<p>A Crypto BlockState is a visual snapshot of current market conditions for a cryptocurrency at a specific moment in time.</p>
+<p>A Crypto BlockState is a visual snapshot of market conditions for a cryptocurrency at a specific moment.</p>
 <h3>Where does the data come from?</h3>
 <p>All pricing and market data is provided by CoinGecko. Data is informational only and not financial advice.</p>
-<h3>Can I share this?</h3>
-<p>Yes. You can save the image and share it freely on social media.</p>
+<h3>Sharing</h3>
+<p>You can save and share BlockStates freely on social media.</p>
 <button class="primary" onclick="FAQ.close()">Close</button>
 </div>
 </div>
@@ -455,7 +464,7 @@ const up=c.price_change_percentage_24h>=0;
 const arrow=up?'▲':'▼';
 caption.textContent=
 `${c.name} (${c.symbol.toUpperCase()}) is ${up?'up':'down'} ${Math.abs(c.price_change_percentage_24h).toFixed(2)}% over the last 24 hours ${arrow}
-Price: $${this.fmt(c.current_price)} • Market Cap: ${this.cap(c.market_cap)}`;
+Price: $${this.fmt(c.current_price)} • Market Cap: ${this.cap(c.market_cap)} #BlockState`;
 },
 
 async load(){
