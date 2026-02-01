@@ -11,7 +11,7 @@
 --panel:#161625;
 --panel2:#12121d;
 --border:#2a2a3a;
---text:#fff;
+--text:#ffffff;
 --muted:#9aa0b4;
 --accent:#6c7cff;
 --green:#22c55e;
@@ -25,94 +25,62 @@ html,body{
 background:var(--bg);
 color:var(--text);
 font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-overflow-x:hidden;
 }
 
 /* ===============================
-   PARTICLE BACKGROUND
+   VERSION + FAQ
    =============================== */
-#particles{
-position:fixed;
-inset:0;
-z-index:0;
-pointer-events:none;
-}
-
-.particle{
-position:absolute;
-width:2px;
-height:2px;
-background:rgba(108,124,255,.35);
-border-radius:50%;
-animation:float linear infinite;
-}
-
-@keyframes float{
-from{transform:translateY(110vh);opacity:0}
-20%{opacity:1}
-to{transform:translateY(-10vh);opacity:0}
-}
-
-/* ===============================
-   VERSION BADGE
-   =============================== */
-.version{
+.top-left{
 position:fixed;
 top:14px;
 left:14px;
 z-index:10;
+display:flex;
+gap:8px;
+}
+
+.badge{
 background:#10101a;
 border:1px solid var(--border);
 border-radius:12px;
 padding:8px 12px;
 font-size:.75rem;
 font-weight:700;
-line-height:1.2;
 }
 
-.version small{
+.badge small{
 display:block;
 font-size:.6rem;
 color:var(--muted);
 margin-top:4px;
 }
 
+.faq-btn{
+cursor:pointer;
+}
+
 /* ===============================
    LAYOUT
    =============================== */
 .container{
-position:relative;
-z-index:2;
 max-width:1100px;
 margin:0 auto;
 padding:80px 20px 120px;
 display:flex;
 flex-direction:column;
 align-items:center;
-min-height:100vh;
 }
 
 h1{
 font-size:3rem;
 font-weight:900;
-text-align:center;
-background:linear-gradient(120deg,#6c7cff,#8b5cf6,#22c55e,#6c7cff);
-background-size:400% 400%;
-animation:titleFlow 180s linear infinite;
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-}
-
-@keyframes titleFlow{
-0%{background-position:0% 50%}
-100%{background-position:100% 50%}
+color:var(--accent);
 }
 
 .bio{
-margin-top:10px;
-text-align:center;
+margin-top:8px;
+font-size:1rem;
 color:var(--muted);
-max-width:600px;
 }
 
 /* ===============================
@@ -125,7 +93,6 @@ grid-template-columns:360px 420px;
 gap:40px;
 width:100%;
 justify-content:center;
-align-items:flex-start;
 }
 
 .panel{
@@ -133,7 +100,6 @@ background:linear-gradient(135deg,var(--panel),#1f1f30);
 border:1px solid var(--border);
 border-radius:20px;
 padding:24px;
-transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
 }
 
 label{
@@ -151,7 +117,7 @@ border-radius:12px;
 border:2px solid var(--border);
 background:#10101a;
 color:white;
-margin-bottom:14px;
+margin-bottom:16px;
 }
 
 .presets{
@@ -183,18 +149,13 @@ color:white;
 }
 
 /* ===============================
-   OUTPUT / WIDGET
+   OUTPUT
    =============================== */
 #output{
 min-height:520px;
 width:100%;
 display:flex;
 justify-content:center;
-}
-
-@keyframes widgetIn{
-from{opacity:0;transform:translateY(16px) scale(.98)}
-to{opacity:1;transform:translateY(0) scale(1)}
 }
 
 .widget{
@@ -205,7 +166,6 @@ border:2px solid var(--border);
 max-width:420px;
 width:100%;
 position:relative;
-animation:widgetIn .28s ease-out;
 }
 
 .widget.positive{border-color:var(--green)}
@@ -307,6 +267,38 @@ cursor:pointer;
 }
 
 /* ===============================
+   FAQ MODAL
+   =============================== */
+#faq{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.7);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:20;
+}
+
+#faq .panel{
+max-width:480px;
+}
+
+#faq h2{
+margin-bottom:10px;
+}
+
+#faq p{
+font-size:.9rem;
+color:var(--muted);
+margin-bottom:10px;
+}
+
+.close{
+margin-top:10px;
+width:100%;
+}
+
+/* ===============================
    MOBILE
    =============================== */
 @media(max-width:900px){
@@ -318,16 +310,17 @@ h1{font-size:2.4rem}
 
 <body>
 
-<div id="particles"></div>
-
-<div class="version">
-v6.6.5
+<div class="top-left">
+<div class="badge">
+v6.6.6
 <small>Auto refresh: <span id="timer">120</span>s</small>
+</div>
+<div class="badge faq-btn" onclick="openFAQ()">FAQ</div>
 </div>
 
 <div class="container">
 <h1>BlockState</h1>
-<p class="bio">Capture a single moment in crypto markets.</p>
+<p class="bio">Create. Capture. Share.</p>
 
 <div class="generator">
 <div class="panel">
@@ -344,26 +337,25 @@ v6.6.5
 </div>
 </div>
 
+<!-- FAQ -->
+<div id="faq">
+<div class="panel">
+<h2>What is BlockState?</h2>
+<p>BlockState captures a single moment in crypto markets — price, change, market cap, and rank — as a clean, shareable snapshot.</p>
+<p><b>How it works:</b><br>
+1. Choose a crypto<br>
+2. Capture its current state<br>
+3. Export or share the image</p>
+<button class="primary close" onclick="closeFAQ()">Close</button>
+</div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
-/* ===============================
-   PARTICLES
-   =============================== */
-const p=document.getElementById("particles");
-for(let i=0;i<90;i++){
-const d=document.createElement("div");
-d.className="particle";
-d.style.left=Math.random()*100+"vw";
-d.style.animationDuration=30+Math.random()*40+"s";
-d.style.animationDelay=Math.random()*-40+"s";
-p.appendChild(d);
-}
-
-/* ===============================
-   APP
-   =============================== */
 const App={
-coins:[],icons:{},refresh:120,
+coins:[],
+icons:{},
+refresh:120,
 
 fmtCap(v){
 if(v>=1e12)return'$'+(v/1e12).toFixed(2)+'T';
@@ -371,7 +363,7 @@ if(v>=1e9)return'$'+(v/1e9).toFixed(2)+'B';
 return'$'+v.toLocaleString();
 },
 fmt(v){
-if(v>=1)return v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+if(v>=1)return v.toFixed(2);
 if(v>=0.01)return v.toFixed(4);
 if(v>=0.0001)return v.toFixed(6);
 return v.toFixed(8);
@@ -380,20 +372,8 @@ return v.toFixed(8);
 async load(){
 const r=await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1');
 this.coins=await r.json();
-await this.cacheIcons();
 this.populate();
-this.show(this.coins[0]);
-},
-
-async cacheIcons(){
-for(const c of this.coins){
-const blob=await fetch(c.image).then(r=>r.blob());
-this.icons[c.id]=await new Promise(res=>{
-const reader=new FileReader();
-reader.onload=()=>res(reader.result);
-reader.readAsDataURL(blob);
-});
-}
+this.show(this.coins[0]); // BTC preload
 },
 
 populate(){
@@ -419,7 +399,7 @@ return `
 <div class="widget ${pos?'positive':'negative'}">
 <div class="header">
 <div class="left">
-<img class="coin-img" src="${this.icons[c.id]}">
+<img class="coin-img" src="${c.image}">
 <div>
 <div class="name">${c.name}</div>
 <div class="symbol">${c.symbol.toUpperCase()}</div>
@@ -466,12 +446,9 @@ async export(){
 const w=document.querySelector(".widget");
 w.querySelectorAll(".actions").forEach(a=>a.style.display="none");
 await new Promise(r=>setTimeout(r,50));
-const canvas=await html2canvas(w,{scale:2,backgroundColor:getComputedStyle(document.documentElement).getPropertyValue('--export-bg')});
+const canvas=await html2canvas(w,{scale:2,backgroundColor:varCSS('--export-bg')});
 w.querySelectorAll(".actions").forEach(a=>a.style.display="flex");
-const a=document.createElement("a");
-a.href=canvas.toDataURL();
-a.download="blockstate.png";
-a.click();
+download(canvas.toDataURL());
 },
 
 async share(){
@@ -479,28 +456,24 @@ if(!navigator.share)return alert("Sharing not supported");
 const w=document.querySelector(".widget");
 w.querySelectorAll(".actions").forEach(a=>a.style.display="none");
 await new Promise(r=>setTimeout(r,50));
-const canvas=await html2canvas(w,{scale:2,backgroundColor:getComputedStyle(document.documentElement).getPropertyValue('--export-bg')});
+const canvas=await html2canvas(w,{scale:2,backgroundColor:varCSS('--export-bg')});
 w.querySelectorAll(".actions").forEach(a=>a.style.display="flex");
-const blob=await new Promise(r=>canvas.toBlob(r));
-navigator.share({files:[new File([blob],"blockstate.png",{type:"image/png"})]});
+canvas.toBlob(b=>navigator.share({files:[new File([b],'blockstate.png',{type:'image/png'})]}));
 }
 };
 
-/* ===============================
-   INIT (FIXED LOAD ORDER)
-   =============================== */
+function varCSS(v){return getComputedStyle(document.documentElement).getPropertyValue(v);}
+function download(url){const a=document.createElement('a');a.href=url;a.download='blockstate.png';a.click();}
+function openFAQ(){faq.style.display='flex'}
+function closeFAQ(){faq.style.display='none'}
+
 document.addEventListener("DOMContentLoaded",()=>{
-requestAnimationFrame(()=>{
 App.load();
 });
-});
 
-/* ===============================
-   AUTO REFRESH TIMER
-   =============================== */
 setInterval(()=>{
 App.refresh--;
-document.getElementById("timer").textContent=App.refresh;
+timer.textContent=App.refresh;
 if(App.refresh<=0)location.reload();
 },1000);
 </script>
