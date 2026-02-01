@@ -53,7 +53,6 @@ border-radius:12px;
 padding:8px 12px;
 font-size:.7rem;
 font-weight:700;
-cursor:pointer;
 }
 
 /* LAYOUT */
@@ -75,8 +74,8 @@ color:var(--accent);
 
 .subtitle{
 margin-top:6px;
-font-size:.8rem;
-letter-spacing:.4em;
+font-size:.75rem;
+letter-spacing:.35em;
 color:var(--muted);
 }
 
@@ -126,14 +125,13 @@ font-weight:900;
 cursor:pointer;
 background:linear-gradient(135deg,var(--accent),#8b5cf6);
 color:white;
-margin-bottom:12px;
 }
 
 /* TRENDING */
 .toggle{
 display:flex;
 gap:8px;
-margin-bottom:10px;
+margin:14px 0;
 }
 .toggle button{
 flex:1;
@@ -209,9 +207,9 @@ letter-spacing:.12em;
 color:var(--muted);
 }
 
-/* BIG % CHANGE */
+/* BIG CHANGE */
 .change{
-font-size:2.4rem;
+font-size:2.6rem;
 font-weight:900;
 line-height:1;
 }
@@ -261,29 +259,47 @@ color:var(--muted);
 letter-spacing:.08em;
 }
 
-/* SHARE */
-textarea{
-width:100%;
-min-height:120px;
-background:#0b0b18;
-border:1px solid var(--border);
-border-radius:14px;
-padding:12px;
-color:white;
-font-size:.8rem;
-resize:vertical;
+/* SHARE (REDESIGNED) */
+.share{
+margin-top:18px;
+display:flex;
+flex-direction:column;
+gap:14px;
 }
 
-.copy{
+.caption-card{
 background:#0b0b18;
 border:1px solid var(--border);
-border-radius:12px;
-padding:12px;
+border-radius:18px;
+padding:16px;
+font-size:.85rem;
+line-height:1.5;
+color:var(--text);
+white-space:pre-wrap;
+}
+
+.share-actions{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+}
+
+.secondary{
+padding:14px;
+border-radius:14px;
+border:1px solid var(--border);
+background:#0b0b18;
+color:white;
 font-weight:800;
 cursor:pointer;
-color:white;
 }
 
+.secondary.copied{
+border-color:var(--up);
+color:var(--up);
+}
+
+/* MOBILE */
 @media(max-width:900px){
 .main{grid-template-columns:1fr}
 }
@@ -295,12 +311,12 @@ color:white;
 <canvas id="particles"></canvas>
 
 <div class="bottom-left">
-<div class="badge">v6.9.2</div>
+<div class="badge">v6.9.3</div>
 </div>
 
 <div class="container">
 <h1>BlockState</h1>
-<div class="subtitle">CRYPTO SNAPSHOT</div>
+<div class="subtitle">CRYPTO</div>
 
 <div class="main">
 
@@ -328,11 +344,17 @@ color:white;
 <div>
 <div id="output"></div>
 
-<div class="panel" style="margin-top:18px">
+<div class="panel share">
 <button class="primary" onclick="App.saveImage()">Save BlockState</button>
-<button class="primary" onclick="App.makeCaption()">Generate Caption</button>
-<button class="copy" onclick="App.copyCaption()">Copy Caption</button>
-<textarea id="caption" placeholder="Caption will appear here…" readonly></textarea>
+
+<div class="caption-card" id="caption">
+Generate a caption to share this BlockState.
+</div>
+
+<div class="share-actions">
+<button class="secondary" onclick="App.makeCaption()">Generate Caption</button>
+<button class="secondary" id="copyBtn" onclick="App.copyCaption()">Copy Caption</button>
+</div>
 </div>
 </div>
 
@@ -440,11 +462,19 @@ a.click();
 },
 makeCaption(){
 const c=this.current;if(!c)return;
-caption.value=`${c.name} is ${c.price_change_percentage_24h>=0?'up':'down'} ${Math.abs(c.price_change_percentage_24h).toFixed(2)}% in the last 24 hours, trading at $${this.fmt(c.current_price)}.
+caption.textContent=
+`${c.name} is ${c.price_change_percentage_24h>=0?'up':'down'} ${Math.abs(c.price_change_percentage_24h).toFixed(2)}% in the last 24 hours, trading at $${this.fmt(c.current_price)}.
 #${c.symbol.toUpperCase()} #Crypto #BlockState`;
 },
 copyCaption(){
-navigator.clipboard.writeText(caption.value);
+navigator.clipboard.writeText(caption.textContent);
+const btn=document.getElementById("copyBtn");
+btn.classList.add("copied");
+btn.textContent="Copied ✓";
+setTimeout(()=>{
+btn.classList.remove("copied");
+btn.textContent="Copy Caption";
+},1500);
 }
 };
 
