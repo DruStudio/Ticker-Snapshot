@@ -44,8 +44,6 @@ left:14px;
 z-index:10;
 display:flex;
 gap:8px;
-flex-wrap:wrap;
-max-width:90vw;
 }
 .badge{
 background:#10101a;
@@ -63,7 +61,7 @@ position:relative;
 z-index:2;
 max-width:1200px;
 margin:0 auto;
-padding:70px 20px 160px;
+padding:70px 20px 120px;
 }
 
 h1{
@@ -256,36 +254,9 @@ font-weight:800;
 margin-bottom:6px;
 }
 
-/* CHANGELOG */
-.changelog{
-position:fixed;
-bottom:14px;
-right:14px;
-z-index:10;
-background:#10101a;
-border:1px solid var(--border);
-border-radius:16px;
-padding:14px;
-font-size:.7rem;
-max-width:280px;
-}
-.changelog h4{
-font-size:.75rem;
-margin-bottom:6px;
-color:var(--accent);
-}
-.changelog ul{
-list-style:none;
-color:var(--muted);
-}
-.changelog li{
-margin-bottom:4px;
-}
-
 @media(max-width:900px){
 .main{grid-template-columns:1fr}
 h1{font-size:2.4rem}
-.changelog{display:none}
 }
 </style>
 </head>
@@ -295,19 +266,8 @@ h1{font-size:2.4rem}
 <canvas id="particles"></canvas>
 
 <div class="bottom-left">
-<div class="badge">v6.8.4</div>
+<div class="badge">v6.8.1</div>
 <div class="badge" onclick="FAQ.open()">FAQ</div>
-</div>
-
-<div class="changelog">
-<h4>BlockState Versions</h4>
-<ul>
-<li><strong>v6.8.4</strong> – Version sync + changelog panel</li>
-<li>v6.8.3 – Share flow stabilization</li>
-<li>v6.8.2 – Widget capture reliability</li>
-<li>v6.8.1 – Trending movers added</li>
-<li>v6.8.0 – Visual overhaul</li>
-</ul>
 </div>
 
 <div class="container">
