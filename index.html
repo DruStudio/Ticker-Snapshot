@@ -2,14 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>BlockState</title>
+
+<!-- html2canvas for image export -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <style>
 :root{
---bg:#0a0a0f;
---panel:#151522;
---panel2:#10101a;
+--bg:#07070c;
+--panel:#141425;
+--panel2:#0f0f1a;
 --border:#2a2a3a;
 --text:#ffffff;
 --muted:#9aa0b4;
@@ -21,31 +24,24 @@
 *{box-sizing:border-box;margin:0;padding:0}
 
 html,body{
-background:radial-gradient(circle at top, #12121d 0%, #07070c 60%);
+background:var(--bg);
 color:var(--text);
 font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 overflow-x:hidden;
 }
 
 /* ===============================
-   PARTICLE BACKGROUND (SAFE)
+   PARTICLES
    =============================== */
-body::before{
-content:"";
+canvas#particles{
 position:fixed;
 inset:0;
-background-image:
-radial-gradient(1px 1px at 10% 20%, rgba(108,124,255,.25) 1px, transparent 0),
-radial-gradient(1px 1px at 80% 30%, rgba(108,124,255,.2) 1px, transparent 0),
-radial-gradient(1px 1px at 40% 70%, rgba(108,124,255,.15) 1px, transparent 0),
-radial-gradient(1px 1px at 70% 80%, rgba(108,124,255,.2) 1px, transparent 0);
-background-size:200px 200px;
-pointer-events:none;
 z-index:0;
+pointer-events:none;
 }
 
 /* ===============================
-   FOOTER BADGES
+   VERSION + FAQ
    =============================== */
 .bottom-left{
 position:fixed;
@@ -63,10 +59,7 @@ border-radius:12px;
 padding:8px 12px;
 font-size:.75rem;
 font-weight:700;
-cursor:default;
 }
-
-.badge.faq{cursor:pointer}
 
 /* ===============================
    LAYOUT
@@ -74,56 +67,53 @@ cursor:default;
 .container{
 position:relative;
 z-index:2;
-max-width:1100px;
+max-width:1200px;
 margin:0 auto;
-padding:80px 20px 140px;
-display:flex;
-flex-direction:column;
-align-items:center;
+padding:70px 20px 120px;
 }
 
 h1{
+text-align:center;
 font-size:3rem;
 font-weight:900;
 color:var(--accent);
 }
 
 .section-title{
-margin:40px 0 14px;
-font-size:1.1rem;
+margin:36px 0 14px;
+text-align:center;
+font-size:.9rem;
 font-weight:800;
-letter-spacing:.5px;
+letter-spacing:.4em;
 color:var(--muted);
-text-transform:uppercase;
 }
 
 /* ===============================
-   MAIN GRID
+   GRID
    =============================== */
 .main{
 display:grid;
 grid-template-columns:420px 420px;
 gap:36px;
-width:100%;
 justify-content:center;
 align-items:start;
 }
 
 /* ===============================
-   CREATE PANEL
+   PANELS
    =============================== */
 .panel{
-background:linear-gradient(135deg,var(--panel),#1e1e30);
+background:linear-gradient(135deg,var(--panel),#1d1d32);
 border:1px solid var(--border);
 border-radius:20px;
 padding:22px;
 }
 
 label{
-font-size:.75rem;
+font-size:.7rem;
 font-weight:700;
 color:var(--muted);
-margin-bottom:8px;
+margin-bottom:6px;
 display:block;
 }
 
@@ -150,7 +140,7 @@ border-radius:10px;
 border:1px solid var(--border);
 background:#10101a;
 color:white;
-font-weight:700;
+font-weight:800;
 cursor:pointer;
 }
 
@@ -159,7 +149,7 @@ width:100%;
 padding:14px;
 border-radius:14px;
 border:none;
-font-weight:800;
+font-weight:900;
 cursor:pointer;
 background:linear-gradient(135deg,var(--accent),#8b5cf6);
 color:white;
@@ -170,8 +160,8 @@ margin-bottom:18px;
    TRENDING
    =============================== */
 .trending h3{
-font-size:.85rem;
-margin-bottom:10px;
+font-size:.75rem;
+margin-bottom:8px;
 color:var(--muted);
 }
 
@@ -192,18 +182,36 @@ cursor:pointer;
 .down{color:var(--red)}
 
 /* ===============================
-   CAPTURE WIDGET
+   WIDGET
    =============================== */
 .widget{
 background:var(--panel2);
 border-radius:22px;
 padding:22px;
 border:2px solid var(--border);
-width:100%;
+position:relative;
+overflow:hidden;
 }
 
 .widget.positive{border-color:var(--green)}
 .widget.negative{border-color:var(--red)}
+
+.flash{
+position:absolute;
+inset:0;
+background:white;
+opacity:0;
+pointer-events:none;
+}
+
+.flash.active{
+animation:flash .35s ease;
+}
+
+@keyframes flash{
+0%{opacity:.8}
+100%{opacity:0}
+}
 
 .header{
 display:flex;
@@ -221,20 +229,13 @@ align-items:center;
 }
 
 .coin-img{
-width:34px;
-height:34px;
+width:36px;
+height:36px;
 border-radius:50%;
 }
 
-.name{
-font-size:1.25rem;
-font-weight:900;
-}
-
-.symbol{
-font-size:.7rem;
-color:var(--accent);
-}
+.name{font-size:1.25rem;font-weight:900}
+.symbol{font-size:.7rem;color:var(--accent)}
 
 .change{
 font-size:1.4rem;
@@ -271,41 +272,62 @@ color:var(--muted);
 margin-bottom:4px;
 }
 
+.actions{
+display:flex;
+justify-content:space-between;
+margin-top:14px;
+}
+
+.action-btn{
+width:40px;
+height:40px;
+border-radius:50%;
+background:#10101a;
+border:1px solid var(--border);
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+}
+
 .footer{
 border-top:1px solid var(--border);
 padding-top:10px;
 margin-top:12px;
-font-size:.7rem;
+font-size:.65rem;
 color:var(--muted);
 text-align:center;
 }
 
 /* ===============================
-   SHARE SECTION
+   SHARE EXAMPLES
    =============================== */
 .share{
-margin-top:60px;
-width:100%;
-max-width:900px;
+margin-top:14px;
 }
 
-.share-grid{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:20px;
+.share-carousel{
+position:relative;
+height:120px;
+overflow:hidden;
 }
 
 .share-card{
-background:linear-gradient(135deg,var(--panel),#1e1e30);
+position:absolute;
+inset:0;
+background:linear-gradient(135deg,var(--panel),#1d1d32);
 border:1px dashed var(--border);
 border-radius:18px;
-height:160px;
 display:flex;
 align-items:center;
 justify-content:center;
+font-size:.8rem;
 color:var(--muted);
-font-size:.85rem;
+opacity:0;
+transition:.6s;
 }
+
+.share-card.active{opacity:1}
 
 /* ===============================
    MOBILE
@@ -313,16 +335,17 @@ font-size:.85rem;
 @media(max-width:900px){
 .main{grid-template-columns:1fr}
 h1{font-size:2.4rem}
-.share-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
 
 <body>
 
+<canvas id="particles"></canvas>
+
 <div class="bottom-left">
-<div class="badge">v6.7.1</div>
-<div class="badge faq" onclick="alert('BlockState lets you create a clean snapshot of a crypto market moment. Choose a coin, capture its state, and share it.')">FAQ</div>
+<div class="badge">v6.7.2</div>
+<div class="badge">FAQ</div>
 </div>
 
 <div class="container">
@@ -332,7 +355,7 @@ h1{font-size:2.4rem}
 
 <!-- CREATE -->
 <div>
-<div class="section-title">Create</div>
+<div class="section-title">CREATE</div>
 <div class="panel">
 <label>Search Crypto (Top 250)</label>
 <input id="search" list="coins" placeholder="BTC, SOL, BONK">
@@ -351,27 +374,67 @@ h1{font-size:2.4rem}
 
 <!-- CAPTURE -->
 <div>
-<div class="section-title">Capture</div>
+<div class="section-title">CAPTURE</div>
 <div id="output"></div>
-</div>
 
-</div>
-
-<!-- SHARE -->
+<div class="section-title">SHARE</div>
 <div class="share">
-<div class="section-title">Share</div>
-<div class="share-grid">
-<div class="share-card">Instagram Story</div>
+<div class="share-carousel" id="shareCarousel">
+<div class="share-card active">Instagram Story</div>
 <div class="share-card">X / Twitter</div>
-<div class="share-card">Save Image</div>
+<div class="share-card">Save & Send</div>
+</div>
 </div>
 </div>
 
+</div>
 </div>
 
 <script>
+/* ===============================
+   PARTICLES
+   =============================== */
+const canvas=document.getElementById("particles");
+const ctx=canvas.getContext("2d");
+let w,h,particles=[];
+function resize(){
+w=canvas.width=window.innerWidth;
+h=canvas.height=window.innerHeight;
+}
+window.addEventListener("resize",resize);
+resize();
+
+for(let i=0;i<80;i++){
+particles.push({
+x:Math.random()*w,
+y:Math.random()*h,
+vx:(Math.random()-.5)*.3,
+vy:(Math.random()-.5)*.3,
+r:Math.random()*1.2+0.3
+});
+}
+
+function tick(){
+ctx.clearRect(0,0,w,h);
+ctx.fillStyle="rgba(108,124,255,.35)";
+particles.forEach(p=>{
+p.x+=p.vx;p.y+=p.vy;
+if(p.x<0)p.x=w;if(p.x>w)p.x=0;
+if(p.y<0)p.y=h;if(p.y>h)p.y=0;
+ctx.beginPath();
+ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+ctx.fill();
+});
+requestAnimationFrame(tick);
+}
+tick();
+
+/* ===============================
+   APP
+   =============================== */
 const App={
 coins:[],
+shareIndex:0,
 
 fmtCap(v){
 if(v>=1e12)return'$'+(v/1e12).toFixed(2)+'T';
@@ -386,7 +449,7 @@ return v.toFixed(8);
 },
 
 async load(){
-const r=await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1');
+const r=await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1");
 this.coins=await r.json();
 this.populate();
 this.renderTrending();
@@ -396,7 +459,6 @@ this.show(this.coins[0]);
 populate(){
 const dl=document.getElementById("coins");
 const p=document.getElementById("presets");
-dl.innerHTML=""; p.innerHTML="";
 this.coins.forEach(c=>{
 const o=document.createElement("option");
 o.value=`${c.symbol.toUpperCase()} — ${c.name}`;
@@ -412,14 +474,12 @@ p.appendChild(b);
 
 renderTrending(){
 const list=document.getElementById("trendList");
-list.innerHTML="";
 this.coins
 .sort((a,b)=>b.price_change_percentage_24h-a.price_change_percentage_24h)
 .slice(0,10)
 .forEach(c=>{
 const li=document.createElement("li");
-li.innerHTML=`
-<span>${c.name}</span>
+li.innerHTML=`<span>${c.name}</span>
 <span class="${c.price_change_percentage_24h>=0?'up':'down'}">
 ${c.price_change_percentage_24h>=0?'▲':'▼'} ${c.price_change_percentage_24h.toFixed(2)}%
 </span>`;
@@ -431,7 +491,9 @@ list.appendChild(li);
 build(c){
 const pos=c.price_change_percentage_24h>=0;
 return `
-<div class="widget ${pos?'positive':'negative'}">
+<div class="widget ${pos?'positive':'negative'}" id="widget">
+<div class="flash"></div>
+
 <div class="header">
 <div class="left">
 <img class="coin-img" src="${c.image}">
@@ -454,28 +516,60 @@ ${pos?'▲':'▼'} ${c.price_change_percentage_24h.toFixed(2)}%
 <div class="stat"><span>MC Rank</span>#${c.market_cap_rank}</div>
 </div>
 
+<div class="actions">
+<div class="action-btn" onclick="App.share()">↗</div>
+<div class="action-btn" onclick="App.save()">⬇</div>
+</div>
+
 <div class="footer">
 Captured • ${new Date().toUTCString()}<br>BLOCKSTATE.LIVE
 </div>
 </div>`;
 },
 
-find(){
-const v=document.getElementById("search").value.toLowerCase();
-return this.coins.find(c=>v.includes(c.symbol)||v.includes(c.name.toLowerCase()));
+show(c){
+document.getElementById("output").innerHTML=this.build(c);
+const flash=document.querySelector(".flash");
+flash.classList.add("active");
+setTimeout(()=>flash.classList.remove("active"),350);
 },
 
 generate(){
-const c=this.find();
+const v=document.getElementById("search").value.toLowerCase();
+const c=this.coins.find(x=>v.includes(x.symbol)||v.includes(x.name.toLowerCase()));
 if(c)this.show(c);
 },
 
-show(c){
-document.getElementById("output").innerHTML=this.build(c);
+save(){
+const widget=document.getElementById("widget");
+document.querySelectorAll(".action-btn").forEach(b=>b.style.display="none");
+html2canvas(widget,{backgroundColor:null}).then(c=>{
+const a=document.createElement("a");
+a.download="blockstate.png";
+a.href=c.toDataURL();
+a.click();
+document.querySelectorAll(".action-btn").forEach(b=>b.style.display="flex");
+});
+},
+
+share(){
+if(navigator.share){
+navigator.share({title:"BlockState",url:location.href});
+}else{
+alert("Sharing supported on mobile devices.");
+}
 }
 };
 
-document.addEventListener("DOMContentLoaded",()=>App.load());
+document.addEventListener("DOMContentLoaded",()=>{
+App.load();
+setInterval(()=>{
+const cards=document.querySelectorAll(".share-card");
+cards.forEach(c=>c.classList.remove("active"));
+App.shareIndex=(App.shareIndex+1)%cards.length;
+cards[App.shareIndex].classList.add("active");
+},3000);
+});
 </script>
 
 </body>
