@@ -46,7 +46,7 @@ z-index:9999;
 /* Hero */
 .hero{
 text-align:center;
-padding:64px 20px 32px;
+padding:64px 20px 24px;
 }
 .hero-title{
 font-size:3rem;
@@ -72,23 +72,46 @@ padding:0 20px 100px;
 .section-title{
 text-align:center;
 font-size:2rem;
-margin:48px 0 24px;
+margin:40px 0 20px;
+}
+
+/* Card base */
+.card{
+background:linear-gradient(135deg,var(--bg3),#1f1f30);
+border:2px solid var(--border);
+border-radius:22px;
+padding:24px;
+box-shadow:0 16px 40px rgba(0,0,0,.45);
 }
 
 /* =========================
-   GENERATOR (TOP)
+   WHAT IS BLOCKSTATE
+========================= */
+.info-card{
+max-width:820px;
+margin:0 auto 36px;
+text-align:center;
+}
+.info-card p{
+color:var(--muted);
+line-height:1.6;
+font-size:1.05rem;
+}
+
+/* =========================
+   GENERATOR
 ========================= */
 .generator-grid{
 display:grid;
-grid-template-columns:360px 1fr;
-gap:40px;
+grid-template-columns:360px minmax(0,420px);
+gap:32px;
+justify-content:center;
 align-items:flex-start;
-margin-top:20px;
 }
 
 .controls{
 background:var(--bg2);
-padding:28px;
+padding:26px;
 border-radius:22px;
 border:1px solid var(--border);
 }
@@ -97,10 +120,8 @@ border:1px solid var(--border);
 display:flex;
 justify-content:center;
 align-items:flex-start;
-min-height:520px;
 }
 
-/* Inputs */
 label{
 font-size:.8rem;
 color:var(--muted);
@@ -108,6 +129,7 @@ font-weight:700;
 margin-bottom:8px;
 display:block;
 }
+
 input{
 width:100%;
 padding:16px;
@@ -117,11 +139,13 @@ background:var(--bg3);
 color:var(--text);
 margin-bottom:16px;
 }
+
 .quick-buttons{
 display:flex;
 gap:8px;
 margin-bottom:20px;
 }
+
 .quick-buttons button{
 flex:1;
 padding:10px;
@@ -132,6 +156,7 @@ color:white;
 font-weight:700;
 cursor:pointer;
 }
+
 .btn-primary{
 width:100%;
 padding:18px;
@@ -152,9 +177,8 @@ border:3px solid var(--border);
 border-radius:26px;
 padding:26px;
 box-shadow:0 18px 48px rgba(0,0,0,.5);
-position:relative;
-max-width:420px;
 width:100%;
+max-width:420px;
 }
 
 .widget-card.positive{border-color:var(--green)}
@@ -179,15 +203,15 @@ gap:12px;
 width:36px;
 height:36px;
 object-fit:contain;
-background:#000;
 border-radius:50%;
+background:#000;
 }
 
 .widget-name{font-size:1.4rem;font-weight:900}
 .widget-symbol{font-size:.75rem;color:var(--accent);font-weight:700}
 
 .widget-percent{
-font-size:1.4rem;
+font-size:1.5rem;
 font-weight:900;
 }
 .widget-percent.positive{color:var(--green)}
@@ -213,6 +237,7 @@ padding:12px;
 border-radius:14px;
 text-align:center;
 }
+
 .widget-stat-label{font-size:.7rem;opacity:.7;margin-bottom:4px}
 .widget-stat-value{font-weight:800;font-size:.95rem}
 
@@ -221,69 +246,42 @@ border-top:1px solid var(--border);
 padding-top:14px;
 text-align:center;
 }
+
 .widget-timestamp{font-size:.7rem;color:var(--muted)}
 .widget-branding{margin-top:6px;font-size:.65rem;letter-spacing:2px;opacity:.85}
 
 /* =========================
-   TRENDING
+   TRENDING SLIDER
 ========================= */
-.trending-wrapper{
-position:relative;
-}
-
-.trending-stack{
+.trending-slider{
 display:flex;
 gap:20px;
 overflow-x:auto;
 scroll-snap-type:x mandatory;
-padding:10px 0;
+padding:10px 0 20px;
 cursor:grab;
+user-select:none;
 }
-.trending-stack:active{cursor:grabbing}
-.trending-stack::-webkit-scrollbar{display:none}
-.trending-stack .widget-card{
+
+.trending-slider:active{cursor:grabbing}
+
+.trending-slider::-webkit-scrollbar{display:none}
+
+.trending-slider .widget-card{
 scroll-snap-align:center;
 flex:0 0 340px;
-}
-
-.trending-nav{
-position:absolute;
-top:50%;
-transform:translateY(-50%);
-width:40px;
-height:40px;
-border-radius:50%;
-border:none;
-background:var(--bg2);
-color:white;
-cursor:pointer;
-}
-.trending-prev{left:-20px}
-.trending-next{right:-20px}
-
-/* =========================
-   INFO
-========================= */
-.info{
-max-width:720px;
-margin:0 auto;
-text-align:center;
-color:var(--muted);
-line-height:1.6;
-font-size:1.05rem;
 }
 
 /* Mobile */
 @media(max-width:900px){
 .generator-grid{grid-template-columns:1fr}
-.trending-nav{display:none}
 }
 </style>
 </head>
 
 <body>
 
-<div class="version-badge">v5.4.0-stable</div>
+<div class="version-badge">v5.4.1-stable</div>
 
 <header class="hero">
 <h1 class="hero-title">BlockState</h1>
@@ -291,6 +289,13 @@ font-size:1.05rem;
 </header>
 
 <div class="container">
+
+<div class="card info-card">
+<p>
+A <strong>BlockState</strong> is a snapshot of a crypto asset at a single moment in time.
+Create your own, view what’s trending, and share the state with friends or on social media.
+</p>
+</div>
 
 <h2 class="section-title">Create a BlockState</h2>
 
@@ -316,30 +321,9 @@ font-size:1.05rem;
 </div>
 
 <h2 class="section-title">View Trending</h2>
-
-<div class="trending-wrapper">
-<button class="trending-nav trending-prev" onclick="scrollTrending(-1)">‹</button>
-<button class="trending-nav trending-next" onclick="scrollTrending(1)">›</button>
-<div id="trending" class="trending-stack"></div>
-</div>
-
-<h2 class="section-title">What is a BlockState?</h2>
-<div class="info">
-Create a snapshot of a crypto’s state at a single moment in time.
-Generate a BlockState, share it on social media or send it directly to friends.
-View trending BlockStates to see what’s moving across the market right now.
-</div>
+<div id="trending" class="trending-slider"></div>
 
 </div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
-<script>
-function scrollTrending(dir){
-const el=document.getElementById('trending');
-el.scrollBy({left:dir*360,behavior:'smooth'});
-}
-</script>
 
 <script>
 const App={
@@ -376,7 +360,7 @@ return `
 <div class="widget-card ${pos?'positive':'negative'}">
 <div class="widget-header">
 <div class="widget-left">
-<img src="https://assets.coingecko.com/coins/images/${c.id ? '' : ''}${c.image.split('/').pop()}" alt="">
+<img src="${c.image}" loading="eager">
 <div>
 <div class="widget-name">${c.name}</div>
 <div class="widget-symbol">${c.symbol.toUpperCase()}</div>
@@ -408,7 +392,7 @@ const el=document.getElementById('trending');
 el.innerHTML='';
 [...this.coins]
 .sort((a,b)=>Math.abs(b.price_change_percentage_24h)-Math.abs(a.price_change_percentage_24h))
-.slice(0,10)
+.slice(0,12)
 .forEach(c=>el.innerHTML+=this.build(c));
 },
 
