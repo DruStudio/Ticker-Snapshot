@@ -43,7 +43,11 @@ z-index:10;
 }
 
 /* Hero */
-.hero{text-align:center;padding:80px 20px 40px}
+.hero{
+text-align:center;
+padding:80px 20px 40px;
+}
+
 .hero-title{
 font-size:3rem;
 font-weight:900;
@@ -51,13 +55,53 @@ background:linear-gradient(135deg,var(--accent),#8b5cf6);
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
 }
-.hero-subtitle{margin-top:12px;color:var(--muted)}
 
-.section-title{text-align:center;font-size:2rem;margin:50px 0 30px}
+.hero-subtitle{
+margin-top:12px;
+color:var(--muted);
+}
 
-/* Layout */
-.generator-section{max-width:1200px;margin:0 auto;padding:0 20px 80px}
-.generator-container{display:grid;grid-template-columns:360px 1fr;gap:50px}
+/* Section titles */
+.section-title{
+text-align:center;
+font-size:2rem;
+margin:50px 0 30px;
+}
+
+/* Trending hero carousel */
+.trending-stage{
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:520px;
+position:relative;
+overflow:hidden;
+}
+
+.trending-stage .widget-card{
+position:absolute;
+opacity:0;
+transform:translateX(40px);
+transition:opacity .6s ease, transform .6s ease;
+}
+
+.trending-stage .widget-card.active{
+opacity:1;
+transform:translateX(0);
+}
+
+/* Generator layout */
+.generator-section{
+max-width:1200px;
+margin:0 auto;
+padding:0 20px 80px;
+}
+
+.generator-container{
+display:grid;
+grid-template-columns:360px 1fr;
+gap:50px;
+}
 
 /* Controls */
 .generator-controls{
@@ -76,21 +120,49 @@ margin-bottom:8px;
 display:block;
 }
 
-input,select{
+input{
 width:100%;
 padding:16px;
 border-radius:12px;
 border:2px solid var(--border);
 background:var(--bg3);
-color:white;
+color:var(--text);
 font-size:1.1rem;
-margin-bottom:14px;
+margin-bottom:10px;
+}
+
+.autocomplete{
+position:relative;
+}
+
+.autocomplete-results{
+position:absolute;
+top:100%;
+left:0;
+right:0;
+background:var(--bg3);
+border:1px solid var(--border);
+border-radius:12px;
+max-height:240px;
+overflow-y:auto;
+z-index:50;
+display:none;
+}
+
+.autocomplete-item{
+padding:12px 14px;
+cursor:pointer;
+border-bottom:1px solid var(--border);
+}
+
+.autocomplete-item:hover{
+background:rgba(108,124,255,.15);
 }
 
 .quick-buttons{
 display:flex;
 gap:8px;
-margin-bottom:16px;
+margin:16px 0 20px;
 }
 
 .quick-buttons button{
@@ -117,13 +189,6 @@ color:white;
 cursor:pointer;
 }
 
-/* Trending */
-.trending-wrap{
-display:flex;
-justify-content:center;
-margin-bottom:40px;
-}
-
 /* Widget */
 .widget-card{
 max-width:480px;
@@ -138,13 +203,50 @@ box-shadow:0 14px 40px rgba(0,0,0,.45);
 .widget-card.positive{border-color:var(--green)}
 .widget-card.negative{border-color:var(--red)}
 
-.widget-header{text-align:center;border-bottom:2px solid var(--border);padding-bottom:16px;margin-bottom:18px}
-.widget-name{font-size:2rem;font-weight:900}
-.widget-ticker{margin-top:6px;color:var(--accent);font-weight:700}
+.widget-header{
+display:flex;
+align-items:center;
+gap:14px;
+border-bottom:2px solid var(--border);
+padding-bottom:16px;
+margin-bottom:18px;
+}
 
-.widget-price{text-align:center;font-size:3rem;font-weight:900;margin:16px 0}
+.widget-header img{
+width:42px;
+height:42px;
+border-radius:50%;
+}
 
-.widget-change{text-align:center;font-size:1.2rem;font-weight:800}
+.widget-title{
+display:flex;
+flex-direction:column;
+}
+
+.widget-name{
+font-size:1.6rem;
+font-weight:900;
+}
+
+.widget-symbol{
+font-size:.9rem;
+color:var(--accent);
+font-weight:700;
+}
+
+.widget-price{
+text-align:center;
+font-size:3rem;
+font-weight:900;
+margin:16px 0;
+}
+
+.widget-change{
+text-align:center;
+font-size:1.2rem;
+font-weight:800;
+}
+
 .widget-change.positive{color:var(--green)}
 .widget-change.negative{color:var(--red)}
 
@@ -162,15 +264,37 @@ border-radius:12px;
 text-align:center;
 }
 
-.widget-stat-label{font-size:.7rem;opacity:.7;margin-bottom:4px}
-.widget-stat-value{font-weight:800;font-size:.95rem}
+.widget-stat-label{
+font-size:.7rem;
+opacity:.7;
+margin-bottom:4px;
+}
 
-.widget-footer{text-align:center;border-top:2px solid var(--border);padding-top:14px}
-.widget-timestamp{font-size:.7rem;color:var(--muted)}
-.widget-branding{margin-top:6px;font-size:.65rem;letter-spacing:2px;opacity:.85}
+.widget-stat-value{
+font-weight:800;
+font-size:.95rem;
+}
+
+.widget-footer{
+border-top:2px solid var(--border);
+padding-top:14px;
+text-align:center;
+}
+
+.widget-timestamp{
+font-size:.7rem;
+color:var(--muted);
+}
+
+.widget-branding{
+margin-top:6px;
+font-size:.65rem;
+letter-spacing:2px;
+opacity:.85;
+}
 
 .preview-widget-container{
-min-height:620px;
+min-height:520px;
 display:flex;
 justify-content:center;
 align-items:center;
@@ -184,7 +308,7 @@ align-items:center;
 
 <body>
 
-<div class="version-badge">v5.4.0</div>
+<div class="version-badge">v5.5.0</div>
 
 <header class="hero">
 <h1 class="hero-title">BlockState</h1>
@@ -194,9 +318,7 @@ align-items:center;
 <section class="generator-section">
 
 <h2 class="section-title">Trending States</h2>
-<div class="trending-wrap">
-<div id="trending"></div>
-</div>
+<div id="trendingStage" class="trending-stage"></div>
 
 <h2 class="section-title">Create a BlockState</h2>
 
@@ -204,13 +326,10 @@ align-items:center;
 
 <div class="generator-controls">
 <label>Symbol</label>
-<input id="symbolInput" placeholder="BTC">
-
-<label>Data Density</label>
-<select id="density">
-<option value="compact">Compact</option>
-<option value="full">Full</option>
-</select>
+<div class="autocomplete">
+<input id="symbolInput" placeholder="BTC or Bitcoin">
+<div id="results" class="autocomplete-results"></div>
+</div>
 
 <div class="quick-buttons">
 <button onclick="App.quick('bitcoin')">BTC</button>
@@ -234,13 +353,46 @@ align-items:center;
 
 <script>
 const App={
-coins:['bitcoin','ethereum','solana','binancecoin','ripple'],
-labels:['BTC','ETH','SOL','BNB','XRP'],
+coins:[],
+trending:['bitcoin','ethereum','solana','binancecoin','ripple'],
 trendIndex:0,
 
 async init(){
-await this.rotateTrending();
+await this.loadCoinList();
+await this.loadTrending();
 setInterval(()=>this.rotateTrending(),5000);
+this.bindSearch();
+},
+
+async loadCoinList(){
+const r=await fetch('https://api.coingecko.com/api/v3/coins/list');
+this.coins=await r.json();
+},
+
+bindSearch(){
+const input=document.getElementById('symbolInput');
+const results=document.getElementById('results');
+
+input.addEventListener('input',()=>{
+const q=input.value.toLowerCase();
+if(q.length<2){results.style.display='none';return;}
+const matches=this.coins.filter(c=>
+c.symbol.includes(q)||c.name.toLowerCase().includes(q)
+).slice(0,10);
+
+results.innerHTML=matches.map(c=>
+`<div class="autocomplete-item" onclick="App.select('${c.id}','${c.symbol.toUpperCase()}')">
+${c.symbol.toUpperCase()} — ${c.name}
+</div>`
+).join('');
+results.style.display='block';
+});
+},
+
+select(id,label){
+document.getElementById('symbolInput').value=label;
+document.getElementById('results').style.display='none';
+this.generate(id);
 },
 
 async fetchCoin(id){
@@ -250,28 +402,16 @@ const r=await fetch(
 return r.json();
 },
 
-buildWidget(d,mode){
+buildWidget(d){
 const pos=d.market_data.price_change_percentage_24h>=0;
-let stats=`
-<div class="widget-stat"><div class="widget-stat-label">24h High</div><div class="widget-stat-value">$${d.market_data.high_24h.usd.toLocaleString()}</div></div>
-<div class="widget-stat"><div class="widget-stat-label">24h Low</div><div class="widget-stat-value">$${d.market_data.low_24h.usd.toLocaleString()}</div></div>
-<div class="widget-stat"><div class="widget-stat-label">Rank</div><div class="widget-stat-value">#${d.market_cap_rank}</div></div>
-`;
-
-if(mode==='full'){
-stats+=`
-<div class="widget-stat"><div class="widget-stat-label">24h Change</div><div class="widget-stat-value">$${d.market_data.price_change_24h.toFixed(2)}</div></div>
-<div class="widget-stat"><div class="widget-stat-label">Volume</div><div class="widget-stat-value">$${(d.market_data.total_volume.usd/1e9).toFixed(2)}B</div></div>
-<div class="widget-stat"><div class="widget-stat-label">Market Cap</div><div class="widget-stat-value">$${(d.market_data.market_cap.usd/1e9).toFixed(2)}B</div></div>
-<div class="widget-stat"><div class="widget-stat-label">Supply</div><div class="widget-stat-value">${(d.market_data.circulating_supply/1e6).toFixed(2)}M</div></div>
-`;
-}
-
 return `
 <div class="widget-card ${pos?'positive':'negative'}">
 <div class="widget-header">
-<div class="widget-name">${d.symbol.toUpperCase()}</div>
-<div class="widget-ticker">${d.name}</div>
+<img src="${d.image.small}" alt="">
+<div class="widget-title">
+<div class="widget-name">${d.name}</div>
+<div class="widget-symbol">${d.symbol.toUpperCase()}</div>
+</div>
 </div>
 
 <div class="widget-price">$${d.market_data.current_price.usd.toLocaleString()}</div>
@@ -280,7 +420,14 @@ return `
 ${pos?'▲':'▼'} ${d.market_data.price_change_percentage_24h.toFixed(2)}%
 </div>
 
-<div class="widget-stats">${stats}</div>
+<div class="widget-stats">
+<div class="widget-stat"><div class="widget-stat-label">24h Change</div><div class="widget-stat-value">$${d.market_data.price_change_24h.toFixed(2)}</div></div>
+<div class="widget-stat"><div class="widget-stat-label">24h High</div><div class="widget-stat-value">$${d.market_data.high_24h.usd.toLocaleString()}</div></div>
+<div class="widget-stat"><div class="widget-stat-label">24h Low</div><div class="widget-stat-value">$${d.market_data.low_24h.usd.toLocaleString()}</div></div>
+<div class="widget-stat"><div class="widget-stat-label">Volume</div><div class="widget-stat-value">$${(d.market_data.total_volume.usd/1e9).toFixed(2)}B</div></div>
+<div class="widget-stat"><div class="widget-stat-label">Market Cap</div><div class="widget-stat-value">$${(d.market_data.market_cap.usd/1e9).toFixed(2)}B</div></div>
+<div class="widget-stat"><div class="widget-stat-label">Rank</div><div class="widget-stat-value">#${d.market_cap_rank}</div></div>
+</div>
 
 <div class="widget-footer">
 <div class="widget-timestamp">State captured • ${new Date().toUTCString()}</div>
@@ -289,25 +436,35 @@ ${pos?'▲':'▼'} ${d.market_data.price_change_percentage_24h.toFixed(2)}%
 </div>`;
 },
 
-async rotateTrending(){
-const id=this.coins[this.trendIndex];
+async loadTrending(){
+const stage=document.getElementById('trendingStage');
+for(const id of this.trending){
 const d=await this.fetchCoin(id);
-document.getElementById('trending').innerHTML=this.buildWidget(d,'compact');
-this.trendIndex=(this.trendIndex+1)%this.coins.length;
+const el=document.createElement('div');
+el.innerHTML=this.buildWidget(d);
+stage.appendChild(el.firstChild);
+}
+stage.children[0].classList.add('active');
 },
 
-async generate(){
-const map={BTC:'bitcoin',ETH:'ethereum',SOL:'solana',BNB:'binancecoin',XRP:'ripple'};
-const input=document.getElementById('symbolInput').value.trim().toUpperCase();
-const id=map[input]||input.toLowerCase();
-const mode=document.getElementById('density').value;
-const d=await this.fetchCoin(id);
-document.getElementById('preview').innerHTML=this.buildWidget(d,mode);
+rotateTrending(){
+const stage=document.getElementById('trendingStage');
+stage.children[this.trendIndex].classList.remove('active');
+this.trendIndex=(this.trendIndex+1)%stage.children.length;
+stage.children[this.trendIndex].classList.add('active');
+},
+
+async generate(forcedId){
+const input=document.getElementById('symbolInput').value.trim().toLowerCase();
+const coin=forcedId||this.coins.find(c=>c.symbol===input||c.name.toLowerCase()===input)?.id;
+if(!coin){alert('Select a valid symbol');return;}
+const d=await this.fetchCoin(coin);
+document.getElementById('preview').innerHTML=this.buildWidget(d);
 },
 
 quick(id){
 document.getElementById('symbolInput').value=id.toUpperCase();
-this.generate();
+this.generate(id);
 }
 };
 
