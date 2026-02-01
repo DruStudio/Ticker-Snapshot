@@ -2,395 +2,387 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>BlockState</title>
 
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
 <style>
-:root {
-  --bg:#0b0c10;
-  --card:#131420;
-  --muted:#8a8fa3;
-  --accent:#7b7cff;
-  --green:#22c55e;
-  --red:#ef4444;
-  --border:#23243a;
+:root{
+--bg:#0b0c10;
+--card:#131420;
+--panel:#15172a;
+--border:#23243a;
+--muted:#8a8fa3;
+--accent:#7b7cff;
+--green:#22c55e;
+--red:#ef4444;
 }
 
-* { box-sizing:border-box; }
-body {
-  margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Inter,sans-serif;
-  background:radial-gradient(circle at 50% 0%, #14162a 0%, var(--bg) 60%);
-  color:#fff;
+*{box-sizing:border-box}
+
+body{
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Inter,sans-serif;
+background:radial-gradient(circle at 50% 0%, #14162a 0%, var(--bg) 60%);
+color:#fff;
 }
 
-h1,h2,h3 { margin:0; }
-
-button {
-  font-family:inherit;
-  cursor:pointer;
+.app{
+max-width:1200px;
+margin:0 auto;
+padding:60px 20px 120px;
 }
 
-.app {
-  max-width:1200px;
-  margin:0 auto;
-  padding:60px 20px 80px;
+h1{
+text-align:center;
+font-size:3rem;
+color:var(--accent);
+margin-bottom:50px;
 }
 
-/* Top header */
-.header {
-  text-align:center;
-  margin-bottom:50px;
+/* bottom left */
+.footer-left{
+position:fixed;
+bottom:16px;
+left:16px;
+display:flex;
+gap:8px;
+z-index:10;
 }
-.header h1 {
-  font-size:3rem;
-  color:var(--accent);
-}
-.header p {
-  margin-top:10px;
-  color:var(--muted);
-}
-
-/* Version / FAQ */
-.footer-left {
-  position:fixed;
-  bottom:20px;
-  left:20px;
-  display:flex;
-  gap:10px;
-}
-.badge {
-  padding:6px 12px;
-  border-radius:999px;
-  background:#16182a;
-  border:1px solid var(--border);
-  font-size:0.75rem;
-  color:#cbd0ff;
+.badge{
+padding:6px 12px;
+border-radius:999px;
+background:#16182a;
+border:1px solid var(--border);
+font-size:.75rem;
+color:#cbd0ff;
 }
 
-/* Layout */
-.main {
-  display:grid;
-  grid-template-columns:380px 1fr;
-  gap:40px;
-  align-items:start;
+/* layout */
+.main{
+display:grid;
+grid-template-columns:380px 1fr;
+gap:40px;
 }
 @media(max-width:900px){
-  .main { grid-template-columns:1fr; }
+.main{grid-template-columns:1fr}
 }
 
-/* Panels */
-.panel {
-  background:linear-gradient(180deg,#15172a,#10111d);
-  border-radius:20px;
-  padding:24px;
-  border:1px solid var(--border);
+/* panels */
+.panel{
+background:linear-gradient(180deg,#15172a,#10111d);
+border-radius:20px;
+padding:24px;
+border:1px solid var(--border);
 }
 
-/* Generator */
-.generator h3 {
-  margin-bottom:14px;
-}
-.input {
-  width:100%;
-  padding:14px;
-  border-radius:12px;
-  border:1px solid var(--border);
-  background:#0e0f1c;
-  color:#fff;
-  margin-bottom:12px;
-}
-.quick {
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:8px;
-  margin-bottom:14px;
-}
-.quick button {
-  padding:10px;
-  border-radius:10px;
-  background:#17192d;
-  border:1px solid var(--border);
-  color:#fff;
-}
-.primary {
-  width:100%;
-  padding:14px;
-  border-radius:12px;
-  border:none;
-  background:linear-gradient(135deg,#6f7cff,#8b5cf6);
-  color:#fff;
-  font-weight:700;
+input{
+width:100%;
+padding:14px;
+border-radius:12px;
+border:1px solid var(--border);
+background:#0e0f1c;
+color:#fff;
+margin-bottom:14px;
 }
 
-/* Trending */
-.trending {
-  margin-top:20px;
+.quick{
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:8px;
+margin-bottom:14px;
 }
-.trending h4 {
-  margin-bottom:10px;
-}
-.trending-item {
-  display:flex;
-  justify-content:space-between;
-  padding:10px 0;
-  border-bottom:1px solid var(--border);
-  cursor:pointer;
-}
-.trending-item span:last-child {
-  color:var(--green);
+.quick button{
+padding:10px;
+border-radius:10px;
+background:#17192d;
+border:1px solid var(--border);
+color:#fff;
+font-weight:700;
 }
 
-/* Card */
-.card {
-  position:relative;
-  background:linear-gradient(180deg,#15172a,#0f101c);
-  border-radius:24px;
-  padding:26px;
-  border:2px solid var(--border);
-  transition:transform .25s ease, box-shadow .25s ease;
-}
-.card.capture {
-  animation:capture 0.35s ease;
-}
-@keyframes capture {
-  0%{transform:scale(.985); box-shadow:0 0 0 rgba(0,0,0,0);}
-  50%{box-shadow:0 0 40px rgba(123,124,255,.35);}
-  100%{transform:scale(1);}
+.primary{
+width:100%;
+padding:14px;
+border-radius:12px;
+border:none;
+background:linear-gradient(135deg,#6f7cff,#8b5cf6);
+color:#fff;
+font-weight:800;
+margin-bottom:18px;
 }
 
-/* Card header */
-.card-header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+/* trending */
+.trending h4{margin:0 0 10px}
+.trending-item{
+display:flex;
+justify-content:space-between;
+padding:10px 0;
+border-bottom:1px solid var(--border);
+cursor:pointer;
 }
-.asset {
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-.asset img {
-  width:32px;
-  height:32px;
-  border-radius:50%;
-}
-.change.up { color:var(--green); }
-.change.down { color:var(--red); }
+.trending-item span:last-child{color:var(--green)}
 
-/* Toggle */
-.toggle {
-  display:flex;
-  gap:4px;
-}
-.toggle button {
-  padding:6px 10px;
-  font-size:0.75rem;
-  border-radius:8px;
-  background:#17192d;
-  border:1px solid var(--border);
-  color:#fff;
-}
-.toggle button.active {
-  background:var(--accent);
+/* capture */
+.capture-title{
+text-align:center;
+margin-bottom:10px;
+font-weight:700;
+letter-spacing:.15em;
+color:var(--muted);
 }
 
-/* Price */
-.price {
-  font-size:3rem;
-  font-weight:900;
-  margin:20px 0;
+.card{
+position:relative;
+background:linear-gradient(180deg,#15172a,#0f101c);
+border-radius:24px;
+padding:26px;
+border:2px solid var(--border);
+animation:capture .3s ease;
+}
+@keyframes capture{
+0%{transform:scale(.985)}
+100%{transform:scale(1)}
 }
 
-/* Stats */
-.stats {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-.stat {
-  background:#101225;
-  border-radius:12px;
-  padding:12px;
-  font-size:0.9rem;
-}
-.stat span {
-  display:block;
-  color:var(--muted);
-  font-size:0.75rem;
+.card-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
 }
 
-/* Footer */
-.card-footer {
-  margin-top:18px;
-  font-size:0.7rem;
-  color:var(--muted);
-  text-align:center;
+.asset{
+display:flex;
+gap:10px;
+align-items:center;
+}
+.asset img{
+width:32px;
+height:32px;
+border-radius:50%;
 }
 
-/* Actions */
-.actions {
-  position:absolute;
-  bottom:16px;
-  right:16px;
-  display:flex;
-  gap:10px;
+.change.up{color:var(--green)}
+.change.down{color:var(--red)}
+
+.price{
+font-size:3rem;
+font-weight:900;
+margin:20px 0;
+text-align:center;
 }
-.actions button {
-  width:36px;
-  height:36px;
-  border-radius:50%;
-  border:none;
-  background:#17192d;
-  color:#fff;
+
+.stats{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px;
 }
-body.exporting .actions { display:none; }
+
+.stat{
+background:#101225;
+border-radius:12px;
+padding:12px;
+font-size:.9rem;
+}
+.stat span{
+display:block;
+font-size:.7rem;
+color:var(--muted);
+}
+
+.card-footer{
+margin-top:16px;
+font-size:.7rem;
+color:var(--muted);
+text-align:center;
+}
+
+/* share */
+.share{
+margin-top:18px;
+}
+.share-title{
+text-align:center;
+margin:18px 0 10px;
+font-weight:700;
+letter-spacing:.15em;
+color:var(--muted);
+}
+
+.share-buttons{
+display:flex;
+justify-content:center;
+gap:12px;
+flex-wrap:wrap;
+}
+
+.share-buttons button{
+padding:10px 14px;
+border-radius:999px;
+background:#17192d;
+border:1px solid var(--border);
+color:#fff;
+font-size:.85rem;
+font-weight:700;
+}
+
+/* hide buttons on export */
+body.exporting .share-buttons{display:none}
 </style>
 </head>
 
 <body>
 
 <div class="footer-left">
-  <div class="badge">v7.0</div>
+  <div class="badge">v7.1</div>
   <div class="badge">FAQ</div>
 </div>
 
 <div class="app">
+<h1>BlockState</h1>
 
-  <div class="header">
-    <h1>BlockState</h1>
-    <p>Create. Capture. Share.</p>
-  </div>
+<div class="main">
 
-  <div class="main">
+<!-- CREATE -->
+<div class="panel">
+<input id="symbolInput" placeholder="BTC, SOL, BONK">
 
-    <!-- CREATE -->
-    <div class="panel generator">
-      <h3>Create</h3>
-      <input id="symbolInput" class="input" placeholder="BTC, SOL, BONK" />
-      <div class="quick">
-        <button onclick="loadSymbol('BTC')">BTC</button>
-        <button onclick="loadSymbol('ETH')">ETH</button>
-        <button onclick="loadSymbol('USDT')">USDT</button>
-        <button onclick="loadSymbol('BNB')">BNB</button>
-        <button onclick="loadSymbol('XRP')">XRP</button>
-      </div>
-      <button class="primary" onclick="generate()">Create BlockState</button>
-
-      <div class="trending">
-        <h4>Trending (24h movers)</h4>
-        <div id="trending"></div>
-      </div>
-    </div>
-
-    <!-- CAPTURE -->
-    <div>
-      <h3 style="text-align:center;margin-bottom:10px;">Capture</h3>
-      <div id="cardContainer"></div>
-    </div>
-
-  </div>
+<div class="quick">
+<button onclick="loadSymbol('bitcoin')">BTC</button>
+<button onclick="loadSymbol('ethereum')">ETH</button>
+<button onclick="loadSymbol('tether')">USDT</button>
+<button onclick="loadSymbol('bnb')">BNB</button>
+<button onclick="loadSymbol('ripple')">XRP</button>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<button class="primary" onclick="generate()">Create BlockState</button>
+
+<div class="trending">
+<h4>Trending (24h movers)</h4>
+<div id="trending"></div>
+</div>
+</div>
+
+<!-- CAPTURE -->
+<div>
+<div class="capture-title">CAPTURE</div>
+<div id="cardContainer"></div>
+
+<div class="share">
+<div class="share-title">SHARE</div>
+<div class="share-buttons">
+<button onclick="shareX()">X</button>
+<button onclick="shareInstagram()">Instagram</button>
+<button onclick="shareNative()">Messages</button>
+<button onclick="saveImage()">Save Image</button>
+</div>
+</div>
+</div>
+
+</div>
+</div>
 
 <script>
-const API = "https://api.coingecko.com/api/v3";
-let mode = "full";
+const API="https://api.coingecko.com/api/v3";
+let currentCoin=null;
 
-async function fetchIcon(id){
-  const res = await fetch(`${API}/coins/${id}`);
-  const data = await res.json();
-  const img = await fetch(data.image.small);
-  const blob = await img.blob();
-  return new Promise(r=>{
-    const fr = new FileReader();
-    fr.onload=()=>r(fr.result);
-    fr.readAsDataURL(blob);
-  });
+async function toBase64(url){
+const r=await fetch(url);
+const b=await r.blob();
+return new Promise(res=>{
+const fr=new FileReader();
+fr.onload=()=>res(fr.result);
+fr.readAsDataURL(b);
+});
 }
 
-async function generate(symbol="bitcoin"){
-  const coinId = symbol.toLowerCase()==="btc"?"bitcoin":symbol.toLowerCase();
-  const res = await fetch(`${API}/coins/${coinId}?localization=false&tickers=false&community_data=false&developer_data=false`);
-  const c = await res.json();
-  const icon = await fetchIcon(c.id);
+async function generate(id){
+if(!id) id="bitcoin";
+const res=await fetch(`${API}/coins/${id}?localization=false&tickers=false&community_data=false&developer_data=false`);
+const c=await res.json();
+const icon=await toBase64(c.image.small);
+currentCoin={...c,icon};
 
-  document.getElementById("cardContainer").innerHTML = `
-    <div class="card capture" id="card">
-      <div class="card-header">
-        <div class="asset">
-          <img src="${icon}">
-          <div>
-            <strong>${c.name}</strong>
-            <div style="font-size:.75rem;color:var(--muted)">${c.symbol.toUpperCase()}</div>
-          </div>
-        </div>
-        <div>
-          <div class="change ${c.market_data.price_change_percentage_24h>=0?'up':'down'}">
-            ${c.market_data.price_change_percentage_24h.toFixed(2)}%
-          </div>
-          <div class="toggle">
-            <button onclick="setMode('compact')" class="${mode==='compact'?'active':''}">Compact</button>
-            <button onclick="setMode('full')" class="${mode==='full'?'active':''}">Full</button>
-          </div>
-        </div>
-      </div>
+document.getElementById("cardContainer").innerHTML=`
+<div class="card" id="card">
+<div class="card-header">
+<div class="asset">
+<img src="${icon}">
+<div>
+<strong>${c.name}</strong>
+<div style="font-size:.75rem;color:var(--muted)">${c.symbol.toUpperCase()}</div>
+</div>
+</div>
+<div class="change ${c.market_data.price_change_percentage_24h>=0?'up':'down'}">
+${c.market_data.price_change_percentage_24h.toFixed(2)}%
+</div>
+</div>
 
-      <div class="price">$${c.market_data.current_price.usd.toLocaleString()}</div>
+<div class="price">$${c.market_data.current_price.usd.toLocaleString()}</div>
 
-      <div class="stats">
-        <div class="stat"><span>24h High</span>$${c.market_data.high_24h.usd.toLocaleString()}</div>
-        <div class="stat"><span>24h Low</span>$${c.market_data.low_24h.usd.toLocaleString()}</div>
-        <div class="stat"><span>Market Cap</span>$${(c.market_data.market_cap.usd/1e12).toFixed(2)}T</div>
-        <div class="stat"><span>MC Rank</span>#${c.market_cap_rank}</div>
-      </div>
+<div class="stats">
+<div class="stat"><span>24h High</span>$${c.market_data.high_24h.usd.toLocaleString()}</div>
+<div class="stat"><span>24h Low</span>$${c.market_data.low_24h.usd.toLocaleString()}</div>
+<div class="stat"><span>Market Cap</span>$${(c.market_data.market_cap.usd/1e12).toFixed(2)}T</div>
+<div class="stat"><span>MC Rank</span>#${c.market_cap_rank}</div>
+</div>
 
-      <div class="card-footer">
-        Captured • ${new Date().toUTCString()}<br>BLOCKSTATE.LIVE
-      </div>
-
-      <div class="actions">
-        <button onclick="exportImage()">⬇</button>
-        <button onclick="share()">⤴</button>
-      </div>
-    </div>
-  `;
+<div class="card-footer">
+Captured • ${new Date().toUTCString()}<br>BLOCKSTATE.LIVE
+</div>
+</div>`;
 }
 
-function setMode(m){ mode=m; generate(); }
+function loadSymbol(id){generate(id)}
 
-function exportImage(){
-  document.body.classList.add("exporting");
-  html2canvas(document.getElementById("card"),{scale:2}).then(c=>{
-    const a=document.createElement("a");
-    a.href=c.toDataURL();
-    a.download="blockstate.png";
-    a.click();
-    document.body.classList.remove("exporting");
-  });
+async function saveImage(){
+document.body.classList.add("exporting");
+const canvas=await html2canvas(document.getElementById("card"),{scale:2});
+const a=document.createElement("a");
+a.href=canvas.toDataURL();
+a.download="blockstate.png";
+a.click();
+document.body.classList.remove("exporting");
 }
 
-function share(){
-  if(navigator.share){
-    navigator.share({title:"BlockState",url:location.href});
-  }
+async function shareNative(){
+if(!navigator.share){alert("Sharing available on mobile");return;}
+const canvas=await html2canvas(document.getElementById("card"),{scale:2});
+canvas.toBlob(b=>{
+navigator.share({
+title:"BlockState",
+text:"Captured with BlockState",
+files:[new File([b],"blockstate.png",{type:"image/png"})],
+url:"https://blockstate.live"
+});
+});
+}
+
+async function shareX(){
+await saveImage();
+window.open("https://twitter.com/intent/tweet?text=Captured%20with%20BlockState%20https://blockstate.live","_blank");
+}
+
+function shareInstagram(){
+alert("Image saved. Upload to Instagram Stories or feed.");
+saveImage();
 }
 
 async function loadTrending(){
-  const res = await fetch(`${API}/coins/markets?vs_currency=usd&order=volume_desc&per_page=10&page=1`);
-  const data = await res.json();
-  document.getElementById("trending").innerHTML =
-    data.map(c=>`<div class="trending-item" onclick="generate('${c.id}')">
-      <span>${c.name}</span><span>${c.price_change_percentage_24h.toFixed(2)}%</span>
-    </div>`).join("");
+const r=await fetch(`${API}/coins/markets?vs_currency=usd&order=volume_desc&per_page=10&page=1`);
+const d=await r.json();
+document.getElementById("trending").innerHTML=d.map(c=>
+`<div class="trending-item" onclick="loadSymbol('${c.id}')">
+<span>${c.name}</span>
+<span>${c.price_change_percentage_24h.toFixed(2)}%</span>
+</div>`).join("");
 }
-
-function loadSymbol(s){ generate(s); }
 
 generate("bitcoin");
 loadTrending();
-setInterval(loadTrending, 20*60*1000);
+setInterval(loadTrending,20*60*1000);
 </script>
+
 </body>
 </html>
