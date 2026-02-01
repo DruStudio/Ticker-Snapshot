@@ -66,7 +66,22 @@ position:relative;
 z-index:2;
 max-width:1200px;
 margin:0 auto;
-padding:110px 18px 160px;
+padding:120px 18px 170px;
+text-align:center;
+}
+
+.page-title{
+font-size:3rem;
+font-weight:900;
+color:var(--accent);
+}
+
+.page-sub{
+margin-top:6px;
+font-size:.75rem;
+letter-spacing:.35em;
+color:var(--muted);
+margin-bottom:42px;
 }
 
 /* GRID */
@@ -193,7 +208,6 @@ border-radius:28px;
 padding:26px;
 background:linear-gradient(180deg,#12132b,#0a0b1a);
 border:1px solid var(--border);
-text-align:center;
 display:flex;
 flex-direction:column;
 justify-content:center;
@@ -207,12 +221,13 @@ margin:0 auto;
 display:flex;
 flex-direction:column;
 align-items:center;
-gap:10px;
+gap:6px;
 }
 .asset img{
 width:54px;
 height:54px;
 border-radius:50%;
+margin-bottom:-4px;
 }
 .asset-name{
 font-size:2.2rem;
@@ -270,6 +285,7 @@ line-height:1.4;
 display:flex;
 flex-direction:column;
 gap:12px;
+margin-top:12px;
 }
 .caption{
 background:#0b0c1b;
@@ -296,6 +312,9 @@ font-size:.85rem;
 <canvas id="particles"></canvas>
 
 <div class="container">
+<div class="page-title">BlockState</div>
+<div class="page-sub">CRYPTO</div>
+
 <div class="main">
 
 <!-- CREATE -->
@@ -324,7 +343,7 @@ font-size:.85rem;
 <div class="section">CAPTURE</div>
 <div id="output"></div>
 
-<div class="section">SHARE</div>
+<div class="section" style="margin-top:34px;">SHARE</div>
 <div class="panel share">
 <button class="primary" onclick="App.save()">Save BlockState</button>
 <div class="caption" id="caption">Generate a caption to share this BlockState.</div>
@@ -339,7 +358,6 @@ font-size:.85rem;
 </div>
 
 <script>
-/* PARTICLES */
 const c=document.getElementById("particles"),x=c.getContext("2d");
 let w,h,p=[];
 function r(){w=c.width=innerWidth;h=c.height=innerHeight}
@@ -435,6 +453,8 @@ show(c,scroll){
 this.current=c;
 const up=c.price_change_percentage_24h>=0;
 const delta=c.current_price*(c.price_change_percentage_24h/100);
+const arrow=up?'▲':'▼';
+
 output.innerHTML=`
 <div class="widget ${up?'up':'down'}" id="widget">
 <div class="asset">
@@ -445,7 +465,7 @@ output.innerHTML=`
 <div class="price">$${this.fmt(c.current_price)}</div>
 
 <div class="change" style="color:${up?'var(--up)':'var(--down)'}">
-${up?'▲':'▼'} ${Math.abs(c.price_change_percentage_24h).toFixed(2)}%
+${arrow} ${Math.abs(c.price_change_percentage_24h).toFixed(2)}%
 ($${Math.abs(delta).toLocaleString(undefined,{maximumFractionDigits:2})})
 </div>
 
@@ -461,6 +481,7 @@ Captured • ${new Date().toUTCString()}<br>
 Data provided by CoinGecko • BlockState.Live
 </div>
 </div>`;
+
 if(scroll)document.getElementById("widget").scrollIntoView({behavior:"smooth",block:"center"});
 },
 
@@ -474,9 +495,11 @@ a.click();
 },
 
 makeCaption(){
-const c=this.current,up=c.price_change_percentage_24h>=0;
+const c=this.current;
+const up=c.price_change_percentage_24h>=0;
+const arrow=up?'▲':'▼';
 caption.textContent=
-`${c.name} (${c.symbol.toUpperCase()}) is ${up?'up':'down'} ${Math.abs(c.price_change_percentage_24h).toFixed(2)}% in the last 24h.
+`${c.name} (${c.symbol.toUpperCase()}) is ${up?'up':'down'} ${Math.abs(c.price_change_percentage_24h).toFixed(2)}% over the last 24 hours ${arrow}. 
 Price: $${this.fmt(c.current_price)} • Market Cap: ${this.cap(c.market_cap)}.`;
 },
 
