@@ -8,43 +8,317 @@
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <style>
-/* --- SAME STYLES AS v6.8.1 (UNCHANGED) --- */
 :root{
---bg:#07070c;--panel:#141425;--panel2:#0f0f1a;--border:#2a2a3a;
---text:#fff;--muted:#9aa0b4;--accent:#6c7cff;
---green:#22c55e;--red:#ef4444;
+--bg:#07070c;
+--panel:#141425;
+--panel2:#0f0f1a;
+--border:#2a2a3a;
+--text:#ffffff;
+--muted:#9aa0b4;
+--accent:#6c7cff;
+--green:#22c55e;
+--red:#ef4444;
 }
+
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-.container{max-width:1200px;margin:0 auto;padding:70px 20px}
-.main{display:grid;grid-template-columns:420px 420px;gap:36px;justify-content:center}
-.panel{background:linear-gradient(135deg,var(--panel),#1d1d32);border:1px solid var(--border);border-radius:20px;padding:22px}
-.primary{width:100%;padding:14px;border-radius:14px;border:none;font-weight:900;cursor:pointer;background:linear-gradient(135deg,var(--accent),#8b5cf6);color:white}
-.widget{background:var(--panel2);border-radius:22px;padding:22px;border:2px solid var(--border)}
-.coin-img{width:36px;height:36px;border-radius:50%;background:#000}
-.price{font-size:2.8rem;font-weight:900;text-align:center;margin:14px 0}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.stat{background:#0d0d16;border-radius:14px;padding:10px;text-align:center}
-.share-output{margin-top:12px;font-size:.8rem;background:#0d0d16;border-radius:12px;padding:12px}
-.success{color:var(--green);font-weight:900}
+html,body{
+background:var(--bg);
+color:var(--text);
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+overflow-x:hidden;
+}
+
+/* PARTICLES */
+canvas#particles{
+position:fixed;
+inset:0;
+z-index:0;
+pointer-events:none;
+}
+
+/* VERSION */
+.bottom-left{
+position:fixed;
+bottom:14px;
+left:14px;
+z-index:10;
+display:flex;
+gap:8px;
+}
+.badge{
+background:#10101a;
+border:1px solid var(--border);
+border-radius:12px;
+padding:8px 12px;
+font-size:.75rem;
+font-weight:700;
+cursor:pointer;
+}
+
+/* LAYOUT */
+.container{
+position:relative;
+z-index:2;
+max-width:1200px;
+margin:0 auto;
+padding:70px 20px 120px;
+}
+
+h1{
+text-align:center;
+font-size:3rem;
+font-weight:900;
+color:var(--accent);
+}
+
+.section-title{
+margin:36px 0 14px;
+text-align:center;
+font-size:.9rem;
+font-weight:800;
+letter-spacing:.4em;
+color:var(--muted);
+}
+
+/* GRID */
+.main{
+display:grid;
+grid-template-columns:420px 420px;
+gap:36px;
+justify-content:center;
+align-items:start;
+}
+
+/* PANELS */
+.panel{
+background:linear-gradient(135deg,var(--panel),#1d1d32);
+border:1px solid var(--border);
+border-radius:20px;
+padding:22px;
+}
+
+label{
+font-size:.7rem;
+font-weight:700;
+color:var(--muted);
+margin-bottom:6px;
+display:block;
+}
+
+input{
+width:100%;
+padding:14px;
+border-radius:12px;
+border:2px solid var(--border);
+background:#10101a;
+color:white;
+margin-bottom:14px;
+}
+
+.presets{
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:8px;
+margin-bottom:14px;
+}
+
+.presets button{
+padding:10px;
+border-radius:10px;
+border:1px solid var(--border);
+background:#10101a;
+color:white;
+font-weight:800;
+cursor:pointer;
+}
+
+.primary{
+width:100%;
+padding:14px;
+border-radius:14px;
+border:none;
+font-weight:900;
+cursor:pointer;
+background:linear-gradient(135deg,var(--accent),#8b5cf6);
+color:white;
+margin-bottom:12px;
+}
+
+/* TRENDING */
+.trending h3{
+font-size:.75rem;
+margin-bottom:8px;
+color:var(--muted);
+}
+.trending ul{list-style:none}
+.trending li{
+display:flex;
+justify-content:space-between;
+padding:10px 6px;
+border-bottom:1px solid var(--border);
+cursor:pointer;
+}
+.trending li:last-child{border-bottom:none}
+.up{color:var(--green)}
+.down{color:var(--red)}
+
+/* WIDGET */
+.widget{
+background:var(--panel2);
+border-radius:22px;
+padding:22px;
+border:2px solid var(--border);
+}
+
+.widget.positive{border-color:var(--green)}
+.widget.negative{border-color:var(--red)}
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+border-bottom:1px solid var(--border);
+padding-bottom:12px;
+margin-bottom:14px;
+}
+
+.left{
+display:flex;
+gap:12px;
+align-items:center;
+}
+
+.coin-img{
+width:36px;
+height:36px;
+border-radius:50%;
+background:#000;
+}
+
+.name{font-size:1.25rem;font-weight:900}
+.symbol{font-size:.7rem;color:var(--accent)}
+
+.change{
+font-size:1.4rem;
+font-weight:900;
+}
+
+.price{
+text-align:center;
+font-size:2.8rem;
+font-weight:900;
+margin:14px 0;
+}
+
+.stats{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+}
+
+.stat{
+background:#0d0d16;
+border-radius:14px;
+padding:10px;
+text-align:center;
+}
+.stat span{
+display:block;
+font-size:.65rem;
+color:var(--muted);
+margin-bottom:4px;
+}
+
+.footer{
+border-top:1px solid var(--border);
+padding-top:10px;
+margin-top:12px;
+font-size:.65rem;
+color:var(--muted);
+text-align:center;
+}
+
+/* SHARE OUTPUT */
+.share-output{
+margin-top:12px;
+font-size:.8rem;
+color:var(--muted);
+background:#0d0d16;
+border-radius:12px;
+padding:12px;
+}
+
+.success{
+color:var(--green);
+font-weight:800;
+margin-bottom:6px;
+}
+
+/* FAQ */
+.faq-modal{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.65);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:20;
+}
+.faq-box{
+background:var(--panel);
+border:1px solid var(--border);
+border-radius:20px;
+padding:24px;
+max-width:480px;
+line-height:1.5;
+}
+
+@media(max-width:900px){
+.main{grid-template-columns:1fr}
+h1{font-size:2.4rem}
+}
 </style>
 </head>
 
 <body>
 
+<canvas id="particles"></canvas>
+
+<div class="bottom-left">
+<div class="badge">v6.8.3</div>
+<div class="badge" onclick="FAQ.open()">FAQ</div>
+</div>
+
 <div class="container">
-<h1 style="text-align:center;color:var(--accent)">BlockState</h1>
+<h1>BlockState</h1>
 
 <div class="main">
 
+<!-- CREATE -->
+<div>
+<div class="section-title">CREATE</div>
 <div class="panel">
-<input id="search" list="coins" placeholder="Search crypto">
+<label>Search Crypto (Top 250)</label>
+<input id="search" list="coins" placeholder="e.g Bitcoin">
 <datalist id="coins"></datalist>
+
+<div class="presets" id="presets"></div>
+
 <button class="primary" onclick="App.generate()">Create BlockState</button>
+
+<div class="trending">
+<h3>Trending (24h movers)</h3>
+<ul id="trendList"></ul>
+</div>
+</div>
 </div>
 
+<!-- CAPTURE -->
 <div>
+<div class="section-title">CAPTURE</div>
 <div id="output"></div>
+
+<div class="section-title">SHARE</div>
 <div class="panel">
 <button class="primary" onclick="App.generateShareables()">Generate Shareables</button>
 <div id="shareOutput" class="share-output" style="display:none"></div>
@@ -54,26 +328,81 @@ html,body{background:var(--bg);color:var(--text);font-family:-apple-system,Blink
 </div>
 </div>
 
+<!-- FAQ -->
+<div class="faq-modal" id="faq">
+<div class="faq-box">
+<h3>What is BlockState?</h3>
+<p>BlockState creates verifiable snapshots of crypto market conditions you can save and share.</p>
+<h3>How do I use it?</h3>
+<p>Select a coin, generate a BlockState, then click Generate Shareables.</p>
+<button class="primary" onclick="FAQ.close()">Close</button>
+</div>
+</div>
+
 <script>
+/* PARTICLES */
+const canvas=document.getElementById("particles");
+const ctx=canvas.getContext("2d");
+let w,h,particles=[];
+function resize(){
+w=canvas.width=window.innerWidth;
+h=canvas.height=window.innerHeight;
+}
+window.addEventListener("resize",resize);
+resize();
+
+for(let i=0;i<80;i++){
+particles.push({
+x:Math.random()*w,
+y:Math.random()*h,
+vx:(Math.random()-.5)*.3,
+vy:(Math.random()-.5)*.3,
+r:Math.random()*1.2+0.3
+});
+}
+function tick(){
+ctx.clearRect(0,0,w,h);
+ctx.fillStyle="rgba(108,124,255,.35)";
+particles.forEach(p=>{
+p.x+=p.vx;p.y+=p.vy;
+if(p.x<0)p.x=w;if(p.x>w)p.x=0;
+if(p.y<0)p.y=h;if(p.y>h)p.y=0;
+ctx.beginPath();
+ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+ctx.fill();
+});
+requestAnimationFrame(tick);
+}
+tick();
+
+/* APP */
 const App={
 coins:[],
 current:null,
+
+fmt(v){
+if(v>=1)return v.toFixed(2);
+if(v>=0.01)return v.toFixed(4);
+if(v>=0.0001)return v.toFixed(6);
+return v.toFixed(8);
+},
+fmtCap(v){
+if(v>=1e12)return'$'+(v/1e12).toFixed(2)+'T';
+if(v>=1e9)return'$'+(v/1e9).toFixed(2)+'B';
+return'$'+v.toLocaleString();
+},
 
 async load(){
 const r=await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1");
 this.coins=await r.json();
 
-/* 🔥 FIX: preload images as base64 */
+/* 🔒 FIX: convert images to base64 */
 for(const c of this.coins){
 c.img64 = await this.toBase64(c.image);
 }
 
-const dl=document.getElementById("coins");
-this.coins.forEach(c=>{
-const o=document.createElement("option");
-o.value=`${c.symbol.toUpperCase()} — ${c.name}`;
-dl.appendChild(o);
-});
+this.populate();
+this.renderTrending();
 this.show(this.coins[0]);
 },
 
@@ -82,12 +411,47 @@ return new Promise(res=>{
 const img=new Image();
 img.crossOrigin="anonymous";
 img.onload=()=>{
-const canvas=document.createElement("canvas");
-canvas.width=img.width;canvas.height=img.height;
-canvas.getContext("2d").drawImage(img,0,0);
-res(canvas.toDataURL("image/png"));
+const c=document.createElement("canvas");
+c.width=img.width;c.height=img.height;
+c.getContext("2d").drawImage(img,0,0);
+res(c.toDataURL("image/png"));
 };
 img.src=url;
+});
+},
+
+populate(){
+const dl=document.getElementById("coins");
+const p=document.getElementById("presets");
+this.coins.forEach(c=>{
+const o=document.createElement("option");
+o.value=`${c.symbol.toUpperCase()} — ${c.name}`;
+dl.appendChild(o);
+});
+["bitcoin","ethereum","binancecoin","ripple","dogecoin"].forEach(id=>{
+const c=this.coins.find(x=>x.id===id);
+if(!c)return;
+const b=document.createElement("button");
+b.textContent=c.symbol.toUpperCase();
+b.onclick=()=>this.show(c);
+p.appendChild(b);
+});
+},
+
+renderTrending(){
+const list=document.getElementById("trendList");
+list.innerHTML="";
+[...this.coins]
+.sort((a,b)=>b.price_change_percentage_24h-a.price_change_percentage_24h)
+.slice(0,10)
+.forEach(c=>{
+const li=document.createElement("li");
+li.innerHTML=`<span>${c.name}</span>
+<span class="${c.price_change_percentage_24h>=0?'up':'down'}">
+${c.price_change_percentage_24h>=0?'▲':'▼'} ${c.price_change_percentage_24h.toFixed(2)}%
+</span>`;
+li.onclick=()=>this.show(c);
+list.appendChild(li);
 });
 },
 
@@ -95,33 +459,38 @@ build(c){
 this.current=c;
 const up=c.price_change_percentage_24h>=0;
 return `
-<div class="widget" id="widget">
-<div style="display:flex;justify-content:space-between;align-items:center">
-<div style="display:flex;gap:12px;align-items:center">
+<div class="widget ${up?'positive':'negative'}" id="widget">
+<div class="header">
+<div class="left">
 <img class="coin-img" src="${c.img64}">
-<div><strong>${c.name}</strong><br>${c.symbol.toUpperCase()}</div>
+<div>
+<div class="name">${c.name}</div>
+<div class="symbol">${c.symbol.toUpperCase()}</div>
 </div>
-<div style="color:${up?'var(--green)':'var(--red)'}">
+</div>
+<div class="change" style="color:${up?'var(--green)':'var(--red)'}">
 ${up?'▲':'▼'} ${c.price_change_percentage_24h.toFixed(2)}%
 </div>
 </div>
 
-<div class="price">$${c.current_price.toFixed(2)}</div>
+<div class="price">$${this.fmt(c.current_price)}</div>
 
 <div class="stats">
-<div class="stat"><span>24h High</span>$${c.high_24h.toFixed(2)}</div>
-<div class="stat"><span>24h Low</span>$${c.low_24h.toFixed(2)}</div>
-<div class="stat"><span>Market Cap</span>$${(c.market_cap/1e9).toFixed(2)}B</div>
-<div class="stat"><span>Rank</span>#${c.market_cap_rank}</div>
+<div class="stat"><span>24h High</span>$${this.fmt(c.high_24h)}</div>
+<div class="stat"><span>24h Low</span>$${this.fmt(c.low_24h)}</div>
+<div class="stat"><span>Market Cap</span>${this.fmtCap(c.market_cap)}</div>
+<div class="stat"><span>MC Rank</span>#${c.market_cap_rank}</div>
 </div>
 
-<div style="text-align:center;font-size:.65rem;margin-top:10px;color:var(--muted)">
+<div class="footer">
 Captured • ${new Date().toUTCString()}<br>BLOCKSTATE.LIVE
 </div>
 </div>`;
 },
 
-show(c){document.getElementById("output").innerHTML=this.build(c)},
+show(c){
+document.getElementById("output").innerHTML=this.build(c);
+},
 
 generate(){
 const v=document.getElementById("search").value.toLowerCase();
@@ -130,22 +499,33 @@ if(c)this.show(c);
 },
 
 generateShareables(){
+this.saveImage();
+this.showCaption();
+},
+
+saveImage(){
 html2canvas(document.getElementById("widget"),{backgroundColor:null}).then(c=>{
 const a=document.createElement("a");
 a.download="blockstate.png";
 a.href=c.toDataURL();
 a.click();
 });
+},
 
+showCaption(){
+const out=document.getElementById("shareOutput");
 const c=this.current;
 const up=c.price_change_percentage_24h>=0;
 const text=`${c.name} is ${up?'up':'down'} ${Math.abs(c.price_change_percentage_24h).toFixed(2)}% in 24 hours. #${c.symbol.toUpperCase()} #BlockState`;
 navigator.clipboard.writeText(text);
-
-const out=document.getElementById("shareOutput");
 out.style.display="block";
 out.innerHTML=`<div class="success">Image saved!</div>${text}`;
 }
+};
+
+const FAQ={
+open(){document.getElementById("faq").style.display="flex"},
+close(){document.getElementById("faq").style.display="none"}
 };
 
 document.addEventListener("DOMContentLoaded",()=>App.load());
