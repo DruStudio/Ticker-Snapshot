@@ -6,290 +6,161 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ticker Snapshot</title>
     <style>
-        :root{
-            --bg:#0a0a0f;
-            --bg2:#15151f;
-            --bg3:#1a1a28;
-            --text:#fff;
-            --text2:#a0a0b0;
-            --accent:#5b7cff;
-            --green:#22c55e;
-            --border:#2a2a3a;
-        }
-
-```
-    body.light{
-        --bg:#ffffff;
-        --bg2:#f5f5f5;
-        --bg3:#e8e8e8;
-        --text:#000000;
-        --text2:#666666;
-        --border:#d0d0d0;
-    }
-    
-    *{margin:0;padding:0;box-sizing:border-box}
-    html,body{overflow-x:hidden;width:100%}
-    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);padding:20px;min-height:100vh;transition:background 0.3s,color 0.3s}
-    
-    .mode-toggle{position:fixed;top:20px;right:20px;width:60px;height:32px;background:var(--bg3);border:2px solid var(--border);border-radius:20px;cursor:pointer;transition:all 0.3s;z-index:9999;display:flex;align-items:center;padding:3px}
-    .mode-toggle-circle{width:22px;height:22px;background:var(--accent);border-radius:50%;transition:transform 0.3s;box-shadow:0 2px 5px rgba(0,0,0,0.2)}
-    body.light .mode-toggle-circle{transform:translateX(28px)}
-    
-    header{text-align:center;margin-bottom:40px;padding-top:20px}
-    h1{font-size:2.5rem;font-weight:800;background:linear-gradient(135deg,var(--accent),#8b5cf6,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px}
-    .subtitle{color:var(--text2);font-size:1.1rem}
-    
-    .carousel{max-width:100%;margin:0 auto 60px;overflow:hidden}
-    .carousel-inner{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;padding:20px 0;scrollbar-width:thin;scrollbar-color:var(--accent) transparent;-webkit-overflow-scrolling:touch}
-    .carousel-inner::-webkit-scrollbar{height:8px}
-    .carousel-inner::-webkit-scrollbar-track{background:transparent}
-    .carousel-inner::-webkit-scrollbar-thumb{background:var(--accent);border-radius:4px}
-    .card{min-width:300px;max-width:300px;height:340px;background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:25px;cursor:pointer;transition:all 0.3s;flex-shrink:0;scroll-snap-align:start}
-    .card:hover{transform:translateY(-5px);border-color:var(--accent);box-shadow:0 10px 30px rgba(91,124,255,0.2)}
-    .card-name{font-size:1.2rem;font-weight:700;margin-bottom:5px}
-    .card-symbol{font-size:0.95rem;color:var(--accent);margin-bottom:15px}
-    .card-widget{width:100%;height:240px}
-    
-    .container{max-width:650px;margin:0 auto}
-    .section-title{text-align:center;font-size:1.6rem;font-weight:700;margin-bottom:10px}
-    .section-subtitle{text-align:center;color:var(--text2);margin-bottom:30px}
-    
-    .input-box{background:var(--bg2);padding:35px;border-radius:16px;border:1px solid var(--border);margin-bottom:40px}
-    .tabs{display:flex;gap:15px;margin-bottom:25px}
-    .tab{flex:1;padding:16px;background:transparent;border:2px solid var(--border);border-radius:10px;color:var(--text2);font-weight:700;text-transform:uppercase;cursor:pointer;transition:all 0.3s;font-size:1rem}
-    .tab.active{border-color:var(--accent);color:var(--accent);box-shadow:0 0 20px rgba(91,124,255,0.15)}
-    
-    .search-wrapper{position:relative}
-    .search-input{width:100%;padding:18px 20px 18px 55px;background:var(--bg3);border:2px solid var(--border);border-radius:10px;color:var(--text);font-size:1.1rem;transition:all 0.3s}
-    .search-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px rgba(91,124,255,0.1)}
-    .search-icon{position:absolute;left:20px;top:50%;transform:translateY(-50%);font-size:1.3rem}
-    
-    .generate-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--accent),#8b5cf6);border:none;color:#fff;font-size:1.05rem;font-weight:700;border-radius:10px;cursor:pointer;text-transform:uppercase;transition:all 0.3s;margin-top:20px}
-    .generate-btn:hover{transform:translateY(-3px);box-shadow:0 8px 25px rgba(91,124,255,0.3)}
-    .generate-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
-    
-    .dropdown{position:absolute;top:calc(100% + 5px);left:0;right:0;background:var(--bg3);border:2px solid var(--accent);border-radius:10px;max-height:350px;overflow-y:auto;z-index:1000;display:none}
-    .dropdown.show{display:block}
-    .dropdown-item{padding:15px 20px 15px 55px;cursor:pointer;border-bottom:1px solid var(--border);transition:background 0.2s}
-    .dropdown-item:hover{background:rgba(91,124,255,0.1)}
-    .dropdown-symbol{font-weight:700;display:block;margin-bottom:3px}
-    .dropdown-name{font-size:0.9rem;color:var(--text2)}
-    
-    .result{display:none;margin-bottom:40px}
-    .result.show{display:block}
-    .widget{max-width:550px;height:600px;margin:0 auto 25px;background:var(--bg3);border:2px solid var(--border);border-radius:20px;padding:45px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
-    .widget-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
-    .widget-name{font-size:1.5rem;font-weight:800;margin-bottom:8px}
-    .widget-symbol{font-size:1.1rem;color:var(--accent);font-weight:700}
-    .widget-chart-container{flex:1;min-height:300px;margin:20px 0}
-    .widget-time{text-align:center;color:var(--text2);font-size:0.9rem;margin-top:20px;margin-bottom:15px}
-    .widget-brand{text-align:center;color:var(--text2);font-size:0.9rem;font-weight:700}
-    
-    .export-btn{width:100%;padding:18px;background:linear-gradient(135deg,var(--green),#16a34a);border:none;color:#fff;font-size:1.1rem;font-weight:700;border-radius:10px;cursor:pointer;text-transform:uppercase;transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:10px}
-    .export-btn:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(34,197,94,0.3)}
-    
-    .error{background:rgba(239,68,68,0.1);border:1px solid #ef4444;padding:20px;border-radius:10px;color:#ef4444;text-align:center;margin-bottom:30px;display:none}
-    .error.show{display:block}
-    
-    @media(max-width:768px){
-        .card{min-width:260px;max-width:260px;height:300px}
-        .card-widget{height:200px}
-    }
-</style>
-```
-
+        :root{--bg:#0a0a0f;--bg2:#15151f;--bg3:#1a1a28;--text:#fff;--text2:#a0a0b0;--accent:#5b7cff;--green:#22c55e;--border:#2a2a3a}
+        body.light-mode{--bg:#ffffff;--bg2:#f5f5f5;--bg3:#e8e8e8;--text:#000000;--text2:#666666;--border:#d0d0d0}
+        *{margin:0;padding:0;box-sizing:border-box}
+        html,body{overflow-x:hidden;width:100%;max-width:100vw}
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);padding:20px;min-height:100vh;transition:all 0.3s}
+        .mode-toggle{position:fixed;top:20px;right:20px;width:60px;height:32px;background:var(--bg3);border:2px solid var(--border);border-radius:20px;cursor:pointer;z-index:9999;display:flex;align-items:center;padding:3px;transition:all 0.3s}
+        .mode-toggle-circle{width:22px;height:22px;background:var(--accent);border-radius:50%;transition:transform 0.3s;box-shadow:0 2px 5px rgba(0,0,0,0.2)}
+        body.light-mode .mode-toggle-circle{transform:translateX(28px)}
+        header{text-align:center;margin-bottom:40px;padding-top:20px}
+        h1{font-size:2.5rem;font-weight:800;background:linear-gradient(135deg,var(--accent),#8b5cf6,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px}
+        .subtitle{color:var(--text2);font-size:1.1rem}
+        .carousel{width:100%;margin:0 auto 60px;overflow:hidden}
+        .carousel-inner{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;padding:20px 0;scrollbar-width:thin;scrollbar-color:var(--accent) transparent}
+        .carousel-inner::-webkit-scrollbar{height:8px}
+        .carousel-inner::-webkit-scrollbar-track{background:transparent}
+        .carousel-inner::-webkit-scrollbar-thumb{background:var(--accent);border-radius:4px}
+        .card{min-width:300px;max-width:300px;height:340px;background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:25px;cursor:pointer;transition:all 0.3s;flex-shrink:0;scroll-snap-align:start}
+        .card:hover{transform:translateY(-5px);border-color:var(--accent);box-shadow:0 10px 30px rgba(91,124,255,0.2)}
+        .card-name{font-size:1.2rem;font-weight:700;margin-bottom:5px}
+        .card-symbol{font-size:0.95rem;color:var(--accent);margin-bottom:15px}
+        .card-widget{width:100%;height:240px}
+        .container{max-width:650px;margin:0 auto}
+        .section-title{text-align:center;font-size:1.6rem;font-weight:700;margin-bottom:10px}
+        .section-subtitle{text-align:center;color:var(--text2);margin-bottom:30px}
+        .input-box{background:var(--bg2);padding:35px;border-radius:16px;border:1px solid var(--border);margin-bottom:40px}
+        .tabs{display:flex;gap:15px;margin-bottom:25px}
+        .tab{flex:1;padding:16px;background:transparent;border:2px solid var(--border);border-radius:10px;color:var(--text2);font-weight:700;text-transform:uppercase;cursor:pointer;transition:all 0.3s;font-size:1rem}
+        .tab.active{border-color:var(--accent);color:var(--accent);box-shadow:0 0 20px rgba(91,124,255,0.15)}
+        .search-wrapper{position:relative}
+        .search-input{width:100%;padding:18px 20px 18px 55px;background:var(--bg3);border:2px solid var(--border);border-radius:10px;color:var(--text);font-size:1.1rem;transition:all 0.3s}
+        .search-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px rgba(91,124,255,0.1)}
+        .search-icon{position:absolute;left:20px;top:50%;transform:translateY(-50%);font-size:1.3rem}
+        .generate-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--accent),#8b5cf6);border:none;color:#fff;font-size:1.05rem;font-weight:700;border-radius:10px;cursor:pointer;text-transform:uppercase;transition:all 0.3s;margin-top:20px}
+        .generate-btn:hover{transform:translateY(-3px);box-shadow:0 8px 25px rgba(91,124,255,0.3)}
+        .generate-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+        .dropdown{position:absolute;top:calc(100% + 5px);left:0;right:0;background:var(--bg3);border:2px solid var(--accent);border-radius:10px;max-height:350px;overflow-y:auto;z-index:1000;display:none}
+        .dropdown.show{display:block}
+        .dropdown-item{padding:15px 20px 15px 55px;cursor:pointer;border-bottom:1px solid var(--border)}
+        .dropdown-item:hover{background:rgba(91,124,255,0.1)}
+        .dropdown-symbol{font-weight:700;display:block;margin-bottom:3px}
+        .result{display:none;margin-bottom:40px}
+        .result.show{display:block}
+        .widget{max-width:550px;height:600px;margin:0 auto 25px;background:var(--bg3);border:2px solid var(--border);border-radius:20px;padding:45px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+        .widget-header{margin-bottom:20px}
+        .widget-name{font-size:1.5rem;font-weight:800;margin-bottom:8px}
+        .widget-symbol{font-size:1.1rem;color:var(--accent);font-weight:700}
+        .widget-chart-container{flex:1;min-height:350px}
+        .widget-time{text-align:center;color:var(--text2);font-size:0.9rem;margin-top:20px;margin-bottom:15px}
+        .widget-brand{text-align:center;color:var(--text2);font-size:0.9rem;font-weight:700}
+        .export-btn{width:100%;padding:18px;background:linear-gradient(135deg,var(--green),#16a34a);border:none;color:#fff;font-size:1.1rem;font-weight:700;border-radius:10px;cursor:pointer;text-transform:uppercase;transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:10px}
+        .export-btn:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(34,197,94,0.3)}
+        .error{background:rgba(239,68,68,0.1);border:1px solid #ef4444;padding:20px;border-radius:10px;color:#ef4444;text-align:center;margin-bottom:30px;display:none}
+        .error.show{display:block}
+    </style>
 </head>
 <body>
     <div class="mode-toggle" onclick="toggleMode()">
         <div class="mode-toggle-circle"></div>
     </div>
-
-```
-<header>
-    <h1>Ticker Snapshot</h1>
-    <p class="subtitle">Instant market prices, shareable as images</p>
-</header>
-
-<div class="carousel">
-    <div class="carousel-inner">
-        <div class="card" onclick="quickLoad('BTC','Bitcoin','crypto')">
-            <div class="card-name">Bitcoin</div>
-            <div class="card-symbol">BTC</div>
-            <div class="tradingview-widget-container card-widget">
-                <div class="tradingview-widget-container__widget"></div>
-                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js" async>
-                {"symbols":[["BINANCE:BTCUSDT|1D"]],"chartOnly":false,"width":"100%","height":"100%","locale":"en","colorTheme":"dark","autosize":true,"showVolume":false,"showMA":false,"hideDateRanges":true,"hideMarketStatus":false,"hideSymbolLogo":false,"scalePosition":"right","scaleMode":"Normal","fontFamily":"-apple-system, BlinkMacSystemFont, Trebuchet MS, Roboto, Ubuntu, sans-serif","fontSize":"10","noTimeScale":false,"valuesTracking":"1","changeMode":"price-and-percent","chartType":"area","lineWidth":2,"lineType":0,"dateRanges":["1d|1","1m|30","3m|60"]}
-                </script>
+    <header>
+        <h1>Ticker Snapshot</h1>
+        <p class="subtitle">Instant market prices, shareable as images</p>
+    </header>
+    <div class="carousel">
+        <div class="carousel-inner">
+            <div class="card" onclick="loadQuick('BTC','Bitcoin','crypto')">
+                <div class="card-name">Bitcoin</div>
+                <div class="card-symbol">BTC</div>
+                <div class="tradingview-widget-container card-widget">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js" async>
+                    {"symbols":[["BINANCE:BTCUSDT|1D"]],"chartOnly":false,"width":"100%","height":"100%","locale":"en","colorTheme":"dark","autosize":true,"showVolume":false,"showMA":false,"hideDateRanges":true,"hideMarketStatus":false,"hideSymbolLogo":false,"scalePosition":"right","scaleMode":"Normal","fontFamily":"-apple-system","fontSize":"10","valuesTracking":"1","changeMode":"price-and-percent","chartType":"area","lineWidth":2}
+                    </script>
+                </div>
             </div>
-        </div>
-        <div class="card" onclick="quickLoad('ETH','Ethereum','crypto')">
-            <div class="card-name">Ethereum</div>
-            <div class="card-symbol">ETH</div>
-            <div class="tradingview-widget-container card-widget">
-                <div class="tradingview-widget-container__widget"></div>
-                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js" async>
-                {"symbols":[["BINANCE:ETHUSDT|1D"]],"chartOnly":false,"width":"100%","height":"100%","locale":"en","colorTheme":"dark","autosize":true,"showVolume":false,"showMA":false,"hideDateRanges":true,"hideMarketStatus":false,"hideSymbolLogo":false,"scalePosition":"right","scaleMode":"Normal","fontFamily":"-apple-system, BlinkMacSystemFont, Trebuchet MS, Roboto, Ubuntu, sans-serif","fontSize":"10","noTimeScale":false,"valuesTracking":"1","changeMode":"price-and-percent","chartType":"area","lineWidth":2,"lineType":0,"dateRanges":["1d|1","1m|30","3m|60"]}
-                </script>
+            <div class="card" onclick="loadQuick('ETH','Ethereum','crypto')">
+                <div class="card-name">Ethereum</div>
+                <div class="card-symbol">ETH</div>
+                <div class="tradingview-widget-container card-widget">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js" async>
+                    {"symbols":[["BINANCE:ETHUSDT|1D"]],"chartOnly":false,"width":"100%","height":"100%","locale":"en","colorTheme":"dark","autosize":true,"showVolume":false,"showMA":false,"hideDateRanges":true,"hideMarketStatus":false,"hideSymbolLogo":false,"scalePosition":"right","scaleMode":"Normal","fontFamily":"-apple-system","fontSize":"10","valuesTracking":"1","changeMode":"price-and-percent","chartType":"area","lineWidth":2}
+                    </script>
+                </div>
             </div>
-        </div>
-        <div class="card" onclick="quickLoad('AAPL','Apple','stock')">
-            <div class="card-name">Apple</div>
-            <div class="card-symbol">AAPL</div>
-            <div class="tradingview-widget-container card-widget">
-                <div class="tradingview-widget-container__widget"></div>
-                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js" async>
-                {"symbols":[["NASDAQ:AAPL|1D"]],"chartOnly":false,"width":"100%","height":"100%","locale":"en","colorTheme":"dark","autosize":true,"showVolume":false,"showMA":false,"hideDateRanges":true,"hideMarketStatus":false,"hideSymbolLogo":false,"scalePosition":"right","scaleMode":"Normal","fontFamily":"-apple-system, BlinkMacSystemFont, Trebuchet MS, Roboto, Ubuntu, sans-serif","fontSize":"10","noTimeScale":false,"valuesTracking":"1","changeMode":"price-and-percent","chartType":"area","lineWidth":2,"lineType":0,"dateRanges":["1d|1","1m|30","3m|60"]}
-                </script>
+            <div class="card" onclick="loadQuick('AAPL','Apple','stock')">
+                <div class="card-name">Apple</div>
+                <div class="card-symbol">AAPL</div>
+                <div class="tradingview-widget-container card-widget">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js" async>
+                    {"symbols":[["NASDAQ:AAPL|1D"]],"chartOnly":false,"width":"100%","height":"100%","locale":"en","colorTheme":"dark","autosize":true,"showVolume":false,"showMA":false,"hideDateRanges":true,"hideMarketStatus":false,"hideSymbolLogo":false,"scalePosition":"right","scaleMode":"Normal","fontFamily":"-apple-system","fontSize":"10","valuesTracking":"1","changeMode":"price-and-percent","chartType":"area","lineWidth":2}
+                    </script>
+                </div>
             </div>
-        </div>
-        <div class="card" onclick="quickLoad('TSLA','Tesla','stock')">
-            <div class="card-name">Tesla</div>
-            <div class="card-symbol">TSLA</div>
-            <div class="tradingview-widget-container card-widget">
-                <div class="tradingview-widget-container__widget"></div>
-                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js" async>
-                {"symbols":[["NASDAQ:TSLA|1D"]],"chartOnly":false,"width":"100%","height":"100%","locale":"en","colorTheme":"dark","autosize":true,"showVolume":false,"showMA":false,"hideDateRanges":true,"hideMarketStatus":false,"hideSymbolLogo":false,"scalePosition":"right","scaleMode":"Normal","fontFamily":"-apple-system, BlinkMacSystemFont, Trebuchet MS, Roboto, Ubuntu, sans-serif","fontSize":"10","noTimeScale":false,"valuesTracking":"1","changeMode":"price-and-percent","chartType":"area","lineWidth":2,"lineType":0,"dateRanges":["1d|1","1m|30","3m|60"]}
-                </script>
+            <div class="card" onclick="loadQuick('TSLA','Tesla','stock')">
+                <div class="card-name">Tesla</div>
+                <div class="card-symbol">TSLA</div>
+                <div class="tradingview-widget-container card-widget">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js" async>
+                    {"symbols":[["NASDAQ:TSLA|1D"]],"chartOnly":false,"width":"100%","height":"100%","locale":"en","colorTheme":"dark","autosize":true,"showVolume":false,"showMA":false,"hideDateRanges":true,"hideMarketStatus":false,"hideSymbolLogo":false,"scalePosition":"right","scaleMode":"Normal","fontFamily":"-apple-system","fontSize":"10","valuesTracking":"1","changeMode":"price-and-percent","chartType":"area","lineWidth":2}
+                    </script>
+                </div>
             </div>
         </div>
     </div>
-</div>
-
-<div class="container">
-    <h2 class="section-title">Generate Snapshot</h2>
-    <p class="section-subtitle">Search any stock or cryptocurrency</p>
-    
-    <div class="input-box">
-        <div class="tabs">
-            <button class="tab active" id="stockTab" onclick="switchTab('stock')">Stocks</button>
-            <button class="tab" id="cryptoTab" onclick="switchTab('crypto')">Crypto</button>
+    <div class="container">
+        <h2 class="section-title">Generate Snapshot</h2>
+        <p class="section-subtitle">Search any stock or cryptocurrency</p>
+        <div class="input-box">
+            <div class="tabs">
+                <button class="tab active" id="stockTab" onclick="setType('stock')">Stocks</button>
+                <button class="tab" id="cryptoTab" onclick="setType('crypto')">Crypto</button>
+            </div>
+            <div class="search-wrapper">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" id="searchInput" placeholder="Type symbol (e.g., AAPL, BTC)..." autocomplete="off">
+                <div class="dropdown" id="dropdown"></div>
+            </div>
+            <button class="generate-btn" onclick="createSnapshot()">Create Snapshot</button>
         </div>
-        <div class="search-wrapper">
-            <span class="search-icon">🔍</span>
-            <input type="text" class="search-input" id="searchInput" placeholder="Type symbol (e.g., AAPL, BTC)..." autocomplete="off">
-            <div class="dropdown" id="dropdown"></div>
-        </div>
-        <button class="generate-btn" onclick="generate()">Create Snapshot</button>
-    </div>
-
-    <div class="error" id="error"></div>
-
-    <div class="result" id="result">
-        <div class="widget" id="widget">
-            <div class="widget-header">
-                <div>
+        <div class="error" id="error"></div>
+        <div class="result" id="result">
+            <div class="widget" id="widget">
+                <div class="widget-header">
                     <div class="widget-name" id="wName">---</div>
                     <div class="widget-symbol" id="wSymbol">---</div>
                 </div>
+                <div class="widget-chart-container" id="wChart"></div>
+                <div>
+                    <div class="widget-time" id="wTime">---</div>
+                    <div class="widget-brand">TICKER SNAPSHOT</div>
+                </div>
             </div>
-            <div class="widget-chart-container" id="wChart"></div>
-            <div>
-                <div class="widget-time" id="wTime">---</div>
-                <div class="widget-brand">TICKER SNAPSHOT</div>
-            </div>
+            <button class="export-btn" onclick="saveImage()">
+                <span>💾</span>
+                <span>Save as Image</span>
+            </button>
         </div>
-        <button class="export-btn" onclick="exportImg()">
-            <span>💾</span>
-            <span>Save as Image</span>
-        </button>
     </div>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"><\/script>
-<script>
-```
-
-let activeType=‘stock’;
-const STOCKS=[‘AAPL’,‘MSFT’,‘GOOGL’,‘AMZN’,‘TSLA’,‘META’,‘NVDA’,‘JPM’,‘V’,‘WMT’];
-const CRYPTO=[‘BTC’,‘ETH’,‘BNB’,‘XRP’,‘ADA’,‘SOL’,‘DOT’,‘DOGE’,‘MATIC’,‘LTC’];
-
-function toggleMode(){
-document.body.classList.toggle(‘light’);
-}
-
-function switchTab(type){
-activeType=type;
-document.getElementById(‘stockTab’).classList.remove(‘active’);
-document.getElementById(‘cryptoTab’).classList.remove(‘active’);
-document.getElementById(type+‘Tab’).classList.add(‘active’);
-document.getElementById(‘dropdown’).classList.remove(‘show’);
-}
-
-function quickLoad(symbol,name,type){
-document.getElementById(‘searchInput’).value=symbol;
-activeType=type;
-switchTab(type);
-generate();
-}
-
-document.getElementById(‘searchInput’).addEventListener(‘input’,e=>{
-const q=e.target.value.trim().toUpperCase();
-const dd=document.getElementById(‘dropdown’);
-if(q.length<1){dd.classList.remove(‘show’);return}
-let results=activeType===‘stock’?STOCKS.filter(s=>s.includes(q)):CRYPTO.filter(c=>c.includes(q));
-if(results.length){
-dd.innerHTML=results.slice(0,10).map(r=>’<div class="dropdown-item" onclick="selectSymbol(\''+r+'\')"><span class="dropdown-symbol">’+r+’</span></div>’).join(’’);
-dd.classList.add(‘show’);
-}else{dd.classList.remove(‘show’)}
-});
-
-document.getElementById(‘searchInput’).addEventListener(‘keypress’,e=>{
-if(e.key===‘Enter’)generate();
-});
-
-function selectSymbol(sym){
-document.getElementById(‘searchInput’).value=sym;
-document.getElementById(‘dropdown’).classList.remove(‘show’);
-}
-
-function generate(){
-const sym=document.getElementById(‘searchInput’).value.trim().toUpperCase();
-if(!sym){
-document.getElementById(‘error’).textContent=‘Please enter a symbol’;
-document.getElementById(‘error’).classList.add(‘show’);
-return;
-}
-document.getElementById(‘error’).classList.remove(‘show’);
-const tvSymbol=activeType===‘crypto’?‘BINANCE:’+sym+‘USDT’:‘NASDAQ:’+sym;
-document.getElementById(‘wName’).textContent=sym;
-document.getElementById(‘wSymbol’).textContent=sym;
-document.getElementById(‘wTime’).textContent=getTime();
-const chartContainer=document.getElementById(‘wChart’);
-const theme=document.body.classList.contains(‘light’)?‘light’:‘dark’;
-chartContainer.innerHTML=’<div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>{“autosize”:true,“symbol”:”’+tvSymbol+’”,“interval”:“D”,“timezone”:“Etc/UTC”,“theme”:”’+theme+’”,“style”:“1”,“locale”:“en”,“enable_publishing”:false,“hide_top_toolbar”:false,“hide_legend”:true,“save_image”:false,“container_id”:“tradingview_widget”}</script></div>’;
-const newScript=document.createElement(‘script’);
-newScript.type=‘text/javascript’;
-newScript.src=‘https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js’;
-newScript.async=true;
-newScript.innerHTML=’{“autosize”:true,“symbol”:”’+tvSymbol+’”,“interval”:“D”,“timezone”:“Etc/UTC”,“theme”:”’+theme+’”,“style”:“1”,“locale”:“en”,“enable_publishing”:false,“hide_top_toolbar”:false,“hide_legend”:true,“save_image”:false,“container_id”:“tradingview_widget”}’;
-chartContainer.querySelector(’.tradingview-widget-container’).appendChild(newScript);
-document.getElementById(‘result’).classList.add(‘show’);
-}
-
-function exportImg(){
-const btn=event.target;
-btn.disabled=true;
-btn.innerHTML=’<span>⏳</span> Saving…’;
-html2canvas(document.getElementById(‘widget’),{scale:2,useCORS:true}).then(canvas=>{
-canvas.toBlob(b=>{
-const a=document.createElement(‘a’);
-a.href=URL.createObjectURL(b);
-a.download=‘ticker-’+document.getElementById(‘searchInput’).value+’-’+new Date().toISOString().split(‘T’)[0]+’.png’;
-a.click();
-btn.disabled=false;
-btn.innerHTML=’<span>💾</span><span>Save as Image</span>’;
-});
-});
-}
-
-function getTime(){
-const d=new Date(),m=[‘Jan’,‘Feb’,‘Mar’,‘Apr’,‘May’,‘Jun’,‘Jul’,‘Aug’,‘Sep’,‘Oct’,‘Nov’,‘Dec’];
-let h=d.getHours();
-const mm=d.getMinutes().toString().padStart(2,‘0’),ap=h>=12?‘PM’:‘AM’;
-h=h%12||12;
-return m[d.getMonth()]+’ ‘+d.getDate()+’, ‘+d.getFullYear()+’ · ‘+h+’:’+mm+’ ’+ap;
-}
-</script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+let activeType='stock';
+const STOCKS=['AAPL','MSFT','GOOGL','AMZN','TSLA','META','NVDA'];
+const CRYPTO=['BTC','ETH','BNB','XRP','SOL','ADA','DOT'];
+function toggleMode(){document.body.classList.toggle('light-mode')}
+function setType(type){activeType=type;document.getElementById('stockTab').classList.remove('active');document.getElementById('cryptoTab').classList.remove('active');document.getElementById(type+'Tab').classList.add('active');document.getElementById('dropdown').classList.remove('show')}
+function loadQuick(sym,name,type){document.getElementById('searchInput').value=sym;setType(type);createSnapshot();window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})}
+document.getElementById('searchInput').addEventListener('input',function(e){const q=e.target.value.trim().toUpperCase();const dd=document.getElementById('dropdown');if(q.length<1){dd.classList.remove('show');return}const list=activeType==='stock'?STOCKS:CRYPTO;const matches=list.filter(s=>s.includes(q));if(matches.length){dd.innerHTML=matches.map(s=>'<div class="dropdown-item" onclick="pickSymbol(\''+s+'\')"><span class="dropdown-symbol">'+s+'</span></div>').join('');dd.classList.add('show')}else{dd.classList.remove('show')}});
+document.getElementById('searchInput').addEventListener('keypress',function(e){if(e.key==='Enter')createSnapshot()});
+function pickSymbol(s){document.getElementById('searchInput').value=s;document.getElementById('dropdown').classList.remove('show')}
+function createSnapshot(){const sym=document.getElementById('searchInput').value.trim().toUpperCase();if(!sym){document.getElementById('error').textContent='Please enter a symbol';document.getElementById('error').classList.add('show');return}document.getElementById('error').classList.remove('show');const exchange=activeType==='crypto'?'BINANCE':'NASDAQ';const pair=activeType==='crypto'?sym+'USDT':sym;const fullSymbol=exchange+':'+pair;const theme=document.body.classList.contains('light-mode')?'light':'dark';document.getElementById('wName').textContent=sym;document.getElementById('wSymbol').textContent=sym;document.getElementById('wTime').textContent=getTimestamp();const chart=document.getElementById('wChart');chart.innerHTML='';const container=document.createElement('div');container.className='tradingview-widget-container';container.style.cssText='height:100%;width:100%';const widget=document.createElement('div');widget.className='tradingview-widget-container__widget';container.appendChild(widget);const script=document.createElement('script');script.type='text/javascript';script.src='https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';script.async=true;script.textContent=JSON.stringify({autosize:true,symbol:fullSymbol,interval:'D',timezone:'Etc/UTC',theme:theme,style:'1',locale:'en',enable_publishing:false,hide_top_toolbar:false,hide_legend:true,save_image:false});container.appendChild(script);chart.appendChild(container);document.getElementById('result').classList.add('show')}
+function saveImage(){const btn=event.target;btn.disabled=true;btn.innerHTML='<span>⏳</span> Saving...';html2canvas(document.getElementById('widget'),{scale:2}).then(function(canvas){canvas.toBlob(function(blob){const url=URL.createObjectURL(blob);const link=document.createElement('a');link.href=url;link.download='ticker-'+document.getElementById('searchInput').value+'-'+new Date().toISOString().split('T')[0]+'.png';link.click();URL.revokeObjectURL(url);btn.disabled=false;btn.innerHTML='<span>💾</span><span>Save as Image</span>'})})}
+function getTimestamp(){const d=new Date();const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];let h=d.getHours();const m=d.getMinutes().toString().padStart(2,'0');const ap=h>=12?'PM':'AM';h=h%12||12;return months[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear()+' · '+h+':'+m+' '+ap}
+    </script>
 </body>
 </html>
