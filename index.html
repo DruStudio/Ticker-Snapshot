@@ -192,6 +192,7 @@ align-items:center;
 width:36px;
 height:36px;
 border-radius:50%;
+background:#000;
 }
 
 .name{font-size:1.25rem;font-weight:900}
@@ -209,6 +210,25 @@ font-weight:900;
 margin:14px 0;
 }
 
+.stats{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+}
+
+.stat{
+background:#0d0d16;
+border-radius:14px;
+padding:10px;
+text-align:center;
+}
+.stat span{
+display:block;
+font-size:.65rem;
+color:var(--muted);
+margin-bottom:4px;
+}
+
 .footer{
 border-top:1px solid var(--border);
 padding-top:10px;
@@ -216,6 +236,22 @@ margin-top:12px;
 font-size:.65rem;
 color:var(--muted);
 text-align:center;
+}
+
+/* SHARE OUTPUT */
+.share-output{
+margin-top:12px;
+font-size:.8rem;
+color:var(--muted);
+background:#0d0d16;
+border-radius:12px;
+padding:12px;
+}
+
+.success{
+color:var(--green);
+font-weight:800;
+margin-bottom:6px;
 }
 
 @media(max-width:900px){
@@ -230,7 +266,7 @@ h1{font-size:2.4rem}
 <canvas id="particles"></canvas>
 
 <div class="bottom-left">
-<div class="badge">v6.8.0</div>
+<div class="badge">v6.8.1</div>
 <div class="badge" onclick="FAQ.open()">FAQ</div>
 </div>
 
@@ -265,7 +301,8 @@ h1{font-size:2.4rem}
 
 <div class="section-title">SHARE</div>
 <div class="panel">
-<button class="primary" onclick="App.generatePost()">Generate Post</button>
+<button class="primary" onclick="App.generateShareables()">Generate Shareables</button>
+<div id="shareOutput" class="share-output" style="display:none"></div>
 </div>
 </div>
 
@@ -276,17 +313,65 @@ h1{font-size:2.4rem}
 <div class="faq-modal" id="faq" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);align-items:center;justify-content:center;z-index:20">
 <div class="panel" style="max-width:460px">
 <h3>What is BlockState?</h3>
-<p>BlockState captures a clean snapshot of crypto market conditions at a specific moment.</p>
+<p>BlockState creates verifiable snapshots of crypto market conditions you can save and share.</p>
 <h3>How do I share?</h3>
-<p>Click “Generate Post” to save the image and copy a caption instantly.</p>
+<p>Click “Generate Shareables” to save the image and auto-generate a caption.</p>
 <button class="primary" onclick="FAQ.close()">Close</button>
 </div>
 </div>
 
 <script>
+/* PARTICLES */
+const canvas=document.getElementById("particles");
+const ctx=canvas.getContext("2d");
+let w,h,particles=[];
+function resize(){
+w=canvas.width=window.innerWidth;
+h=canvas.height=window.innerHeight;
+}
+window.addEventListener("resize",resize);
+resize();
+
+for(let i=0;i<80;i++){
+particles.push({
+x:Math.random()*w,
+y:Math.random()*h,
+vx:(Math.random()-.5)*.3,
+vy:(Math.random()-.5)*.3,
+r:Math.random()*1.2+0.3
+});
+}
+function tick(){
+ctx.clearRect(0,0,w,h);
+ctx.fillStyle="rgba(108,124,255,.35)";
+particles.forEach(p=>{
+p.x+=p.vx;p.y+=p.vy;
+if(p.x<0)p.x=w;if(p.x>w)p.x=0;
+if(p.y<0)p.y=h;if(p.y>h)p.y=0;
+ctx.beginPath();
+ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+ctx.fill();
+});
+requestAnimationFrame(tick);
+}
+tick();
+
+/* APP */
 const App={
 coins:[],
 current:null,
+
+fmt(v){
+if(v>=1)return v.toFixed(2);
+if(v>=0.01)return v.toFixed(4);
+if(v>=0.0001)return v.toFixed(6);
+return v.toFixed(8);
+},
+fmtCap(v){
+if(v>=1e12)return'$'+(v/1e12).toFixed(2)+'T';
+if(v>=1e9)return'$'+(v/1e9).toFixed(2)+'B';
+return'$'+v.toLocaleString();
+},
 
 async load(){
 const r=await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1");
@@ -349,7 +434,14 @@ ${up?'▲':'▼'} ${c.price_change_percentage_24h.toFixed(2)}%
 </div>
 </div>
 
-<div class="price">$${c.current_price.toFixed(2)}</div>
+<div class="price">$${this.fmt(c.current_price)}</div>
+
+<div class="stats">
+<div class="stat"><span>24h High</span>$${this.fmt(c.high_24h)}</div>
+<div class="stat"><span>24h Low</span>$${this.fmt(c.low_24h)}</div>
+<div class="stat"><span>Market Cap</span>${this.fmtCap(c.market_cap)}</div>
+<div class="stat"><span>MC Rank</span>#${c.market_cap_rank}</div>
+</div>
 
 <div class="footer">
 Captured • ${new Date().toUTCString()}<br>BLOCKSTATE.LIVE
@@ -367,9 +459,9 @@ const c=this.coins.find(x=>v.includes(x.symbol)||v.includes(x.name.toLowerCase()
 if(c)this.show(c);
 },
 
-generatePost(){
+generateShareables(){
 this.saveImage();
-this.copyCaption();
+this.showCaption();
 },
 
 saveImage(){
@@ -381,13 +473,15 @@ a.click();
 });
 },
 
-copyCaption(){
-if(!this.current)return;
+showCaption(){
+const out=document.getElementById("shareOutput");
 const c=this.current;
+if(!c)return;
 const up=c.price_change_percentage_24h>=0;
-navigator.clipboard.writeText(
-`${c.name} is ${up?'up':'down'} ${Math.abs(c.price_change_percentage_24h).toFixed(2)}% in 24 hours. #${c.symbol.toUpperCase()} #BlockState`
-);
+const text=`${c.name} is ${up?'up':'down'} ${Math.abs(c.price_change_percentage_24h).toFixed(2)}% in 24 hours. #${c.symbol.toUpperCase()} #BlockState`;
+navigator.clipboard.writeText(text);
+out.style.display="block";
+out.innerHTML=`<div class="success">Image saved!</div>${text}`;
 }
 };
 
