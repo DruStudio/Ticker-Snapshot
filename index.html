@@ -25,6 +25,7 @@ background:var(--bg);
 color:var(--text);
 font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 overflow-x:hidden;
+overflow-y:auto;
 }
 
 /* Version */
@@ -46,50 +47,20 @@ z-index:9999;
 .exporting .no-export{display:none!important}
 
 /* Hero */
-.hero{
-text-align:center;
-padding:64px 20px 28px;
-}
-
+.hero{text-align:center;padding:64px 20px 28px}
 .hero-title{
-font-size:3rem;
-font-weight:900;
-background:linear-gradient(
-120deg,
-#6c7cff,
-#8b5cf6,
-#22c55e,
-#ec4899,
-#6c7cff
-);
+font-size:3rem;font-weight:900;
+background:linear-gradient(120deg,#6c7cff,#8b5cf6,#22c55e,#ec4899,#6c7cff);
 background-size:400% 400%;
 animation:slowFlow 60s linear infinite;
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
 }
+@keyframes slowFlow{0%{background-position:0% 50%}100%{background-position:100% 50%}}
+.hero-subtitle{margin-top:6px;color:var(--muted)}
 
-@keyframes slowFlow{
-0%{background-position:0% 50%}
-100%{background-position:100% 50%}
-}
-
-.hero-subtitle{
-margin-top:6px;
-color:var(--muted);
-}
-
-/* Layout */
-.container{
-max-width:1200px;
-margin:0 auto;
-padding:0 20px 80px;
-}
-
-.section-title{
-text-align:center;
-font-size:2rem;
-margin:36px 0 20px;
-}
+.container{max-width:1200px;margin:0 auto;padding:0 20px 80px}
+.section-title{text-align:center;font-size:2rem;margin:36px 0 20px}
 
 /* Trending */
 .trending-stack{
@@ -99,9 +70,7 @@ overflow-x:auto;
 scroll-snap-type:x mandatory;
 padding-bottom:14px;
 }
-
 .trending-stack::-webkit-scrollbar{display:none}
-
 .trending-stack .widget-card{
 scroll-snap-align:center;
 flex:0 0 86%;
@@ -117,22 +86,19 @@ padding:26px;
 box-shadow:0 18px 48px rgba(0,0,0,.5);
 position:relative;
 }
-
 .widget-card.positive{border-color:var(--green)}
 .widget-card.negative{border-color:var(--red)}
 
 .export-btn,.share-btn{
 position:absolute;
-width:30px;
-height:30px;
+width:32px;height:32px;
 border-radius:50%;
 border:none;
 background:var(--bg2);
 color:var(--text);
 cursor:pointer;
-font-size:14px;
+font-size:15px;
 }
-
 .export-btn{bottom:14px;right:14px}
 .share-btn{bottom:14px;left:14px}
 
@@ -140,24 +106,25 @@ font-size:14px;
 .widget-header{
 display:flex;
 align-items:center;
+justify-content:space-between;
 gap:12px;
 padding-bottom:14px;
 border-bottom:1px solid var(--border);
 margin-bottom:16px;
 }
 
+.widget-left{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
 .widget-header img{
 width:36px;
 height:36px;
 object-fit:contain;
-}
-
-.widget-title{display:flex;flex-direction:column}
-
-.widget-name-row{
-display:flex;
-align-items:center;
-gap:8px;
+crossorigin:anonymous;
+referrerpolicy:no-referrer;
 }
 
 .widget-name{
@@ -165,19 +132,18 @@ font-size:1.4rem;
 font-weight:900;
 }
 
-.widget-percent{
-font-size:.8rem;
-font-weight:800;
-}
-
-.widget-percent.positive{color:var(--green)}
-.widget-percent.negative{color:var(--red)}
-
 .widget-symbol{
 font-size:.75rem;
 color:var(--accent);
 font-weight:700;
 }
+
+.widget-percent{
+font-size:1.4rem;
+font-weight:900;
+}
+.widget-percent.positive{color:var(--green)}
+.widget-percent.negative{color:var(--red)}
 
 /* Price */
 .widget-price{
@@ -194,20 +160,17 @@ grid-template-columns:1fr 1fr;
 gap:12px;
 margin-bottom:18px;
 }
-
 .widget-stat{
 background:var(--bg2);
 padding:12px;
 border-radius:14px;
 text-align:center;
 }
-
 .widget-stat-label{
 font-size:.7rem;
 opacity:.7;
 margin-bottom:4px;
 }
-
 .widget-stat-value{
 font-weight:800;
 font-size:.95rem;
@@ -219,12 +182,7 @@ border-top:1px solid var(--border);
 padding-top:14px;
 text-align:center;
 }
-
-.widget-timestamp{
-font-size:.7rem;
-color:var(--muted);
-}
-
+.widget-timestamp{font-size:.7rem;color:var(--muted)}
 .widget-branding{
 margin-top:6px;
 font-size:.65rem;
@@ -232,31 +190,28 @@ letter-spacing:2px;
 opacity:.85;
 }
 
-/* Generator */
-.generator{
-display:flex;
-flex-direction:column;
-align-items:center;
-gap:24px;
+/* Generator layout */
+.generator-grid{
+display:grid;
+grid-template-columns:360px 1fr;
+gap:40px;
+align-items:start;
 }
-
 .controls{
-width:100%;
-max-width:420px;
 background:var(--bg2);
 padding:28px;
 border-radius:22px;
 border:1px solid var(--border);
 }
-
-label{
-font-size:.8rem;
-color:var(--muted);
-font-weight:700;
-margin-bottom:8px;
-display:block;
+.preview-wrap{
+display:flex;
+justify-content:center;
+align-items:flex-start;
+min-height:520px;
 }
 
+/* Inputs */
+label{font-size:.8rem;color:var(--muted);font-weight:700;margin-bottom:8px;display:block}
 input{
 width:100%;
 padding:16px;
@@ -266,47 +221,26 @@ background:var(--bg3);
 color:var(--text);
 margin-bottom:16px;
 }
-
-.quick-buttons{
-display:flex;
-gap:8px;
-margin-bottom:20px;
-}
-
+.quick-buttons{display:flex;gap:8px;margin-bottom:20px}
 .quick-buttons button{
-flex:1;
-padding:10px;
-border-radius:10px;
+flex:1;padding:10px;border-radius:10px;
 border:2px solid var(--border);
 background:var(--bg3);
-color:white;
-font-weight:700;
-cursor:pointer;
-}
-
+color:white;font-weight:700;cursor:pointer}
 .btn-primary{
-width:100%;
-padding:18px;
-border:none;
-border-radius:12px;
-font-weight:800;
-background:linear-gradient(135deg,var(--accent),#8b5cf6);
-color:white;
-cursor:pointer;
-}
+width:100%;padding:18px;border:none;border-radius:12px;
+font-weight:800;background:linear-gradient(135deg,var(--accent),#8b5cf6);color:white}
 
-.preview-wrap{
-display:flex;
-justify-content:center;
-align-items:center;
-min-height:520px;
+/* Mobile */
+@media(max-width:900px){
+.generator-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
 
 <body>
 
-<div class="version-badge">v5.3.7-stable</div>
+<div class="version-badge">v5.3.8-stable</div>
 
 <header class="hero">
 <h1 class="hero-title">BlockState</h1>
@@ -320,7 +254,8 @@ min-height:520px;
 
 <h2 class="section-title">Create a BlockState</h2>
 
-<div class="generator">
+<div class="generator-grid">
+
 <div class="controls">
 <label>Search Crypto (Top 250)</label>
 <input id="coinInput" list="coinList" placeholder="BTC, SOL, BONK">
@@ -339,6 +274,7 @@ min-height:520px;
 <div id="preview" class="preview-wrap">
 <div style="opacity:.6">Generate a block state</div>
 </div>
+
 </div>
 </div>
 
@@ -381,15 +317,15 @@ return `
 <button class="export-btn no-export" onclick="App.export(this)">⤓</button>
 
 <div class="widget-header">
-<img src="${c.image}">
-<div class="widget-title">
-<div class="widget-name-row">
+<div class="widget-left">
+<img src="${c.image}" crossorigin="anonymous" referrerpolicy="no-referrer">
+<div>
 <div class="widget-name">${c.name}</div>
+<div class="widget-symbol">${c.symbol.toUpperCase()}</div>
+</div>
+</div>
 <div class="widget-percent ${pos?'positive':'negative'}">
 ${pos?'▲':'▼'} ${c.price_change_percentage_24h.toFixed(2)}%
-</div>
-</div>
-<div class="widget-symbol">${c.symbol.toUpperCase()}</div>
 </div>
 </div>
 
@@ -439,7 +375,12 @@ document.getElementById('preview').innerHTML=this.build(c);
 async export(btn){
 const widget=btn.closest('.widget-card');
 document.body.classList.add('exporting');
-const canvas=await html2canvas(widget,{scale:2,backgroundColor:'#1a1a28'});
+const canvas=await html2canvas(widget,{
+scale:2,
+backgroundColor:'#1a1a28',
+useCORS:true,
+allowTaint:false
+});
 const a=document.createElement('a');
 a.href=canvas.toDataURL('image/png');
 a.download='blockstate.png';
@@ -450,7 +391,12 @@ document.body.classList.remove('exporting');
 async share(btn){
 const widget=btn.closest('.widget-card');
 document.body.classList.add('exporting');
-const canvas=await html2canvas(widget,{scale:2,backgroundColor:'#1a1a28'});
+const canvas=await html2canvas(widget,{
+scale:2,
+backgroundColor:'#1a1a28',
+useCORS:true,
+allowTaint:false
+});
 document.body.classList.remove('exporting');
 if(navigator.share){
 const blob=await new Promise(r=>canvas.toBlob(r));
@@ -460,26 +406,6 @@ navigator.share({files:[new File([blob],'blockstate.png',{type:'image/png'})]});
 };
 
 App.init();
-</script>
-
-<script>
-/* Auto-snap nearest card on scroll end */
-const stack=document.getElementById('trending');
-let snapTimeout;
-stack.addEventListener('scroll',()=>{
-clearTimeout(snapTimeout);
-snapTimeout=setTimeout(()=>{
-const cards=[...stack.children];
-const center=stack.scrollLeft+stack.offsetWidth/2;
-let closest=cards[0],dist=Infinity;
-cards.forEach(c=>{
-const cCenter=c.offsetLeft+c.offsetWidth/2;
-const d=Math.abs(center-cCenter);
-if(d<dist){dist=d;closest=c;}
-});
-closest.scrollIntoView({behavior:'smooth',inline:'center'});
-},120);
-});
 </script>
 
 </body>
