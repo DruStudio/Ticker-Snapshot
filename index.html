@@ -39,17 +39,17 @@ radial-gradient(1px 1px at 10% 20%, rgba(108,124,255,.25) 1px, transparent 0),
 radial-gradient(1px 1px at 80% 30%, rgba(108,124,255,.2) 1px, transparent 0),
 radial-gradient(1px 1px at 40% 70%, rgba(108,124,255,.15) 1px, transparent 0),
 radial-gradient(1px 1px at 70% 80%, rgba(108,124,255,.2) 1px, transparent 0);
-background-size: 200px 200px;
+background-size:200px 200px;
 pointer-events:none;
 z-index:0;
 }
 
 /* ===============================
-   VERSION + FAQ
+   FOOTER BADGES
    =============================== */
-.top-left{
+.bottom-left{
 position:fixed;
-top:14px;
+bottom:14px;
 left:14px;
 z-index:10;
 display:flex;
@@ -63,9 +63,10 @@ border-radius:12px;
 padding:8px 12px;
 font-size:.75rem;
 font-weight:700;
+cursor:default;
 }
 
-.faq-btn{cursor:pointer}
+.badge.faq{cursor:pointer}
 
 /* ===============================
    LAYOUT
@@ -75,7 +76,7 @@ position:relative;
 z-index:2;
 max-width:1100px;
 margin:0 auto;
-padding:80px 20px 80px;
+padding:80px 20px 140px;
 display:flex;
 flex-direction:column;
 align-items:center;
@@ -87,17 +88,19 @@ font-weight:900;
 color:var(--accent);
 }
 
-.bio{
-margin-top:8px;
-font-size:1rem;
+.section-title{
+margin:40px 0 14px;
+font-size:1.1rem;
+font-weight:800;
+letter-spacing:.5px;
 color:var(--muted);
+text-transform:uppercase;
 }
 
 /* ===============================
    MAIN GRID
    =============================== */
 .main{
-margin-top:48px;
 display:grid;
 grid-template-columns:420px 420px;
 gap:36px;
@@ -107,7 +110,7 @@ align-items:start;
 }
 
 /* ===============================
-   CONTROL PANEL (GENERATOR + TRENDING)
+   CREATE PANEL
    =============================== */
 .panel{
 background:linear-gradient(135deg,var(--panel),#1e1e30);
@@ -164,10 +167,10 @@ margin-bottom:18px;
 }
 
 /* ===============================
-   TRENDING LIST
+   TRENDING
    =============================== */
 .trending h3{
-font-size:.9rem;
+font-size:.85rem;
 margin-bottom:10px;
 color:var(--muted);
 }
@@ -185,12 +188,11 @@ cursor:pointer;
 }
 
 .trending li:last-child{border-bottom:none}
-
 .up{color:var(--green)}
 .down{color:var(--red)}
 
 /* ===============================
-   WIDGET
+   CAPTURE WIDGET
    =============================== */
 .widget{
 background:var(--panel2);
@@ -279,29 +281,58 @@ text-align:center;
 }
 
 /* ===============================
+   SHARE SECTION
+   =============================== */
+.share{
+margin-top:60px;
+width:100%;
+max-width:900px;
+}
+
+.share-grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:20px;
+}
+
+.share-card{
+background:linear-gradient(135deg,var(--panel),#1e1e30);
+border:1px dashed var(--border);
+border-radius:18px;
+height:160px;
+display:flex;
+align-items:center;
+justify-content:center;
+color:var(--muted);
+font-size:.85rem;
+}
+
+/* ===============================
    MOBILE
    =============================== */
 @media(max-width:900px){
 .main{grid-template-columns:1fr}
 h1{font-size:2.4rem}
+.share-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
 
 <body>
 
-<div class="top-left">
-<div class="badge">v6.7.0</div>
-<div class="badge faq-btn" onclick="openFAQ()">FAQ</div>
+<div class="bottom-left">
+<div class="badge">v6.7.1</div>
+<div class="badge faq" onclick="alert('BlockState lets you create a clean snapshot of a crypto market moment. Choose a coin, capture its state, and share it.')">FAQ</div>
 </div>
 
 <div class="container">
 <h1>BlockState</h1>
-<p class="bio">Create. Capture. Share.</p>
 
 <div class="main">
 
-<!-- CONTROL PANEL -->
+<!-- CREATE -->
+<div>
+<div class="section-title">Create</div>
 <div class="panel">
 <label>Search Crypto (Top 250)</label>
 <input id="search" list="coins" placeholder="BTC, SOL, BONK">
@@ -309,24 +340,35 @@ h1{font-size:2.4rem}
 
 <div class="presets" id="presets"></div>
 
-<button class="primary" onclick="App.generate()">Generate BlockState</button>
+<button class="primary" onclick="App.generate()">Create BlockState</button>
 
 <div class="trending">
 <h3>Trending (24h movers)</h3>
 <ul id="trendList"></ul>
 </div>
 </div>
+</div>
 
-<!-- OUTPUT -->
+<!-- CAPTURE -->
+<div>
+<div class="section-title">Capture</div>
 <div id="output"></div>
+</div>
 
+</div>
+
+<!-- SHARE -->
+<div class="share">
+<div class="section-title">Share</div>
+<div class="share-grid">
+<div class="share-card">Instagram Story</div>
+<div class="share-card">X / Twitter</div>
+<div class="share-card">Save Image</div>
 </div>
 </div>
 
-<!-- FAQ -->
-<div id="faq" style="display:none"></div>
+</div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 const App={
 coins:[],
@@ -348,7 +390,7 @@ const r=await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=
 this.coins=await r.json();
 this.populate();
 this.renderTrending();
-this.show(this.coins[0]); // BTC preload
+this.show(this.coins[0]);
 },
 
 populate(){
@@ -433,9 +475,7 @@ document.getElementById("output").innerHTML=this.build(c);
 }
 };
 
-document.addEventListener("DOMContentLoaded",()=>{
-App.load();
-});
+document.addEventListener("DOMContentLoaded",()=>App.load());
 </script>
 
 </body>
