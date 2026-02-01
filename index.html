@@ -32,15 +32,17 @@ color:var(--text);
 
 /* NAV */
 nav{
-position:absolute;
+position:fixed;
 top:0;
 width:100%;
 display:flex;
 justify-content:center;
 gap:28px;
 padding:14px;
-z-index:5;
+z-index:10;
+transition:transform .3s ease;
 }
+nav.hide{transform:translateY(-100%)}
 nav a{
 color:var(--muted);
 text-decoration:none;
@@ -51,7 +53,7 @@ letter-spacing:.25em;
 
 /* PARTICLES */
 canvas{
-position:absolute;
+position:fixed;
 inset:0;
 z-index:0;
 pointer-events:none;
@@ -105,7 +107,6 @@ cursor:pointer;
 position:relative;
 }
 
-/* LIVE GLOW — REDUCED */
 .icon.live::after{
 content:"";
 position:absolute;
@@ -130,6 +131,18 @@ letter-spacing:.18em;
 color:var(--muted);
 }
 
+/* FAQ */
+.faq{
+position:absolute;
+bottom:16px;
+display:flex;
+gap:24px;
+font-size:.7rem;
+letter-spacing:.25em;
+color:var(--muted);
+}
+.faq a{color:var(--muted);text-decoration:none}
+
 @media(max-width:520px){
 .icons{grid-template-columns:1fr;max-width:320px}
 h1{font-size:3rem}
@@ -139,7 +152,7 @@ h1{font-size:3rem}
 
 <body>
 
-<nav>
+<nav id="nav">
 <a href="index.html">HOME</a>
 <a href="crypto.html">CRYPTO</a>
 </nav>
@@ -157,22 +170,25 @@ A clean, visual snapshot of the current state of something — built to be share
 Crypto
 <span>LIVE</span>
 </div>
-<div class="icon">
-Stocks
-<span>UNDER CONSTRUCTION</span>
+<div class="icon">Stocks<span>UNDER CONSTRUCTION</span></div>
+<div class="icon">Ideas<span>UNDER CONSTRUCTION</span></div>
+<div class="icon">Memes<span>UNDER CONSTRUCTION</span></div>
 </div>
-<div class="icon">
-Ideas
-<span>UNDER CONSTRUCTION</span>
-</div>
-<div class="icon">
-Memes
-<span>UNDER CONSTRUCTION</span>
-</div>
+
+<div class="faq">
+<a href="#">FAQ</a>
 </div>
 </div>
 
 <script>
+let last=0;
+addEventListener("scroll",()=>{
+const n=document.getElementById("nav");
+const y=scrollY;
+n.classList.toggle("hide",y>last && y>50);
+last=y;
+});
+
 const c=document.getElementById("particles"),x=c.getContext("2d");
 let w,h,p=[];
 function r(){w=c.width=innerWidth;h=c.height=innerHeight}
