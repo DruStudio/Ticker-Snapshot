@@ -96,14 +96,6 @@ border-radius:20px;
 padding:22px;
 }
 
-label{
-font-size:.7rem;
-font-weight:700;
-color:var(--muted);
-margin-bottom:6px;
-display:block;
-}
-
 input{
 width:100%;
 padding:14px;
@@ -247,27 +239,6 @@ text-align:center;
 .share{
 margin-top:14px;
 }
-.share-carousel{
-position:relative;
-height:120px;
-overflow:hidden;
-}
-.share-card{
-position:absolute;
-inset:0;
-background:linear-gradient(135deg,var(--panel),#1d1d32);
-border:1px dashed var(--border);
-border-radius:18px;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:.8rem;
-color:var(--muted);
-opacity:0;
-transition:.6s;
-}
-.share-card.active{opacity:1}
-
 .share-actions{
 display:flex;
 justify-content:center;
@@ -310,9 +281,7 @@ h1{font-size:2.4rem}
 <div>
 <div class="section-title">CREATE</div>
 <div class="panel">
-<label>Search Crypto (Top 250)</label>
 <input id="search" placeholder="e.g BTC">
-<datalist id="coins"></datalist>
 
 <div class="presets" id="presets"></div>
 
@@ -332,12 +301,6 @@ h1{font-size:2.4rem}
 
 <div class="section-title">SHARE</div>
 <div class="share">
-<div class="share-carousel" id="shareCarousel">
-<div class="share-card active">Instagram Story</div>
-<div class="share-card">X / Twitter</div>
-<div class="share-card">Messages</div>
-</div>
-
 <div class="share-actions">
 <button onclick="App.shareX()">X</button>
 <button onclick="App.shareIG()">Instagram</button>
@@ -355,10 +318,10 @@ const canvas=document.getElementById("particles");
 const ctx=canvas.getContext("2d");
 let w,h,particles=[];
 function resize(){
-w=canvas.width=window.innerWidth;
-h=canvas.height=window.innerHeight;
+w=canvas.width=innerWidth;
+h=canvas.height=innerHeight;
 }
-window.addEventListener("resize",resize);
+addEventListener("resize",resize);
 resize();
 
 for(let i=0;i<80;i++){
@@ -370,7 +333,6 @@ vy:(Math.random()-.5)*.3,
 r:Math.random()*1.2+0.3
 });
 }
-
 (function tick(){
 ctx.clearRect(0,0,w,h);
 ctx.fillStyle="rgba(108,124,255,.35)";
@@ -388,7 +350,6 @@ requestAnimationFrame(tick);
 /* APP */
 const App={
 coins:[],
-shareIndex:0,
 
 fmtCap(v){
 if(v>=1e12)return'$'+(v/1e12).toFixed(2)+'T';
@@ -422,6 +383,7 @@ p.appendChild(b);
 
 renderTrending(){
 const list=document.getElementById("trendList");
+list.innerHTML="";
 this.coins
 .sort((a,b)=>b.price_change_percentage_24h-a.price_change_percentage_24h)
 .slice(0,10)
@@ -478,23 +440,18 @@ const c=this.coins.find(x=>v.includes(x.symbol)||v.includes(x.name.toLowerCase()
 if(c)this.show(c);
 },
 
-async captureImage(){
-const widget=document.querySelector(".widget");
-return html2canvas(widget,{backgroundColor:null});
+capture(){
+return html2canvas(document.querySelector(".widget"),{backgroundColor:null});
 },
 
 shareX(){
-this.captureImage().then(c=>{
 window.open("https://twitter.com/intent/tweet?text=Captured%20with%20BlockState%20https://blockstate.live","_blank");
-});
 },
 shareIG(){
-this.captureImage().then(()=>{
-alert("Image captured. Upload to Instagram.");
-});
+alert("Image ready — upload to Instagram.");
 },
 shareMsg(){
-this.captureImage().then(c=>{
+this.capture().then(c=>{
 c.toBlob(b=>{
 navigator.share({
 files:[new File([b],"blockstate.png",{type:"image/png"})],
@@ -505,15 +462,7 @@ url:"https://blockstate.live"
 }
 };
 
-document.addEventListener("DOMContentLoaded",()=>{
-App.load();
-setInterval(()=>{
-const cards=document.querySelectorAll(".share-card");
-cards.forEach(c=>c.classList.remove("active"));
-App.shareIndex=(App.shareIndex+1)%cards.length;
-cards[App.shareIndex].classList.add("active");
-},3000);
-});
+document.addEventListener("DOMContentLoaded",()=>App.load());
 </script>
 
 </body>
