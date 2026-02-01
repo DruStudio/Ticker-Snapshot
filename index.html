@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ticker Snapshot v4.3.0</title>
+    <title>Ticker Snapshot v4.5.0</title>
     <style>
         :root {
             --bg-dark: #0a0a0f;
@@ -57,7 +57,7 @@
     /* Hero Section */
     .hero {
         text-align: center;
-        padding: 80px 20px 40px;
+        padding: 80px 20px 60px;
         background: linear-gradient(135deg, var(--bg-dark-2), var(--bg-dark-3));
     }
 
@@ -85,71 +85,16 @@
         margin: 60px 0 40px;
     }
 
-    /* Carousel */
-    .carousel-section {
-        padding: 60px 0;
-        max-width: 100%;
-        margin: 0 auto;
-        overflow: hidden;
-        position: relative;
-    }
-
-    .carousel-container {
-        position: relative;
-        max-width: 100vw;
-        overflow: hidden;
-    }
-
-    .carousel-track {
-        display: flex;
-        gap: 0;
-        transition: transform 0.5s ease-in-out;
-    }
-
-    .carousel-item {
-        min-width: 100vw;
-        max-width: 100vw;
-        flex-shrink: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 0 20px;
-    }
-
-    .carousel-dots {
-        display: flex;
-        justify-content: center;
-        gap: 12px;
-        margin-top: 40px;
-    }
-
-    .carousel-dot {
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        background: var(--border-dark);
-        cursor: pointer;
-        transition: all 0.3s;
-    }
-
-    .carousel-dot.active {
-        background: var(--accent);
-        width: 32px;
-        border-radius: 6px;
-    }
-
     /* Widget Card */
     .widget-card {
         background: linear-gradient(135deg, var(--bg-dark-3), #1f1f30);
         border: 3px solid var(--border-dark);
         border-radius: 24px;
-        padding: 40px;
+        padding: 50px;
         width: 100%;
-        max-width: 450px;
+        max-width: 500px;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
         transition: all 0.3s;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         margin: 0 auto;
@@ -166,49 +111,33 @@
     }
 
     .widget-header {
-        display: flex;
-        align-items: center;
-        gap: 16px;
+        text-align: center;
+        margin-bottom: 40px;
+        padding-bottom: 30px;
+        border-bottom: 2px solid var(--border-dark);
+    }
+
+    .widget-name {
+        font-size: 2.2rem;
+        font-weight: 900;
+        margin-bottom: 8px;
+        letter-spacing: -0.5px;
+    }
+
+    .widget-ticker {
+        font-size: 1.1rem;
+        color: var(--accent);
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+
+    .widget-price-section {
+        text-align: center;
         margin-bottom: 40px;
     }
 
-    .widget-icon {
-        width: 56px;
-        height: 56px;
-        border-radius: 50%;
-        background: var(--bg-dark-2);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 28px;
-        font-weight: 900;
-        color: var(--accent);
-    }
-
-    .widget-symbol-group {
-        flex: 1;
-    }
-
-    .widget-symbol {
-        font-size: 2rem;
-        font-weight: 900;
-        letter-spacing: -0.5px;
-        margin-bottom: 4px;
-    }
-
-    .widget-pair {
-        font-size: 1rem;
-        color: var(--accent);
-        font-weight: 600;
-    }
-
-    .widget-data {
-        margin: 40px 0;
-        text-align: center;
-    }
-
     .widget-price {
-        font-size: 3.5rem;
+        font-size: 4rem;
         font-weight: 900;
         letter-spacing: -2px;
         margin-bottom: 16px;
@@ -216,13 +145,12 @@
     }
 
     .widget-change {
-        font-size: 1.5rem;
+        font-size: 1.8rem;
         font-weight: 700;
-        margin-bottom: 32px;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
+        gap: 10px;
     }
 
     .widget-change.positive {
@@ -237,77 +165,72 @@
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 24px;
-        padding: 24px 0;
-        border-top: 2px solid var(--border-dark);
-        border-bottom: 2px solid var(--border-dark);
-        margin-bottom: 24px;
+        margin-bottom: 30px;
     }
 
     .widget-stat {
         text-align: center;
+        background: var(--bg-dark-2);
+        padding: 20px;
+        border-radius: 12px;
     }
 
     .widget-stat-label {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         color: var(--text-dark-2);
-        margin-bottom: 8px;
+        margin-bottom: 10px;
         text-transform: uppercase;
         letter-spacing: 1px;
         font-weight: 600;
     }
 
     .widget-stat-value {
-        font-size: 1.4rem;
+        font-size: 1.5rem;
+        font-weight: 800;
+    }
+
+    .widget-volume {
+        text-align: center;
+        background: var(--bg-dark-2);
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+    }
+
+    .widget-volume-label {
+        font-size: 0.8rem;
+        color: var(--text-dark-2);
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 600;
+    }
+
+    .widget-volume-value {
+        font-size: 1.5rem;
         font-weight: 800;
     }
 
     .widget-footer {
-        padding-top: 16px;
+        padding-top: 30px;
+        border-top: 2px solid var(--border-dark);
     }
 
     .widget-timestamp {
-        font-size: 0.85rem;
+        font-size: 0.9rem;
         color: var(--text-dark-2);
-        margin-bottom: 8px;
+        margin-bottom: 12px;
         text-align: center;
+        font-weight: 500;
     }
 
     .widget-branding {
-        font-size: 0.8rem;
+        font-size: 0.85rem;
         color: var(--text-dark-2);
         text-transform: uppercase;
         letter-spacing: 2px;
         font-weight: 700;
         text-align: center;
-    }
-
-    .carousel-save-btn {
-        width: 100%;
-        max-width: 450px;
-        margin: 24px auto 0;
-        padding: 16px;
-        border: none;
-        background: linear-gradient(135deg, var(--green), #16a34a);
-        color: white;
-        border-radius: 12px;
-        font-size: 1.1rem;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.3s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-    }
-
-    .carousel-save-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(34, 197, 94, 0.4);
-    }
-
-    .carousel-save-btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
     }
 
     /* Generator Section */
@@ -438,13 +361,13 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        min-height: 500px;
+        min-height: 600px;
         width: 100%;
     }
 
     .preview-actions {
         width: 100%;
-        max-width: 450px;
+        max-width: 500px;
     }
 
     .preview-actions button {
@@ -508,7 +431,7 @@
         }
 
         .preview-actions {
-            max-width: 450px;
+            max-width: 500px;
         }
     }
 
@@ -519,15 +442,19 @@
 
         .widget-card {
             max-width: 100%;
-            padding: 32px;
+            padding: 35px;
         }
 
-        .widget-symbol {
-            font-size: 1.6rem;
+        .widget-name {
+            font-size: 1.8rem;
         }
 
         .widget-price {
-            font-size: 2.8rem;
+            font-size: 3rem;
+        }
+
+        .widget-change {
+            font-size: 1.4rem;
         }
 
         .version-badge {
@@ -543,10 +470,6 @@
             width: 100%;
             max-width: 100%;
         }
-
-        .carousel-save-btn {
-            max-width: 100%;
-        }
     }
 </style>
 ```
@@ -554,7 +477,7 @@
 </head>
 <body>
     <!-- Version Badge -->
-    <div class="version-badge">v4.3.0</div>
+    <div class="version-badge">v4.5.0</div>
 
 ```
 <!-- Hero Section -->
@@ -562,14 +485,6 @@
     <h1 class="hero-title">Ticker Snapshot</h1>
     <p class="hero-subtitle">capture & share crypto price data</p>
 </header>
-
-<!-- Carousel -->
-<section class="carousel-section">
-    <div class="carousel-container">
-        <div class="carousel-track" id="carouselTrack"></div>
-    </div>
-    <div class="carousel-dots" id="carouselDots"></div>
-</section>
 
 <!-- Widget Generator -->
 <section class="generator-section">
@@ -610,6 +525,30 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
+    // Crypto name mapping
+    const CRYPTO_NAMES = {
+        'BTC': 'Bitcoin',
+        'ETH': 'Ethereum',
+        'SOL': 'Solana',
+        'BNB': 'BNB',
+        'XRP': 'XRP',
+        'DOGE': 'Dogecoin',
+        'ADA': 'Cardano',
+        'MATIC': 'Polygon',
+        'DOT': 'Polkadot',
+        'AVAX': 'Avalanche',
+        'LINK': 'Chainlink',
+        'UNI': 'Uniswap',
+        'LTC': 'Litecoin',
+        'ATOM': 'Cosmos',
+        'XLM': 'Stellar',
+        'ALGO': 'Algorand',
+        'VET': 'VeChain',
+        'FIL': 'Filecoin',
+        'NEAR': 'NEAR Protocol',
+        'HBAR': 'Hedera'
+    };
+
     // ============================================
     // API INTEGRATION MODULE
     // ============================================
@@ -643,9 +582,11 @@
                     return {
                         price: parseFloat(data.lastPrice),
                         change24h: parseFloat(data.priceChangePercent),
+                        changeAmount: parseFloat(data.priceChange),
                         high24h: parseFloat(data.highPrice),
                         low24h: parseFloat(data.lowPrice),
-                        volume: parseFloat(data.volume)
+                        volume: parseFloat(data.volume),
+                        quoteVolume: parseFloat(data.quoteVolume)
                     };
                 } catch (error) {
                     return this.getPriceFromCoinGecko(symbol);
@@ -668,12 +609,18 @@
             const response = await fetch(`https://api.coingecko.com/api/v3/coins/${coinId}?localization=false&tickers=false&community_data=false&developer_data=false`);
             const data = await response.json();
             
+            const currentPrice = data.market_data.current_price.usd;
+            const change24h = data.market_data.price_change_percentage_24h;
+            const changeAmount = data.market_data.price_change_24h;
+            
             return {
-                price: data.market_data.current_price.usd,
-                change24h: data.market_data.price_change_percentage_24h,
+                price: currentPrice,
+                change24h: change24h,
+                changeAmount: changeAmount,
                 high24h: data.market_data.high_24h.usd,
                 low24h: data.market_data.low_24h.usd,
-                volume: data.market_data.total_volume.usd
+                volume: 0,
+                quoteVolume: data.market_data.total_volume.usd
             };
         }
     };
@@ -684,36 +631,42 @@
     const WidgetBuilder = {
         async buildWidget(symbol) {
             const priceData = await API.getPrice(symbol);
+            const name = CRYPTO_NAMES[symbol] || symbol;
             
             const widget = document.createElement('div');
             widget.className = `widget-card ${priceData.change24h >= 0 ? 'positive' : 'negative'}`;
             widget.innerHTML = `
                 <div class="widget-header">
-                    <div class="widget-icon">${symbol}</div>
-                    <div class="widget-symbol-group">
-                        <div class="widget-symbol">${symbol}</div>
-                        <div class="widget-pair">${symbol}/USDT</div>
-                    </div>
+                    <div class="widget-name">${name}</div>
+                    <div class="widget-ticker">${symbol}/USDT</div>
                 </div>
-                <div class="widget-data">
+                
+                <div class="widget-price-section">
                     <div class="widget-price">$${this.formatPrice(priceData.price)}</div>
                     <div class="widget-change ${priceData.change24h >= 0 ? 'positive' : 'negative'}">
                         <span>${priceData.change24h >= 0 ? '▲' : '▼'}</span>
                         <span>${priceData.change24h >= 0 ? '+' : ''}${priceData.change24h.toFixed(2)}%</span>
                     </div>
-                    <div class="widget-stats">
-                        <div class="widget-stat">
-                            <div class="widget-stat-label">24h High</div>
-                            <div class="widget-stat-value">$${this.formatPrice(priceData.high24h)}</div>
-                        </div>
-                        <div class="widget-stat">
-                            <div class="widget-stat-label">24h Low</div>
-                            <div class="widget-stat-value">$${this.formatPrice(priceData.low24h)}</div>
-                        </div>
+                </div>
+                
+                <div class="widget-stats">
+                    <div class="widget-stat">
+                        <div class="widget-stat-label">24h High</div>
+                        <div class="widget-stat-value">$${this.formatPrice(priceData.high24h)}</div>
+                    </div>
+                    <div class="widget-stat">
+                        <div class="widget-stat-label">24h Low</div>
+                        <div class="widget-stat-value">$${this.formatPrice(priceData.low24h)}</div>
                     </div>
                 </div>
+                
+                <div class="widget-volume">
+                    <div class="widget-volume-label">24h Volume</div>
+                    <div class="widget-volume-value">$${this.formatVolume(priceData.quoteVolume)}</div>
+                </div>
+                
                 <div class="widget-footer">
-                    <div class="widget-timestamp">Snapshot: ${this.getTimestamp()}</div>
+                    <div class="widget-timestamp">${this.getTimestamp()}</div>
                     <div class="widget-branding">Ticker Snapshot</div>
                 </div>
             `;
@@ -731,6 +684,18 @@
             }
         },
 
+        formatVolume(vol) {
+            if (vol >= 1e9) {
+                return (vol / 1e9).toFixed(2) + 'B';
+            } else if (vol >= 1e6) {
+                return (vol / 1e6).toFixed(2) + 'M';
+            } else if (vol >= 1e3) {
+                return (vol / 1e3).toFixed(2) + 'K';
+            } else {
+                return vol.toFixed(2);
+            }
+        },
+
         getTimestamp() {
             const d = new Date();
             const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -742,107 +707,6 @@
     };
 
     // ============================================
-    // CAROUSEL MODULE
-    // ============================================
-    const Carousel = {
-        currentIndex: 0,
-        symbols: ['BTC', 'ETH', 'SOL', 'BNB', 'XRP', 'DOGE'],
-        autoSlideInterval: null,
-
-        async init() {
-            await this.loadWidgets();
-            this.setupDots();
-            this.startAutoSlide();
-        },
-
-        async loadWidgets() {
-            const track = document.getElementById('carouselTrack');
-            
-            for (const symbol of this.symbols) {
-                const item = document.createElement('div');
-                item.className = 'carousel-item';
-                
-                const widget = await WidgetBuilder.buildWidget(symbol);
-                item.appendChild(widget);
-                
-                const saveBtn = document.createElement('button');
-                saveBtn.className = 'carousel-save-btn';
-                saveBtn.innerHTML = '<span>💾</span> Save Image';
-                saveBtn.onclick = () => this.saveWidget(saveBtn, symbol);
-                item.appendChild(saveBtn);
-                
-                track.appendChild(item);
-            }
-        },
-
-        setupDots() {
-            const dotsContainer = document.getElementById('carouselDots');
-            this.symbols.forEach((_, index) => {
-                const dot = document.createElement('div');
-                dot.className = `carousel-dot ${index === 0 ? 'active' : ''}`;
-                dot.onclick = () => this.goToSlide(index);
-                dotsContainer.appendChild(dot);
-            });
-        },
-
-        goToSlide(index) {
-            this.currentIndex = index;
-            const track = document.getElementById('carouselTrack');
-            track.style.transform = `translateX(-${index * 100}vw)`;
-            
-            document.querySelectorAll('.carousel-dot').forEach((dot, i) => {
-                dot.classList.toggle('active', i === index);
-            });
-
-            this.resetAutoSlide();
-        },
-
-        startAutoSlide() {
-            this.autoSlideInterval = setInterval(() => {
-                const nextIndex = (this.currentIndex + 1) % this.symbols.length;
-                this.goToSlide(nextIndex);
-            }, 5000);
-        },
-
-        resetAutoSlide() {
-            clearInterval(this.autoSlideInterval);
-            this.startAutoSlide();
-        },
-
-        async saveWidget(button, symbol) {
-            const widget = button.previousElementSibling;
-            if (!widget) return;
-            
-            button.disabled = true;
-            button.innerHTML = '<span>⏳</span> Saving...';
-            
-            try {
-                const canvas = await html2canvas(widget, {
-                    scale: 2,
-                    backgroundColor: '#1a1a28',
-                    logging: false
-                });
-                
-                canvas.toBlob(blob => {
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `${symbol}-snapshot.png`;
-                    a.click();
-                    URL.revokeObjectURL(url);
-                    
-                    button.disabled = false;
-                    button.innerHTML = '<span>💾</span> Save Image';
-                });
-            } catch (error) {
-                alert('Failed to save: ' + error.message);
-                button.disabled = false;
-                button.innerHTML = '<span>💾</span> Save Image';
-            }
-        }
-    };
-
-    // ============================================
     // APP INITIALIZATION
     // ============================================
     const App = {
@@ -850,7 +714,6 @@
 
         async init() {
             this.setupEventListeners();
-            await Carousel.init();
         },
 
         setupEventListeners() {
@@ -867,7 +730,7 @@
                 const matches = API.popularCryptos.filter(crypto => crypto.includes(value));
                 if (matches.length > 0) {
                     autocompleteResults.innerHTML = matches.map(crypto => 
-                        `<div class="autocomplete-item" onclick="App.selectSymbol('${crypto}')">${crypto}</div>`
+                        `<div class="autocomplete-item" onclick="App.selectSymbol('${crypto}')">${crypto} - ${CRYPTO_NAMES[crypto] || crypto}</div>`
                     ).join('');
                     autocompleteResults.classList.add('show');
                 } else {
