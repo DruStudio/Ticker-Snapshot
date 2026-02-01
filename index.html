@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BlockState</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet">
@@ -16,7 +16,7 @@
 --border:#24243a;
 }
 
-*{box-sizing:border-box;margin:0;padding:0}
+*{margin:0;padding:0;box-sizing:border-box}
 html,body{
 background:var(--bg);
 font-family:Inter,system-ui,sans-serif;
@@ -105,11 +105,7 @@ cursor:pointer;
 
 <div class="container">
 <h1>BlockState</h1>
-<p>
-A fast, visual snapshot of the current state of anything —
-designed to be shared.
-</p>
-
+<p>A fast, visual snapshot of the current state of anything — designed to be shared.</p>
 <a class="primary" href="crypto.html">Open Crypto BlockState</a>
 </div>
 
@@ -124,7 +120,7 @@ const c=document.getElementById("particles"),ctx=c.getContext("2d");
 let w,h,p=[];
 function resize(){w=c.width=innerWidth;h=c.height=innerHeight;}
 addEventListener("resize",resize);resize();
-for(let i=0;i<110;i++)p.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,r:Math.random()*1.6+.4});
+for(let i=0;i<120;i++)p.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,r:Math.random()*1.6+.4});
 (function tick(){
 ctx.clearRect(0,0,w,h);
 ctx.fillStyle="rgba(108,124,255,.45)";
@@ -132,7 +128,7 @@ p.forEach(o=>{
 o.x+=o.vx;o.y+=o.vy;
 if(o.x<0)o.x=w;if(o.x>w)o.x=0;
 if(o.y<0)o.y=h;if(o.y>h)o.y=0;
-ctx.beginPath();ctx.arc(o.x,o.y,o.r,0,Math.PI*2);ctx.fill();
+ctx.beginPath();ctx.arc(o.x,o.y,o.r,0,7);ctx.fill();
 });
 requestAnimationFrame(tick);
 })();
