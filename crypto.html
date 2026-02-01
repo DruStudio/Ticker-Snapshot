@@ -67,7 +67,6 @@ margin:0 auto;
 padding:120px 20px 160px;
 }
 
-/* HEADER */
 h1{
 text-align:center;
 font-size:3rem;
@@ -91,7 +90,7 @@ justify-content:center;
 align-items:start;
 }
 
-/* SECTION TITLE */
+/* SECTION TITLES */
 .section-title{
 text-align:center;
 font-size:.7rem;
@@ -207,7 +206,7 @@ border-radius:50%;
 .widget{
 width:100%;
 max-width:420px;
-height:420px;
+height:460px;
 background:linear-gradient(180deg,#14142a,#0e0e1c);
 border-radius:28px;
 padding:28px;
@@ -241,7 +240,7 @@ margin-left:6px;
 }
 
 .price{
-font-size:2.1rem;
+font-size:2.2rem;
 font-weight:900;
 }
 .change{
@@ -254,7 +253,7 @@ font-weight:800;
 display:grid;
 grid-template-columns:1fr 1fr;
 gap:10px;
-margin-top:10px;
+margin-top:8px;
 }
 .stat{
 background:#0b0b18;
@@ -310,7 +309,7 @@ font-size:.85rem;
 <div>
 <div class="section-title">CREATE</div>
 <div class="panel">
-<input id="search" list="coins" placeholder="Search crypto (e.g. Bitcoin)">
+<input id="search" list="coins" placeholder="Search crypto (Top 250)">
 <datalist id="coins"></datalist>
 
 <div class="presets" id="presets"></div>
@@ -372,6 +371,12 @@ requestAnimationFrame(tick);
 const App={
 coins:[],current:null,
 
+fmtPrice(v){
+if(v>=1)return v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+if(v>=0.01)return v.toFixed(4);
+if(v>=0.0001)return v.toFixed(6);
+return v.toFixed(8);
+},
 fmtCap(v){
 if(v>=1e12)return (v/1e12).toFixed(2)+" T";
 if(v>=1e9)return (v/1e9).toFixed(2)+" B";
@@ -380,7 +385,7 @@ return v.toLocaleString();
 },
 
 async load(){
-const r=await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1");
+const r=await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1");
 this.coins=await r.json();
 this.populate();
 this.showGainers();
@@ -446,14 +451,14 @@ output.innerHTML=`
 <img src="${c.image}">
 <div class="asset-name">${c.name}<span>${c.symbol.toUpperCase()}</span></div>
 </div>
-<div class="price">$${c.current_price.toLocaleString()}</div>
+<div class="price">$${this.fmtPrice(c.current_price)}</div>
 <div class="change" style="color:${c.price_change_percentage_24h>=0?'var(--up)':'var(--down)'}">
 ${c.price_change_percentage_24h.toFixed(2)}%
 </div>
 
 <div class="stats">
-<div class="stat"><span>24H HIGH</span>$${c.high_24h.toLocaleString()}</div>
-<div class="stat"><span>24H LOW</span>$${c.low_24h.toLocaleString()}</div>
+<div class="stat"><span>24H HIGH</span>$${this.fmtPrice(c.high_24h)}</div>
+<div class="stat"><span>24H LOW</span>$${this.fmtPrice(c.low_24h)}</div>
 <div class="stat"><span>MARKET CAP</span>${this.fmtCap(c.market_cap)}</div>
 <div class="stat"><span>MC RANK</span>#${c.market_cap_rank}</div>
 </div>
@@ -473,7 +478,7 @@ makeCaption(){
 const c=this.current;
 caption.textContent=
 `${c.name} (${c.symbol.toUpperCase()}) is ${c.price_change_percentage_24h.toFixed(2)}% over the last 24 hours.
-Currently trading at $${c.current_price.toLocaleString()} with a market cap of ${this.fmtCap(c.market_cap)}.`;
+Trading at $${this.fmtPrice(c.current_price)} with a market cap of ${this.fmtCap(c.market_cap)}.`;
 },
 
 copyCaption(){
