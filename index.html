@@ -80,17 +80,6 @@ color:var(--muted);
 max-width:640px;
 }
 
-.cta{
-margin-top:28px;
-padding:16px 30px;
-border-radius:18px;
-background:linear-gradient(135deg,var(--accent),#8b5cf6);
-color:white;
-text-decoration:none;
-font-weight:900;
-}
-
-/* ICON GRID (FIXED) */
 .icons{
 margin-top:40px;
 width:100%;
@@ -109,6 +98,7 @@ font-weight:900;
 font-size:.9rem;
 color:var(--text);
 text-align:center;
+cursor:pointer;
 }
 
 .icon span{
@@ -119,14 +109,8 @@ letter-spacing:.18em;
 color:var(--muted);
 }
 
-/* MOBILE */
 @media(max-width:520px){
-h1{font-size:3rem}
-.tagline{font-size:.95rem}
-.icons{
-grid-template-columns:1fr;
-max-width:320px;
-}
+.icons{grid-template-columns:1fr;max-width:320px}
 }
 </style>
 </head>
@@ -147,47 +131,41 @@ max-width:320px;
 A clean, visual snapshot of the current state of something — built to be shared.
 </div>
 
-<a class="cta" href="crypto.html">Crypto</a>
-
 <div class="icons">
-<div class="icon">Crypto<span>LIVE</span></div>
-<div class="icon">Stocks<span>UNDER CONSTRUCTION</span></div>
-<div class="icon">Ideas<span>UNDER CONSTRUCTION</span></div>
-<div class="icon">Memes<span>UNDER CONSTRUCTION</span></div>
+<div class="icon" onclick="location.href='crypto.html'">
+Crypto
+<span>LIVE</span>
+</div>
+<div class="icon">
+Stocks
+<span>UNDER CONSTRUCTION</span>
+</div>
+<div class="icon">
+Ideas
+<span>UNDER CONSTRUCTION</span>
+</div>
+<div class="icon">
+Memes
+<span>UNDER CONSTRUCTION</span>
+</div>
 </div>
 </div>
 
 <script>
 const canvas=document.getElementById("particles");
 const ctx=canvas.getContext("2d");
-let w,h,particles=[];
-function resize(){
-w=canvas.width=window.innerWidth;
-h=canvas.height=window.innerHeight;
-}
-window.addEventListener("resize",resize);
-resize();
-
-for(let i=0;i<110;i++){
-particles.push({
-x:Math.random()*w,
-y:Math.random()*h,
-vx:(Math.random()-.5)*.25,
-vy:(Math.random()-.5)*.25,
-r:Math.random()*1.6+.4
-});
-}
-
+let w,h,p=[];
+function resize(){w=canvas.width=innerWidth;h=canvas.height=innerHeight}
+addEventListener("resize",resize);resize();
+for(let i=0;i<110;i++)p.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,r:Math.random()*1.6+.4});
 (function tick(){
 ctx.clearRect(0,0,w,h);
 ctx.fillStyle="rgba(108,124,255,.45)";
-particles.forEach(p=>{
-p.x+=p.vx;p.y+=p.vy;
-if(p.x<0)p.x=w;if(p.x>w)p.x=0;
-if(p.y<0)p.y=h;if(p.y>h)p.y=0;
-ctx.beginPath();
-ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-ctx.fill();
+p.forEach(o=>{
+o.x+=o.vx;o.y+=o.vy;
+if(o.x<0)o.x=w;if(o.x>w)o.x=0;
+if(o.y<0)o.y=h;if(o.y>h)o.y=0;
+ctx.beginPath();ctx.arc(o.x,o.y,o.r,0,7);ctx.fill();
 });
 requestAnimationFrame(tick);
 })();
