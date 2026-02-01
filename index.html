@@ -82,27 +82,14 @@ max-width:640px;
 line-height:1.6;
 }
 
-.cta-row{
-margin-top:36px;
-display:flex;
-gap:16px;
-}
-
 .cta{
-padding:16px 26px;
+margin-top:36px;
+padding:16px 28px;
 border-radius:18px;
-font-weight:900;
-text-decoration:none;
-}
-
-.cta.primary{
 background:linear-gradient(135deg,var(--accent),#8b5cf6);
 color:white;
-}
-
-.cta.secondary{
-border:1px solid var(--border);
-color:var(--muted);
+text-decoration:none;
+font-weight:900;
 }
 
 /* FOOTER FLOAT */
@@ -144,20 +131,15 @@ cursor:pointer;
 <h1>BlockState</h1>
 <div class="tagline">
 Create a clean, visual snapshot of the current state of something —
-built to be saved, shared, and understood instantly.
+built to be saved and shared instantly.
 </div>
 
-<div class="cta-row">
-<a class="cta primary" href="crypto.html">Crypto</a>
-<a class="cta secondary" href="#bottom">About</a>
+<a class="cta" href="crypto.html">Crypto</a>
 </div>
-</div>
-
-<div id="bottom"></div>
 
 <div class="footer-float" id="footer">
 <div class="badge">v1.0</div>
-<div class="badge" onclick="alert('BlockState creates shareable snapshots of live states.')">FAQ</div>
+<div class="badge" onclick="alert('BlockState creates shareable visual snapshots of live data.')">FAQ</div>
 </div>
 
 <script>
