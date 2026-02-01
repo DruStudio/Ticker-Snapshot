@@ -68,12 +68,10 @@ font-size:2rem;
 margin:50px 0 30px;
 }
 
-/* Trending carousel */
+/* Carousel */
 .carousel{
-position:relative;
-max-width:100%;
 overflow:hidden;
-margin-bottom:60px;
+margin-bottom:50px;
 }
 
 .carousel-track{
@@ -113,8 +111,8 @@ font-size:.8rem;
 color:var(--muted);
 font-weight:700;
 letter-spacing:1px;
-display:block;
 margin-bottom:8px;
+display:block;
 }
 
 input{
@@ -123,7 +121,7 @@ padding:16px;
 border-radius:12px;
 border:2px solid var(--border);
 background:var(--bg3);
-color:var(--text);
+color:white;
 font-size:1.1rem;
 margin-bottom:14px;
 }
@@ -162,14 +160,14 @@ cursor:pointer;
 .preview-widget-container{
 min-height:620px;
 display:flex;
-justify-content:center;
 align-items:center;
+justify-content:center;
 }
 
 /* Widget */
 .widget-card{
-width:100%;
 max-width:480px;
+width:100%;
 background:linear-gradient(135deg,var(--bg3),#1f1f30);
 border:3px solid var(--border);
 border-radius:24px;
@@ -182,8 +180,8 @@ box-shadow:0 14px 40px rgba(0,0,0,.45);
 
 .widget-header{
 text-align:center;
-padding-bottom:18px;
 border-bottom:2px solid var(--border);
+padding-bottom:18px;
 margin-bottom:18px;
 }
 
@@ -198,14 +196,9 @@ color:var(--accent);
 font-weight:700;
 }
 
-.chart-wrap{
-margin:20px 0;
-}
+.chart-wrap{margin:20px 0}
 
-canvas{
-width:100%;
-height:160px;
-}
+canvas{width:100%;height:160px}
 
 .widget-price{
 text-align:center;
@@ -228,30 +221,6 @@ text-align:center;
 font-size:.75rem;
 opacity:.7;
 margin-top:6px;
-}
-
-.widget-stats{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:14px;
-margin:24px 0;
-}
-
-.widget-stat{
-background:var(--bg2);
-padding:14px;
-border-radius:12px;
-text-align:center;
-}
-
-.widget-stat-label{
-font-size:.7rem;
-opacity:.7;
-margin-bottom:6px;
-}
-
-.widget-stat-value{
-font-weight:800;
 }
 
 .widget-footer{
@@ -292,7 +261,7 @@ cursor:pointer;
 
 <body>
 
-<div class="version-badge">v5.2.0</div>
+<div class="version-badge">v5.2.1</div>
 
 <header class="hero">
 <h1 class="hero-title">BlockState</h1>
@@ -341,15 +310,16 @@ cursor:pointer;
 
 <script>
 const App={
-symbols:['BTC','ETH','SOL','BNB','XRP'],
+symbols:['bitcoin','ethereum','solana','binancecoin','ripple'],
+labels:['BTC','ETH','SOL','BNB','XRP'],
 carouselIndex:0,
 
 async init(){
-this.buildCarousel();
-setInterval(()=>this.rotateCarousel(),5000);
+await this.buildCarousel();
+setInterval(()=>this.rotate(),5000);
 },
 
-rotateCarousel(){
+rotate(){
 this.carouselIndex=(this.carouselIndex+1)%this.symbols.length;
 document.getElementById('carouselTrack').style.transform=
 `translateX(-${this.carouselIndex*100}%)`;
@@ -357,43 +327,46 @@ document.getElementById('carouselTrack').style.transform=
 
 async buildCarousel(){
 const track=document.getElementById('carouselTrack');
-for(const s of this.symbols){
+for(let i=0;i<this.symbols.length;i++){
 const card=document.createElement('div');
 card.className='carousel-card';
 card.innerHTML='<div class="widget-card">Loading…</div>';
 track.appendChild(card);
-this.buildWidget(s,card.firstChild,true);
+this.loadTrending(this.symbols[i],this.labels[i],card.firstChild);
 }
 },
 
-async buildWidget(symbol,target,isStatic=false){
-const r=await fetch(`https://api.binance.com/api/v3/klines?symbol=${symbol}USDT&interval=15m&limit=40`);
-const klines=await r.json();
+async loadTrending(id,label,target){
+const r=await fetch(
+`https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=usd&days=1`
+);
+const d=await r.json();
+const prices=d.prices.slice(-40);
 
-const ohlc=klines.map(k=>({
-o:+k[1],h:+k[2],l:+k[3],c:+k[4]
+const ohlc=prices.map((p,i)=>({
+o:i===0?p[1]:prices[i-1][1],
+h:p[1]*1.01,
+l:p[1]*0.99,
+c:p[1]
 }));
 
-const last=ohlc[ohlc.length-1];
-const change=((last.c-ohlc[0].o)/ohlc[0].o)*100;
+const change=((ohlc.at(-1).c-ohlc[0].o)/ohlc[0].o)*100;
 const pos=change>=0;
 
 target.innerHTML=`
 <div class="widget-card ${pos?'positive':'negative'}">
 <div class="widget-header">
-<div class="widget-name">${symbol}</div>
-<div class="widget-ticker">${symbol}/USDT</div>
+<div class="widget-name">${label}</div>
+<div class="widget-ticker">${label}/USD</div>
 </div>
 
-<div class="chart-wrap">
-<canvas></canvas>
-</div>
+<div class="chart-wrap"><canvas></canvas></div>
 
-<div class="widget-price">$${last.c.toLocaleString()}</div>
+<div class="widget-price">$${ohlc.at(-1).c.toLocaleString()}</div>
 <div class="widget-change ${pos?'positive':'negative'}">
 ${pos?'▲':'▼'} ${change.toFixed(2)}%
 </div>
-<div class="widget-change-label">15m trend</div>
+<div class="widget-change-label">24h trend</div>
 
 <div class="widget-footer">
 <div class="widget-timestamp">State captured • ${new Date().toUTCString()}</div>
@@ -402,7 +375,6 @@ ${pos?'▲':'▼'} ${change.toFixed(2)}%
 </div>`;
 
 this.drawCandles(target.querySelector('canvas'),ohlc);
-if(!isStatic)document.getElementById('saveBtn').disabled=false;
 },
 
 drawCandles(canvas,data){
@@ -413,7 +385,7 @@ ctx.scale(2,2);
 
 const max=Math.max(...data.map(d=>d.h));
 const min=Math.min(...data.map(d=>d.l));
-const cw=w/2/data.length;
+const cw=(w/2)/data.length;
 
 data.forEach((d,i)=>{
 const x=i*cw+cw/2;
@@ -436,7 +408,13 @@ ctx.fillRect(x-cw/4,Math.min(openY,closeY),cw/2,Math.abs(openY-closeY)||1);
 
 async generate(){
 const s=document.getElementById('symbolInput').value.toUpperCase();
-this.buildWidget(s,document.getElementById('preview'));
+document.getElementById('saveBtn').disabled=true;
+await this.loadTrending(
+{BTC:'bitcoin',ETH:'ethereum',SOL:'solana',BNB:'binancecoin',XRP:'ripple'}[s],
+s,
+document.getElementById('preview')
+);
+document.getElementById('saveBtn').disabled=false;
 },
 
 quick(s){
