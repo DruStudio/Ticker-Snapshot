@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>BlockState</title>
 
-<meta property="og:title" content="BlockState">
-<meta property="og:description" content="Capture a single moment in crypto markets.">
-<meta property="og:image" content="https://blockstate.live/og.png">
-<meta name="twitter:card" content="summary_large_image">
+<!-- OG (static fallback) -->
+<meta property="og:title" content="BlockState" />
+<meta property="og:description" content="Capture a single moment in crypto markets." />
+<meta property="og:image" content="https://blockstate.live/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
 
 <style>
 :root{
 --bg:#0a0a0f;
+--bg2:#0f1020;
 --panel:#161625;
 --panel2:#12121d;
 --border:#2a2a3a;
@@ -24,8 +26,15 @@
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+html,body{
+background:radial-gradient(1200px 800px at 20% 10%, #141428, var(--bg)),
+radial-gradient(800px 600px at 80% 80%, #0f1025, var(--bg));
+background-attachment:fixed;
+color:var(--text);
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
 
+/* ===== VERSION ===== */
 .version{
 position:fixed;
 top:14px;left:14px;
@@ -38,10 +47,11 @@ font-size:.75rem;
 font-weight:700;
 }
 
+/* ===== PAGE ===== */
 .container{
 max-width:1100px;
 margin:0 auto;
-padding:60px 20px 120px;
+padding:70px 20px 120px;
 display:flex;
 flex-direction:column;
 align-items:center;
@@ -51,14 +61,20 @@ h1{
 font-size:3rem;
 font-weight:900;
 text-align:center;
-background:linear-gradient(120deg,#6c7cff,#8b5cf6,#22c55e,#6c7cff);
+background:linear-gradient(
+120deg,
+#6c7cff,
+#8b5cf6,
+#22c55e,
+#6c7cff
+);
 background-size:400% 400%;
-animation:flow 160s linear infinite;
+animation:titleFlow 180s linear infinite;
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
 }
 
-@keyframes flow{
+@keyframes titleFlow{
 0%{background-position:0% 50%}
 100%{background-position:100% 50%}
 }
@@ -80,7 +96,7 @@ justify-content:center;
 .generator{
 display:grid;
 grid-template-columns:360px 420px;
-gap:36px;
+gap:40px;
 justify-content:center;
 width:100%;
 }
@@ -138,6 +154,7 @@ background:linear-gradient(135deg,var(--accent),#8b5cf6);
 color:white;
 }
 
+/* ===== WIDGET ===== */
 .widget{
 background:var(--panel2);
 border-radius:22px;
@@ -170,6 +187,7 @@ align-items:center;
 width:36px;
 height:36px;
 border-radius:50%;
+background:#000;
 }
 
 .name{font-size:1.3rem;font-weight:900}
@@ -236,10 +254,10 @@ color:white;
 cursor:pointer;
 }
 
+/* ===== TRENDING ===== */
 .trending{
 max-width:420px;
 width:100%;
-margin-top:32px;
 }
 
 .trending select{
@@ -264,6 +282,7 @@ font-weight:700;
 
 .row:hover{background:#12121d}
 
+/* ===== MOBILE ===== */
 @media(max-width:900px){
 .generator{grid-template-columns:1fr}
 }
@@ -271,7 +290,7 @@ font-weight:700;
 </head>
 
 <body>
-<div class="version">v6.5.0</div>
+<div class="version">v6.6.0</div>
 
 <div class="container">
 <h1>BlockState</h1>
@@ -279,6 +298,8 @@ font-weight:700;
 
 <div class="section">
 <div class="generator">
+
+<!-- Generator -->
 <div class="panel">
 <label>Search Crypto (Top 250)</label>
 <input id="search" list="coins" placeholder="BTC, SOL, BONK">
@@ -289,14 +310,16 @@ font-weight:700;
 <button class="primary" onclick="App.generate()">Generate BlockState</button>
 </div>
 
+<!-- Output -->
 <div id="output"></div>
+
 </div>
 </div>
 
 <div class="section">
 <div class="trending panel">
 <select id="mode" onchange="App.renderTrending()">
-<option value="movers">Biggest Movers</option>
+<option value="movers" selected>Biggest Movers</option>
 <option value="top">Top 10</option>
 <option value="random">Trending</option>
 </select>
@@ -308,15 +331,13 @@ font-weight:700;
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 const App={
-coins:[],icons:{},current:null,
+coins:[],current:null,
 
 fmtCap(v){
 if(v>=1e12) return '$'+(v/1e12).toFixed(2)+'T';
 if(v>=1e9) return '$'+(v/1e9).toFixed(2)+'B';
-if(v>=1e6) return '$'+(v/1e6).toFixed(2)+'M';
 return '$'+v.toLocaleString();
 },
-
 fmt(v){
 if(v>=1) return v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
 if(v>=0.01) return v.toFixed(4);
@@ -325,30 +346,27 @@ return v.toFixed(8);
 },
 
 async load(){
-const r=await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1");
+const r=await fetch(
+'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1'
+);
 this.coins=await r.json();
-await this.cacheIcons();
 this.populate();
 this.renderTrending();
 this.show(this.coins[0]); // BTC preload
-},
-
-async cacheIcons(){
-for(const c of this.coins){
-const b=await fetch(c.image).then(r=>r.blob());
-this.icons[c.id]=URL.createObjectURL(b);
-}
 },
 
 populate(){
 const dl=document.getElementById("coins");
 const p=document.getElementById("presets");
 dl.innerHTML=""; p.innerHTML="";
+
 this.coins.forEach(c=>{
 const o=document.createElement("option");
 o.value=`${c.symbol.toUpperCase()} — ${c.name}`;
 dl.appendChild(o);
 });
+
+// Top 5 by market cap
 this.coins.slice(0,5).forEach(c=>{
 const b=document.createElement("button");
 b.textContent=c.symbol.toUpperCase();
@@ -361,16 +379,18 @@ build(c){
 this.current=c;
 const pos=c.price_change_percentage_24h>=0;
 return `
-<div class="widget ${pos?"positive":"negative"}" id="widget">
+<div class="widget ${pos?'positive':'negative'}" id="widget">
 <div class="header">
 <div class="left">
-<img class="coin-img" src="${this.icons[c.id]}">
+<img class="coin-img" src="${c.image}">
 <div>
 <div class="name">${c.name}</div>
 <div class="symbol">${c.symbol.toUpperCase()}</div>
 </div>
 </div>
-<div class="change ${pos?"positive":"negative"}">${pos?"▲":"▼"} ${c.price_change_percentage_24h.toFixed(2)}%</div>
+<div class="change ${pos?'positive':'negative'}">
+${pos?'▲':'▼'} ${c.price_change_percentage_24h.toFixed(2)}%
+</div>
 </div>
 
 <div class="price">$${this.fmt(c.current_price)}</div>
@@ -382,10 +402,16 @@ return `
 <div class="stat"><span>MC Rank</span>#${c.market_cap_rank}</div>
 </div>
 
-<div class="footer">Captured • ${new Date().toUTCString()}<br>BLOCKSTATE.LIVE</div>
+<div class="footer">
+Captured • ${new Date().toUTCString()}<br>BLOCKSTATE.LIVE
+</div>
 
-<div class="actions left"><button class="icon" onclick="App.share()">⤴</button></div>
-<div class="actions right"><button class="icon" onclick="App.export()">⤓</button></div>
+<div class="actions left">
+<button class="icon" onclick="App.share()">⤴</button>
+</div>
+<div class="actions right">
+<button class="icon" onclick="App.export()">⤓</button>
+</div>
 </div>`;
 },
 
@@ -394,9 +420,11 @@ const l=document.getElementById("list");
 l.innerHTML="";
 let arr=[...this.coins];
 const m=document.getElementById("mode").value;
+
 if(m==="movers") arr.sort((a,b)=>Math.abs(b.price_change_percentage_24h)-Math.abs(a.price_change_percentage_24h));
 if(m==="top") arr.sort((a,b)=>a.market_cap_rank-b.market_cap_rank);
 if(m==="random") arr.sort(()=>0.5-Math.random());
+
 arr.slice(0,10).forEach(c=>{
 const d=document.createElement("div");
 d.className="row";
