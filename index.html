@@ -19,6 +19,7 @@
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
+
 html,body{
 background:var(--bg);
 color:var(--text);
@@ -26,31 +27,39 @@ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 overflow-x:hidden;
 }
 
-/* ===== PARTICLES (SAFE) ===== */
+/* ===============================
+   PARTICLE BACKGROUND
+   =============================== */
 #particles{
 position:fixed;
 inset:0;
 z-index:0;
 pointer-events:none;
 }
+
 .particle{
 position:absolute;
-width:2px;height:2px;
+width:2px;
+height:2px;
 background:rgba(108,124,255,.35);
 border-radius:50%;
 animation:float linear infinite;
 }
+
 @keyframes float{
-from{transform:translateY(100vh);opacity:0}
+from{transform:translateY(110vh);opacity:0}
 20%{opacity:1}
 to{transform:translateY(-10vh);opacity:0}
 }
 
-/* ===== VERSION ===== */
+/* ===============================
+   VERSION BADGE
+   =============================== */
 .version{
 position:fixed;
-top:14px;left:14px;
-z-index:5;
+top:14px;
+left:14px;
+z-index:10;
 background:#10101a;
 border:1px solid var(--border);
 border-radius:10px;
@@ -59,7 +68,9 @@ font-size:.75rem;
 font-weight:700;
 }
 
-/* ===== LAYOUT ===== */
+/* ===============================
+   LAYOUT
+   =============================== */
 .container{
 position:relative;
 z-index:2;
@@ -75,12 +86,19 @@ h1{
 font-size:3rem;
 font-weight:900;
 text-align:center;
-background:linear-gradient(120deg,#6c7cff,#8b5cf6,#22c55e,#6c7cff);
+background:linear-gradient(
+120deg,
+#6c7cff,
+#8b5cf6,
+#22c55e,
+#6c7cff
+);
 background-size:400% 400%;
 animation:titleFlow 180s linear infinite;
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
 }
+
 @keyframes titleFlow{
 0%{background-position:0% 50%}
 100%{background-position:100% 50%}
@@ -93,6 +111,9 @@ color:var(--muted);
 max-width:600px;
 }
 
+/* ===============================
+   GENERATOR
+   =============================== */
 .generator{
 margin-top:48px;
 display:grid;
@@ -107,6 +128,16 @@ background:linear-gradient(135deg,var(--panel),#1f1f30);
 border:1px solid var(--border);
 border-radius:20px;
 padding:24px;
+transition:
+transform .25s ease,
+box-shadow .25s ease,
+border-color .25s ease;
+}
+
+.panel:hover{
+transform:translateY(-2px);
+box-shadow:0 12px 40px rgba(108,124,255,.15);
+border-color:rgba(108,124,255,.4);
 }
 
 label{
@@ -142,6 +173,16 @@ background:#10101a;
 color:white;
 font-weight:700;
 cursor:pointer;
+transition:
+background .2s ease,
+transform .15s ease,
+box-shadow .15s ease;
+}
+
+.presets button:hover{
+background:rgba(108,124,255,.15);
+transform:translateY(-1px);
+box-shadow:0 6px 20px rgba(108,124,255,.25);
 }
 
 .primary{
@@ -153,19 +194,24 @@ font-weight:800;
 cursor:pointer;
 background:linear-gradient(135deg,var(--accent),#8b5cf6);
 color:white;
+transition:
+transform .15s ease,
+box-shadow .2s ease;
 }
 
-/* ===== WIDGET ENTRY ANIMATION ===== */
+.primary:hover{
+transform:translateY(-1px);
+box-shadow:0 10px 30px rgba(108,124,255,.35);
+}
+
+/* ===============================
+   WIDGET
+   =============================== */
 @keyframes widgetIn{
-from{
-opacity:0;
-transform:translateY(16px) scale(.98);
+from{opacity:0;transform:translateY(16px) scale(.98)}
+to{opacity:1;transform:translateY(0) scale(1)}
 }
-to{
-opacity:1;
-transform:translateY(0) scale(1);
-}
-}
+
 .widget{
 background:var(--panel2);
 border-radius:22px;
@@ -175,6 +221,14 @@ max-width:420px;
 width:100%;
 position:relative;
 animation:widgetIn .28s ease-out;
+transition:
+transform .25s ease,
+box-shadow .25s ease;
+}
+
+.widget:hover{
+transform:translateY(-3px);
+box-shadow:0 18px 50px rgba(0,0,0,.45);
 }
 
 .widget.positive{border-color:var(--green)}
@@ -189,17 +243,42 @@ padding-bottom:14px;
 margin-bottom:16px;
 }
 
-.left{display:flex;gap:12px;align-items:center}
-.coin-img{width:36px;height:36px;border-radius:50%}
+.left{
+display:flex;
+gap:12px;
+align-items:center;
+}
 
-.name{font-size:1.3rem;font-weight:900}
-.symbol{font-size:.7rem;color:var(--accent)}
+.coin-img{
+width:36px;
+height:36px;
+border-radius:50%;
+}
 
-.change{font-size:1.5rem;font-weight:900}
+.name{
+font-size:1.3rem;
+font-weight:900;
+}
+
+.symbol{
+font-size:.7rem;
+color:var(--accent);
+}
+
+.change{
+font-size:1.5rem;
+font-weight:900;
+}
+
 .change.positive{color:var(--green)}
 .change.negative{color:var(--red)}
 
-.price{text-align:center;font-size:3rem;font-weight:900;margin:16px 0}
+.price{
+text-align:center;
+font-size:3rem;
+font-weight:900;
+margin:16px 0;
+}
 
 .stats{
 display:grid;
@@ -236,19 +315,33 @@ bottom:12px;
 display:flex;
 gap:10px;
 }
+
 .actions.left{left:12px}
 .actions.right{right:12px}
 
 .icon{
-width:32px;height:32px;
+width:32px;
+height:32px;
 border-radius:50%;
 border:none;
 background:#0d0d16;
 color:white;
 cursor:pointer;
+transition:
+transform .15s ease,
+background .15s ease,
+box-shadow .15s ease;
 }
 
-/* ===== TRENDING ===== */
+.icon:hover{
+transform:scale(1.08);
+background:rgba(108,124,255,.2);
+box-shadow:0 6px 20px rgba(108,124,255,.35);
+}
+
+/* ===============================
+   TRENDING
+   =============================== */
 .trending{
 margin-top:50px;
 max-width:420px;
@@ -262,12 +355,28 @@ padding:12px 14px;
 border-bottom:1px solid var(--border);
 cursor:pointer;
 font-weight:700;
+transition:
+background .2s ease,
+transform .15s ease,
+padding-left .15s ease;
 }
-.row:hover{background:#12121d}
 
-/* ===== MOBILE ===== */
+.row:hover{
+background:rgba(108,124,255,.08);
+transform:translateX(4px);
+padding-left:18px;
+}
+
+/* ===============================
+   MOBILE POLISH
+   =============================== */
 @media(max-width:900px){
 .generator{grid-template-columns:1fr}
+h1{font-size:2.4rem}
+.panel{padding:26px}
+input{padding:16px}
+.primary{padding:18px}
+.widget{margin-top:20px}
 }
 </style>
 </head>
@@ -275,7 +384,7 @@ font-weight:700;
 <body>
 
 <div id="particles"></div>
-<div class="version">v6.6.3</div>
+<div class="version">v6.6.4</div>
 
 <div class="container">
 <h1>BlockState</h1>
@@ -300,9 +409,11 @@ font-weight:700;
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
-/* ===== PARTICLES INIT ===== */
+/* ===============================
+   PARTICLES INIT
+   =============================== */
 const p=document.getElementById("particles");
-for(let i=0;i<80;i++){
+for(let i=0;i<90;i++){
 const d=document.createElement("div");
 d.className="particle";
 d.style.left=Math.random()*100+"vw";
@@ -311,7 +422,9 @@ d.style.animationDelay=Math.random()*-40+"s";
 p.appendChild(d);
 }
 
-/* ===== APP (REVERTED + SAFE) ===== */
+/* ===============================
+   APP LOGIC (STABLE)
+   =============================== */
 const App={
 coins:[],icons:{},
 
@@ -352,7 +465,8 @@ reader.readAsDataURL(blob);
 populate(){
 const dl=document.getElementById("coins");
 const p=document.getElementById("presets");
-dl.innerHTML="";p.innerHTML="";
+dl.innerHTML="";
+p.innerHTML="";
 this.coins.forEach(c=>{
 const o=document.createElement("option");
 o.value=`${c.symbol.toUpperCase()} — ${c.name}`;
