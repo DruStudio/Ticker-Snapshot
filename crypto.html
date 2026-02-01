@@ -139,7 +139,7 @@ font-weight:900;
 cursor:pointer;
 }
 
-/* PRIMARY CTA (FIXED) */
+/* PRIMARY CTA */
 .primary{
 width:100%;
 padding:16px;
@@ -207,29 +207,42 @@ justify-content:center;
 gap:12px;
 margin:0 auto;
 }
-.widget.up{box-shadow:0 0 22px rgba(34,197,94,.22)}
-.widget.down{box-shadow:0 0 22px rgba(239,68,68,.22)}
+.widget.up{box-shadow:0 0 18px rgba(34,197,94,.2)}
+.widget.down{box-shadow:0 0 18px rgba(239,68,68,.2)}
 
 .asset{
 display:flex;
 flex-direction:column;
 align-items:center;
-gap:4px;
+gap:2px;
 }
 .asset img{
 width:56px;
 height:56px;
 border-radius:50%;
-margin-bottom:-2px;
+margin-bottom:0;
 }
 .asset-name{
 font-size:2.2rem;
 font-weight:900;
+line-height:1.1;
 }
 .asset-name span{
 font-size:1rem;
 color:var(--muted);
 margin-left:6px;
+}
+
+/* hide long names automatically */
+.asset-name.long span{
+display:inline;
+}
+.asset-name.long{
+font-size:0;
+}
+.asset-name.long span{
+font-size:1.4rem;
+font-weight:900;
 }
 
 .price{
@@ -531,12 +544,16 @@ this.current=c;
 const up=c.price_change_percentage_24h>=0;
 const arrow=up?'▲':'▼';
 const delta=Math.abs(c.price_change_24h);
+const longName=c.name.length>16;
 
 output.innerHTML=`
 <div class="widget ${up?'up':'down'}" id="widget">
 <div class="asset">
 <img src="${c.image}">
-<div class="asset-name">${c.name}<span>${c.symbol.toUpperCase()}</span></div>
+<div class="asset-name ${longName?'long':''}">
+${longName?``:`${c.name}`}
+<span>${c.symbol.toUpperCase()}</span>
+</div>
 </div>
 
 <div class="price">$${this.fmt(c.current_price)}</div>
@@ -563,10 +580,17 @@ if(scroll)document.getElementById("widget").scrollIntoView({behavior:"smooth",bl
 },
 
 save(){
-html2canvas(document.getElementById("widget"),{backgroundColor:null,useCORS:true}).then(c=>{
+const node=document.getElementById("widget");
+html2canvas(node,{
+backgroundColor:null,
+useCORS:true,
+scale:window.devicePixelRatio>1?2:1,
+width:1080,
+height:1080,
+}).then(canvas=>{
 const a=document.createElement("a");
 a.download="blockstate.png";
-a.href=c.toDataURL();
+a.href=canvas.toDataURL("image/png");
 a.click();
 });
 },
