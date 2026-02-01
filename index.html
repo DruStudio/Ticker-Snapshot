@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ticker Snapshot v4.1.0</title>
+    <title>Ticker Snapshot v4.2.0</title>
     <style>
         :root {
             --bg-dark: #0a0a0f;
@@ -57,7 +57,7 @@
     /* Hero Section */
     .hero {
         text-align: center;
-        padding: 80px 20px 60px;
+        padding: 80px 20px 40px;
         background: linear-gradient(135deg, var(--bg-dark-2), var(--bg-dark-3));
     }
 
@@ -74,12 +74,7 @@
     .hero-subtitle {
         font-size: 1.2rem;
         color: var(--text-dark-2);
-        margin-bottom: 40px;
-    }
-
-    .hero-widget-container {
-        max-width: 500px;
-        margin: 0 auto;
+        margin-bottom: 20px;
     }
 
     /* Section */
@@ -100,8 +95,8 @@
 
     .carousel-container {
         position: relative;
+        max-width: 100vw;
         overflow: hidden;
-        padding: 20px 0;
     }
 
     .carousel-track {
@@ -110,8 +105,9 @@
         overflow-x: auto;
         scroll-behavior: smooth;
         scrollbar-width: none;
-        padding: 20px 60px;
+        padding: 20px 20px;
         -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory;
     }
 
     .carousel-track::-webkit-scrollbar {
@@ -120,7 +116,9 @@
 
     .carousel-item {
         min-width: 400px;
+        max-width: 400px;
         flex-shrink: 0;
+        scroll-snap-align: center;
     }
 
     .carousel-btn {
@@ -182,7 +180,25 @@
     }
 
     .widget-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
         margin-bottom: 40px;
+    }
+
+    .widget-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: var(--bg-dark-2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+    }
+
+    .widget-symbol-group {
+        flex: 1;
     }
 
     .widget-symbol {
@@ -200,6 +216,7 @@
 
     .widget-data {
         margin: 40px 0;
+        text-align: center;
     }
 
     .widget-price {
@@ -216,6 +233,7 @@
         margin-bottom: 32px;
         display: flex;
         align-items: center;
+        justify-content: center;
         gap: 8px;
     }
 
@@ -301,17 +319,22 @@
         box-shadow: 0 8px 25px rgba(34, 197, 94, 0.4);
     }
 
+    .widget-actions button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
     /* Generator Section */
     .generator-section {
-        padding: 40px 20px;
+        padding: 40px 20px 80px;
         max-width: 1200px;
         margin: 0 auto;
     }
 
     .generator-container {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 40px;
+        grid-template-columns: 400px 1fr;
+        gap: 60px;
         align-items: start;
     }
 
@@ -323,7 +346,7 @@
     }
 
     .control-group {
-        margin-bottom: 28px;
+        margin-bottom: 24px;
     }
 
     .control-group label {
@@ -342,13 +365,14 @@
 
     input[type="text"] {
         width: 100%;
-        padding: 16px 20px;
+        padding: 18px 20px;
         background: var(--bg-dark-3);
         border: 2px solid var(--border-dark);
         border-radius: 12px;
         color: var(--text-dark);
-        font-size: 1.1rem;
+        font-size: 1.2rem;
         transition: all 0.3s;
+        font-weight: 600;
     }
 
     input[type="text"]:focus {
@@ -376,10 +400,12 @@
     }
 
     .autocomplete-item {
-        padding: 14px 20px;
+        padding: 16px 20px;
         cursor: pointer;
         border-bottom: 1px solid var(--border-dark);
         transition: background 0.2s;
+        font-size: 1.1rem;
+        font-weight: 600;
     }
 
     .autocomplete-item:hover {
@@ -392,12 +418,12 @@
 
     .btn-primary {
         width: 100%;
-        padding: 18px;
+        padding: 20px;
         background: linear-gradient(135deg, var(--accent), #8b5cf6);
         border: none;
         border-radius: 12px;
         color: white;
-        font-size: 1.1rem;
+        font-size: 1.2rem;
         font-weight: 700;
         cursor: pointer;
         text-transform: uppercase;
@@ -416,8 +442,9 @@
     }
 
     .generator-preview {
-        position: sticky;
-        top: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
     .preview-widget-container {
@@ -425,16 +452,21 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        min-height: 500px;
+    }
+
+    .preview-actions {
+        width: 400px;
     }
 
     .preview-actions button {
         width: 100%;
-        padding: 18px;
+        padding: 20px;
         background: linear-gradient(135deg, var(--green), #16a34a);
         border: none;
         border-radius: 12px;
         color: white;
-        font-size: 1.1rem;
+        font-size: 1.2rem;
         font-weight: 700;
         cursor: pointer;
         transition: all 0.3s;
@@ -459,9 +491,9 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        height: 300px;
+        padding: 100px;
         color: var(--text-dark-2);
-        font-size: 1.1rem;
+        font-size: 1.2rem;
     }
 
     .loading::after {
@@ -479,11 +511,16 @@
     @media (max-width: 1024px) {
         .generator-container {
             grid-template-columns: 1fr;
+            gap: 40px;
         }
 
-        .generator-preview {
-            position: relative;
-            top: 0;
+        .generator-controls {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .preview-actions {
+            max-width: 400px;
         }
     }
 
@@ -493,25 +530,35 @@
         }
 
         .carousel-item {
-            min-width: 320px;
+            min-width: 340px;
+            max-width: 340px;
         }
 
         .widget-card {
-            width: 320px;
-            padding: 28px;
+            width: 340px;
+            padding: 32px;
         }
 
         .widget-symbol {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
         }
 
         .widget-price {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
         }
 
         .version-badge {
             font-size: 0.75rem;
             padding: 6px 12px;
+        }
+
+        .generator-controls {
+            padding: 30px;
+        }
+
+        .preview-actions {
+            width: 100%;
+            max-width: 340px;
         }
     }
 </style>
@@ -520,19 +567,16 @@
 </head>
 <body>
     <!-- Version Badge -->
-    <div class="version-badge">v4.1.0</div>
+    <div class="version-badge">v4.2.0</div>
 
 ```
 <!-- Hero Section -->
 <header class="hero">
     <h1 class="hero-title">Ticker Snapshot</h1>
-    <p class="hero-subtitle">Capture & share crypto price data as beautiful images</p>
-    <div id="heroWidget" class="hero-widget-container">
-        <div class="loading">Loading widget</div>
-    </div>
+    <p class="hero-subtitle">Capture & share crypto price data</p>
 </header>
 
-<!-- Pre-loaded Carousel -->
+<!-- Carousel -->
 <section class="carousel-section">
     <h2 class="section-title">Popular Cryptos</h2>
     <div class="carousel-container">
@@ -581,6 +625,30 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
+    // Crypto icon emojis
+    const CRYPTO_ICONS = {
+        'BTC': '₿',
+        'ETH': 'Ξ',
+        'SOL': '◎',
+        'BNB': '🔶',
+        'XRP': '✕',
+        'DOGE': '🐕',
+        'ADA': '₳',
+        'MATIC': '🟣',
+        'DOT': '●',
+        'AVAX': '🔺',
+        'LINK': '🔗',
+        'UNI': '🦄',
+        'LTC': 'Ł',
+        'ATOM': '⚛',
+        'XLM': '✦',
+        'ALGO': '△',
+        'VET': 'V',
+        'FIL': '⨎',
+        'NEAR': 'N',
+        'HBAR': 'H'
+    };
+
     // ============================================
     // API INTEGRATION MODULE
     // ============================================
@@ -655,13 +723,17 @@
     const WidgetBuilder = {
         async buildWidget(symbol) {
             const priceData = await API.getPrice(symbol);
+            const icon = CRYPTO_ICONS[symbol] || '●';
             
             const widget = document.createElement('div');
             widget.className = `widget-card ${priceData.change24h >= 0 ? 'positive' : 'negative'}`;
             widget.innerHTML = `
                 <div class="widget-header">
-                    <div class="widget-symbol">${symbol}</div>
-                    <div class="widget-pair">${symbol}/USDT</div>
+                    <div class="widget-icon">${icon}</div>
+                    <div class="widget-symbol-group">
+                        <div class="widget-symbol">${symbol}</div>
+                        <div class="widget-pair">${symbol}/USDT</div>
+                    </div>
                 </div>
                 <div class="widget-data">
                     <div class="widget-price">$${this.formatPrice(priceData.price)}</div>
@@ -717,7 +789,6 @@
 
         async init() {
             this.setupEventListeners();
-            await this.loadHeroWidget();
             await this.loadCarousel();
         },
 
@@ -752,11 +823,13 @@
             document.getElementById('generateBtn').addEventListener('click', () => this.generateWidget());
             document.getElementById('saveImageBtn').addEventListener('click', () => this.saveImage());
 
+            // Carousel navigation - scroll by exact card width + gap
+            const scrollAmount = 424; // 400px card + 24px gap
             document.getElementById('carouselPrev').addEventListener('click', () => {
-                document.getElementById('carouselTrack').scrollBy({ left: -424, behavior: 'smooth' });
+                document.getElementById('carouselTrack').scrollBy({ left: -scrollAmount, behavior: 'smooth' });
             });
             document.getElementById('carouselNext').addEventListener('click', () => {
-                document.getElementById('carouselTrack').scrollBy({ left: 424, behavior: 'smooth' });
+                document.getElementById('carouselTrack').scrollBy({ left: scrollAmount, behavior: 'smooth' });
             });
         },
 
@@ -764,13 +837,7 @@
             document.getElementById('symbolInput').value = symbol;
             document.getElementById('autocompleteResults').classList.remove('show');
             this.currentSymbol = symbol;
-        },
-
-        async loadHeroWidget() {
-            const container = document.getElementById('heroWidget');
-            const widget = await WidgetBuilder.buildWidget('BTC');
-            container.innerHTML = '';
-            container.appendChild(widget);
+            this.generateWidget();
         },
 
         async loadCarousel() {
@@ -817,6 +884,7 @@
                 document.getElementById('saveImageBtn').disabled = false;
             } catch (error) {
                 container.innerHTML = `<div class="loading">Failed: ${error.message}</div>`;
+                document.getElementById('saveImageBtn').disabled = true;
             }
         },
 
