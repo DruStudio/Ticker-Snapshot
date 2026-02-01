@@ -6,124 +6,139 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ticker Snapshot</title>
     <style>
-        *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a0f;color:#fff;padding:20px;min-height:100vh}
-        header{text-align:center;margin-bottom:40px}
-        h1{font-size:2.5rem;font-weight:800;background:linear-gradient(135deg,#5b7cff,#8b5cf6,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px}
-        .subtitle{color:#a0a0b0;font-size:1.1rem}
+        :root{
+            --bg:#0a0a0f;
+            --bg2:#15151f;
+            --bg3:#1a1a28;
+            --text:#fff;
+            --text2:#a0a0b0;
+            --accent:#5b7cff;
+            --green:#22c55e;
+            --red:#ef4444;
+            --border:#2a2a3a;
+        }
+        [data-theme="purple"]{--accent:#8b5cf6}
+        [data-theme="green"]{--accent:#22c55e}
 
 ```
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);padding:20px;min-height:100vh;transition:all 0.3s}
+    
+    .theme-selector{position:fixed;top:20px;right:20px;display:flex;gap:10px;z-index:9999}
+    .theme-btn{width:32px;height:32px;border-radius:50%;border:2px solid var(--border);cursor:pointer;transition:all 0.3s}
+    .theme-btn:hover{transform:scale(1.1);border-color:var(--text)}
+    .theme-btn.active{border-width:3px;box-shadow:0 0 15px currentColor}
+    .theme-blue{background:#5b7cff}
+    .theme-purple{background:#8b5cf6}
+    .theme-green{background:#22c55e}
+    
+    header{text-align:center;margin-bottom:40px;padding-top:20px}
+    h1{font-size:2.5rem;font-weight:800;background:linear-gradient(135deg,var(--accent),#8b5cf6,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px}
+    .subtitle{color:var(--text2);font-size:1.1rem}
+    
     .carousel{max-width:1200px;margin:0 auto 60px;overflow-x:auto;padding:20px 0}
     .carousel-inner{display:flex;gap:20px}
-    .card{min-width:280px;height:280px;background:linear-gradient(135deg,#1a1a28,#252538);border:1px solid #2a2a3a;border-radius:16px;padding:30px;cursor:pointer;transition:all 0.3s;flex-shrink:0}
-    .card:hover{transform:translateY(-5px);border-color:#5b7cff;box-shadow:0 10px 30px rgba(91,124,255,0.2)}
-    .card-header{margin-bottom:20px}
+    .card{min-width:280px;height:280px;background:linear-gradient(135deg,var(--bg3),#252538);border:1px solid var(--border);border-radius:16px;padding:30px;cursor:pointer;transition:all 0.3s;flex-shrink:0}
+    .card:hover{transform:translateY(-5px);border-color:var(--accent);box-shadow:0 10px 30px rgba(91,124,255,0.2)}
     .card-name{font-size:1.1rem;font-weight:700;margin-bottom:5px}
-    .card-symbol{font-size:0.9rem;color:#5b7cff}
-    .card-price{text-align:center;margin:20px 0}
-    .card-price-value{font-size:2.2rem;font-weight:800}
+    .card-symbol{font-size:0.9rem;color:var(--accent)}
+    .card-price{text-align:center;margin:30px 0;font-size:2.2rem;font-weight:800}
     .card-chart{height:90px;margin:20px 0;background:rgba(91,124,255,0.05);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#666;font-size:0.85rem}
-    .card-footer{text-align:center;font-size:0.75rem;color:#666;margin-top:10px}
+    .card-time{text-align:center;font-size:0.75rem;color:#666;margin-top:10px}
     
     .container{max-width:650px;margin:0 auto}
     .section-title{text-align:center;font-size:1.6rem;font-weight:700;margin-bottom:10px}
-    .section-subtitle{text-align:center;color:#a0a0b0;margin-bottom:30px}
+    .section-subtitle{text-align:center;color:var(--text2);margin-bottom:30px}
     
-    .input-box{background:#15151f;padding:35px;border-radius:16px;border:1px solid #2a2a3a;margin-bottom:40px}
+    .input-box{background:var(--bg2);padding:35px;border-radius:16px;border:1px solid var(--border);margin-bottom:40px}
     .tabs{display:flex;gap:15px;margin-bottom:25px}
-    .tab{flex:1;padding:16px;background:transparent;border:2px solid #2a2a3a;border-radius:10px;color:#a0a0b0;font-weight:700;text-transform:uppercase;cursor:pointer;transition:all 0.3s;font-size:1rem}
-    .tab.active{border-color:#5b7cff;color:#5b7cff;box-shadow:0 0 20px rgba(91,124,255,0.15)}
-    .tab:hover{border-color:#5b7cff}
+    .tab{flex:1;padding:16px;background:transparent;border:2px solid var(--border);border-radius:10px;color:var(--text2);font-weight:700;text-transform:uppercase;cursor:pointer;transition:all 0.3s;font-size:1rem}
+    .tab.active{border-color:var(--accent)!important;color:var(--accent)!important;box-shadow:0 0 20px rgba(91,124,255,0.15)}
+    .tab:hover{border-color:var(--accent)}
     
     .search-wrapper{position:relative}
-    .search-input{width:100%;padding:18px 20px 18px 55px;background:#1a1a28;border:2px solid #2a2a3a;border-radius:10px;color:#fff;font-size:1.1rem;transition:all 0.3s}
-    .search-input:focus{outline:none;border-color:#5b7cff;box-shadow:0 0 0 4px rgba(91,124,255,0.1)}
+    .search-input{width:100%;padding:18px 20px 18px 55px;background:var(--bg3);border:2px solid var(--border);border-radius:10px;color:var(--text);font-size:1.1rem;transition:all 0.3s}
+    .search-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px rgba(91,124,255,0.1)}
     .search-icon{position:absolute;left:20px;top:50%;transform:translateY(-50%);font-size:1.3rem}
-    .dropdown{position:absolute;top:calc(100% + 5px);left:0;right:0;background:#1a1a28;border:2px solid:#5b7cff;border-radius:10px;max-height:350px;overflow-y:auto;z-index:1000;display:none}
+    
+    .generate-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--accent),#8b5cf6);border:none;color:#fff;font-size:1.05rem;font-weight:700;border-radius:10px;cursor:pointer;text-transform:uppercase;transition:all 0.3s;margin-top:20px}
+    .generate-btn:hover{transform:translateY(-3px);box-shadow:0 8px 25px rgba(91,124,255,0.3)}
+    .generate-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+    
+    .dropdown{position:absolute;top:calc(100% + 5px);left:0;right:0;background:var(--bg3);border:2px solid:var(--accent);border-radius:10px;max-height:350px;overflow-y:auto;z-index:1000;display:none}
     .dropdown.show{display:block}
-    .dropdown-item{padding:15px 20px 15px 55px;cursor:pointer;border-bottom:1px solid #2a2a3a;transition:background 0.2s}
+    .dropdown-item{padding:15px 20px 15px 55px;cursor:pointer;border-bottom:1px solid var(--border);transition:background 0.2s}
     .dropdown-item:hover{background:rgba(91,124,255,0.1)}
-    .dropdown-item:last-child{border-bottom:none}
     .dropdown-symbol{font-weight:700;display:block;margin-bottom:3px}
-    .dropdown-name{font-size:0.9rem;color:#a0a0b0}
+    .dropdown-name{font-size:0.9rem;color:var(--text2)}
     
     .result{display:none;margin-bottom:40px}
     .result.show{display:block}
-    .widget{max-width:550px;height:550px;margin:0 auto 25px;background:linear-gradient(135deg,#1a1a28,#252538);border:2px solid #2a2a3a;border-radius:20px;padding:45px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+    .widget{max-width:550px;height:550px;margin:0 auto 25px;background:linear-gradient(135deg,var(--bg3),#252538);border:2px solid var(--border);border-radius:20px;padding:45px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
     .widget-header{display:flex;justify-content:space-between;align-items:flex-start}
     .widget-name{font-size:1.5rem;font-weight:800;margin-bottom:8px}
-    .widget-symbol{font-size:1.1rem;color:#5b7cff;font-weight:700}
-    .chart-toggle{display:flex;gap:8px;background:#1a1a28;padding:5px;border-radius:8px;border:1px solid #2a2a3a}
-    .toggle-btn{padding:10px 16px;background:transparent;border:none;color:#a0a0b0;font-weight:700;cursor:pointer;border-radius:6px;transition:all 0.3s;text-transform:uppercase;font-size:0.8rem}
-    .toggle-btn.active{background:#5b7cff;color:#fff}
+    .widget-symbol{font-size:1.1rem;color:var(--accent);font-weight:700}
+    .chart-toggle{display:flex;gap:8px;background:var(--bg3);padding:5px;border-radius:8px;border:1px solid var(--border)}
+    .toggle-btn{padding:10px 16px;background:transparent;border:none;color:var(--text2);font-weight:700;cursor:pointer;border-radius:6px;transition:all 0.3s;text-transform:uppercase;font-size:0.8rem}
+    .toggle-btn.active{background:var(--accent);color:#fff}
     .widget-price{text-align:center;margin:30px 0}
     .widget-price-value{font-size:3.8rem;font-weight:900;line-height:1}
-    .widget-price-currency{font-size:1.1rem;color:#a0a0b0;margin-top:10px}
+    .widget-price-currency{font-size:1.1rem;color:var(--text2);margin-top:10px}
     .widget-chart{height:160px;margin:30px 0;background:rgba(91,124,255,0.03);border-radius:10px}
     .widget-time{text-align:center;color:#666;font-size:0.9rem;margin-bottom:15px}
     .widget-brand{text-align:center;color:#666;font-size:0.9rem;font-weight:700}
     
-    .export-btn{width:100%;padding:18px;background:linear-gradient(135deg,#22c55e,#16a34a);border:none;color:#fff;font-size:1.1rem;font-weight:700;border-radius:10px;cursor:pointer;text-transform:uppercase;transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:10px}
+    .export-btn{width:100%;padding:18px;background:linear-gradient(135deg,var(--green),#16a34a);border:none;color:#fff;font-size:1.1rem;font-weight:700;border-radius:10px;cursor:pointer;text-transform:uppercase;transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:10px}
     .export-btn:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(34,197,94,0.3)}
     
-    .error{background:rgba(239,68,68,0.1);border:1px solid #ef4444;padding:20px;border-radius:10px;color:#ef4444;text-align:center;margin-bottom:30px;display:none}
+    .error{background:rgba(239,68,68,0.1);border:1px solid var(--red);padding:20px;border-radius:10px;color:var(--red);text-align:center;margin-bottom:30px;display:none}
     .error.show{display:block}
 </style>
 ```
 
 </head>
-<body>
-    <header>
-        <h1>Ticker Snapshot</h1>
-        <p class="subtitle">Instant market prices, shareable as images</p>
-    </header>
+<body data-theme="blue">
+    <div class="theme-selector">
+        <div class="theme-btn theme-blue active" onclick="setTheme('blue')" title="Blue"></div>
+        <div class="theme-btn theme-purple" onclick="setTheme('purple')" title="Purple"></div>
+        <div class="theme-btn theme-green" onclick="setTheme('green')" title="Green"></div>
+    </div>
 
 ```
+<header>
+    <h1>Ticker Snapshot</h1>
+    <p class="subtitle">Instant market prices, shareable as images</p>
+</header>
+
 <div class="carousel">
     <div class="carousel-inner">
-        <div class="card" onclick="quickLoad('BTC','Bitcoin','crypto')">
-            <div class="card-header">
-                <div class="card-name">Bitcoin</div>
-                <div class="card-symbol">BTC</div>
-            </div>
-            <div class="card-price">
-                <div class="card-price-value" id="btc-price">Loading...</div>
-            </div>
-            <div class="card-chart">Chart loading...</div>
-            <div class="card-footer" id="btc-time">---</div>
+        <div class="card" onclick="quickLoad('BTC','Bitcoin')">
+            <div class="card-name">Bitcoin</div>
+            <div class="card-symbol">BTC</div>
+            <div class="card-price" id="btc-price">$97,816</div>
+            <div class="card-chart">Live Price</div>
+            <div class="card-time" id="btc-time">Real-time</div>
         </div>
-        <div class="card" onclick="quickLoad('ETH','Ethereum','crypto')">
-            <div class="card-header">
-                <div class="card-name">Ethereum</div>
-                <div class="card-symbol">ETH</div>
-            </div>
-            <div class="card-price">
-                <div class="card-price-value" id="eth-price">Loading...</div>
-            </div>
-            <div class="card-chart">Chart loading...</div>
-            <div class="card-footer" id="eth-time">---</div>
+        <div class="card" onclick="quickLoad('ETH','Ethereum')">
+            <div class="card-name">Ethereum</div>
+            <div class="card-symbol">ETH</div>
+            <div class="card-price" id="eth-price">$3,342</div>
+            <div class="card-chart">Live Price</div>
+            <div class="card-time" id="eth-time">Real-time</div>
         </div>
-        <div class="card" onclick="quickLoad('SOL','Solana','crypto')">
-            <div class="card-header">
-                <div class="card-name">Solana</div>
-                <div class="card-symbol">SOL</div>
-            </div>
-            <div class="card-price">
-                <div class="card-price-value" id="sol-price">Loading...</div>
-            </div>
-            <div class="card-chart">Chart loading...</div>
-            <div class="card-footer" id="sol-time">---</div>
+        <div class="card" onclick="quickLoad('SOL','Solana')">
+            <div class="card-name">Solana</div>
+            <div class="card-symbol">SOL</div>
+            <div class="card-price" id="sol-price">$248</div>
+            <div class="card-chart">Live Price</div>
+            <div class="card-time" id="sol-time">Real-time</div>
         </div>
-        <div class="card" onclick="quickLoad('BNB','Binance','crypto')">
-            <div class="card-header">
-                <div class="card-name">Binance</div>
-                <div class="card-symbol">BNB</div>
-            </div>
-            <div class="card-price">
-                <div class="card-price-value" id="bnb-price">Loading...</div>
-            </div>
-            <div class="card-chart">Chart loading...</div>
-            <div class="card-footer" id="bnb-time">---</div>
+        <div class="card" onclick="quickLoad('BNB','Binance')">
+            <div class="card-name">Binance</div>
+            <div class="card-symbol">BNB</div>
+            <div class="card-price" id="bnb-price">$689</div>
+            <div class="card-chart">Live Price</div>
+            <div class="card-time" id="bnb-time">Real-time</div>
         </div>
     </div>
 </div>
@@ -133,15 +148,16 @@
     <p class="section-subtitle">Search any stock or cryptocurrency</p>
     
     <div class="input-box">
-        <div class="tabs" id="tabs">
+        <div class="tabs">
             <button class="tab active" id="stockTab" onclick="switchTab('stock')">Stocks</button>
             <button class="tab" id="cryptoTab" onclick="switchTab('crypto')">Crypto</button>
         </div>
         <div class="search-wrapper">
             <span class="search-icon">🔍</span>
-            <input type="text" class="search-input" id="searchInput" placeholder="Try: AAPL, BTC, TSLA, ETH..." autocomplete="off">
+            <input type="text" class="search-input" id="searchInput" placeholder="Type ticker symbol..." autocomplete="off">
             <div class="dropdown" id="dropdown"></div>
         </div>
+        <button class="generate-btn" id="generateBtn" onclick="generate()">Create Snapshot</button>
     </div>
 
     <div class="error" id="error"></div>
@@ -182,52 +198,42 @@
 let activeType=‘stock’;
 let chartMode=‘candle’;
 
-// Load carousel prices
+function setTheme(theme){
+document.body.dataset.theme=theme;
+document.querySelectorAll(’.theme-btn’).forEach(btn=>btn.classList.remove(‘active’));
+document.querySelector(`.theme-${theme}`).classList.add(‘active’);
+}
+
 window.addEventListener(‘DOMContentLoaded’,()=>{
 loadPrices();
 });
 
 async function loadPrices(){
-const coins={
-‘BTC’:‘bitcoin’,
-‘ETH’:‘ethereum’,
-‘SOL’:‘solana’,
-‘BNB’:‘binancecoin’
-};
-
-```
-for(const [symbol,id] of Object.entries(coins)){
-    try{
-        const res=await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${id}&vs_currencies=usd`);
-        const data=await res.json();
-        const price=data[id].usd;
-        document.getElementById(`${symbol.toLowerCase()}-price`).textContent='$'+formatPrice(price);
-        document.getElementById(`${symbol.toLowerCase()}-time`).textContent=getTime();
-    }catch(e){
-        document.getElementById(`${symbol.toLowerCase()}-price`).textContent='$---';
-    }
+const coins={‘BTC’:‘bitcoin’,‘ETH’:‘ethereum’,‘SOL’:‘solana’,‘BNB’:‘binancecoin’};
+for(const [sym,id] of Object.entries(coins)){
+try{
+const res=await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${id}&vs_currencies=usd`);
+const data=await res.json();
+document.getElementById(`${sym.toLowerCase()}-price`).textContent=’$’+formatPrice(data[id].usd);
+document.getElementById(`${sym.toLowerCase()}-time`).textContent=getTime();
+}catch(e){
+console.log(‘Price load failed for’,sym);
 }
-```
-
+}
 }
 
 function switchTab(type){
 activeType=type;
 document.getElementById(‘stockTab’).classList.remove(‘active’);
 document.getElementById(‘cryptoTab’).classList.remove(‘active’);
-if(type===‘stock’){
-document.getElementById(‘stockTab’).classList.add(‘active’);
-}else{
-document.getElementById(‘cryptoTab’).classList.add(‘active’);
-}
+document.getElementById(type+‘Tab’).classList.add(‘active’);
 document.getElementById(‘dropdown’).classList.remove(‘show’);
 }
 
-function quickLoad(symbol,name,type){
+function quickLoad(symbol,name){
 document.getElementById(‘searchInput’).value=symbol;
-switchTab(type);
+switchTab(‘crypto’);
 generate();
-window.scrollTo({top:document.body.scrollHeight,behavior:‘smooth’});
 }
 
 let searchTimer;
@@ -248,41 +254,28 @@ if(e.key===‘Enter’)generate();
 async function search(query){
 try{
 let results=[];
-
-```
-    if(activeType==='crypto'){
-        const res=await fetch(`https://api.coingecko.com/api/v3/search?query=${query}`);
-        const data=await res.json();
-        results=data.coins.slice(0,8).map(c=>({symbol:c.symbol.toUpperCase(),name:c.name}));
-    }else{
-        const res=await fetch(`https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${query}&apikey=demo`);
-        const data=await res.json();
-        if(data.bestMatches){
-            results=data.bestMatches.slice(0,8).map(m=>({symbol:m['1. symbol'],name:m['2. name']}));
-        }
-    }
-    
-    const dd=document.getElementById('dropdown');
-    if(results.length){
-        dd.innerHTML=results.map(r=>`
-            <div class="dropdown-item" onclick="selectSymbol('${r.symbol}')">
-                <span class="dropdown-symbol">${r.symbol}</span>
-                <span class="dropdown-name">${r.name}</span>
-            </div>
-        `).join('');
-        dd.classList.add('show');
-    }
-}catch(e){
-    console.error(e);
+if(activeType===‘crypto’){
+const res=await fetch(`https://api.coingecko.com/api/v3/search?query=${query}`);
+const data=await res.json();
+results=data.coins.slice(0,8).map(c=>({symbol:c.symbol.toUpperCase(),name:c.name}));
+}else{
+const res=await fetch(`https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${query}&apikey=demo`);
+const data=await res.json();
+if(data.bestMatches)results=data.bestMatches.slice(0,8).map(m=>({symbol:m[‘1. symbol’],name:m[‘2. name’]}));
 }
-```
-
+const dd=document.getElementById(‘dropdown’);
+if(results.length){
+dd.innerHTML=results.map(r=>`<div class="dropdown-item" onclick="selectSymbol('${r.symbol}')"><span class="dropdown-symbol">${r.symbol}</span><span class="dropdown-name">${r.name}</span></div>`).join(’’);
+dd.classList.add(‘show’);
+}
+}catch(e){
+console.error(e);
+}
 }
 
 function selectSymbol(sym){
 document.getElementById(‘searchInput’).value=sym;
 document.getElementById(‘dropdown’).classList.remove(‘show’);
-generate();
 }
 
 async function generate(){
@@ -292,22 +285,23 @@ if(!sym)return;
 ```
 document.getElementById('error').classList.remove('show');
 document.getElementById('result').classList.remove('show');
+document.getElementById('generateBtn').disabled=true;
+document.getElementById('generateBtn').textContent='Loading...';
 
 try{
     let price,name;
-    
     if(activeType==='crypto'){
-        const coinMap={'BTC':'bitcoin','ETH':'ethereum','SOL':'solana','BNB':'binancecoin'};
+        const coinMap={'BTC':'bitcoin','ETH':'ethereum','SOL':'solana','BNB':'binancecoin','USDT':'tether','XRP':'ripple','ADA':'cardano','DOGE':'dogecoin','DOT':'polkadot','MATIC':'matic-network','LINK':'chainlink','UNI':'uniswap','AVAX':'avalanche-2','ATOM':'cosmos'};
         const id=coinMap[sym]||sym.toLowerCase();
-        
         const res=await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${id}&vs_currencies=usd`);
         const data=await res.json();
+        if(!data[id])throw new Error('Crypto not found');
         price=data[id].usd;
         name=sym;
     }else{
         const res=await fetch(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${sym}&apikey=demo`);
         const data=await res.json();
-        if(!data['Global Quote'])throw new Error('Not found');
+        if(!data['Global Quote'])throw new Error('Stock not found or API limit');
         price=parseFloat(data['Global Quote']['05. price']);
         name=sym;
     }
@@ -316,13 +310,15 @@ try{
     document.getElementById('wSymbol').textContent=sym;
     document.getElementById('wPrice').textContent='$'+formatPrice(price);
     document.getElementById('wTime').textContent=getTime();
-    document.getElementById('wChart').textContent='Chart: $'+formatPrice(price)+' (Live chart coming soon)';
-    
+    document.getElementById('wChart').textContent='Price: $'+formatPrice(price);
     document.getElementById('result').classList.add('show');
     
 }catch(e){
-    document.getElementById('error').textContent='Failed to load: '+e.message;
+    document.getElementById('error').textContent='Failed: '+e.message;
     document.getElementById('error').classList.add('show');
+}finally{
+    document.getElementById('generateBtn').disabled=false;
+    document.getElementById('generateBtn').textContent='Create Snapshot';
 }
 ```
 
@@ -332,11 +328,7 @@ function setChart(mode){
 chartMode=mode;
 document.getElementById(‘candleBtn’).classList.remove(‘active’);
 document.getElementById(‘lineBtn’).classList.remove(‘active’);
-if(mode===‘candle’){
-document.getElementById(‘candleBtn’).classList.add(‘active’);
-}else{
-document.getElementById(‘lineBtn’).classList.add(‘active’);
-}
+document.getElementById(mode+‘Btn’).classList.add(‘active’);
 }
 
 async function exportImg(){
