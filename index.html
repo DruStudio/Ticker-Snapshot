@@ -33,7 +33,7 @@ overflow-x:hidden;
 position:fixed;
 top:14px;
 left:14px;
-z-index:999;
+z-index:9999;
 background:var(--bg3);
 border:1px solid var(--border);
 border-radius:10px;
@@ -42,41 +42,55 @@ font-size:.75rem;
 font-weight:700;
 }
 
-.version-badge span{
-display:block;
-font-size:.65rem;
-font-weight:500;
-color:var(--muted);
-margin-top:2px;
-}
-
 /* ===== LAYOUT ===== */
 .container{
 max-width:1100px;
 margin:0 auto;
 padding:40px 20px 120px;
+display:flex;
+flex-direction:column;
+align-items:center;
 }
 
 h1{
 font-size:3rem;
 font-weight:900;
 text-align:center;
-background:linear-gradient(120deg,#6c7cff,#8b5cf6,#22c55e);
+background:linear-gradient(
+120deg,
+#6c7cff,
+#8b5cf6,
+#22c55e,
+#ec4899,
+#6c7cff
+);
+background-size:400% 400%;
+animation:titleFlow 120s linear infinite;
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
 }
 
+@keyframes titleFlow{
+0%{background-position:0% 50%}
+100%{background-position:100% 50%}
+}
+
 .section{
-margin-top:60px;
+width:100%;
+margin-top:56px;
+display:flex;
+flex-direction:column;
+align-items:center;
 }
 
 /* ===== GENERATOR ===== */
 .generator{
 display:grid;
-grid-template-columns:340px 1fr;
-gap:32px;
+grid-template-columns:340px 420px;
+gap:36px;
+justify-content:center;
 align-items:flex-start;
-margin-top:32px;
+width:100%;
 }
 
 .controls{
@@ -84,6 +98,7 @@ background:linear-gradient(135deg,var(--card),#1f1f30);
 border:1px solid var(--border);
 border-radius:22px;
 padding:24px;
+width:100%;
 }
 
 label{
@@ -141,8 +156,8 @@ border:2px solid var(--border);
 box-shadow:0 20px 60px rgba(0,0,0,.6);
 width:100%;
 max-width:420px;
-animation:fadeUp .4s ease;
 position:relative;
+animation:fadeUp .4s ease;
 }
 
 @keyframes fadeUp{
@@ -186,7 +201,7 @@ color:var(--accent);
 }
 
 .widget-percent{
-font-size:1.4rem;
+font-size:1.5rem;
 font-weight:900;
 }
 
@@ -253,12 +268,23 @@ color:white;
 cursor:pointer;
 }
 
-/* ===== TRENDING LIST ===== */
+/* ===== TRENDING ===== */
+.trending-controls{
+margin-bottom:12px;
+}
+
+select{
+background:var(--bg3);
+color:white;
+border:1px solid var(--border);
+border-radius:10px;
+padding:8px 12px;
+font-weight:700;
+}
+
 .trending-list{
-margin-top:28px;
+width:100%;
 max-width:420px;
-margin-left:auto;
-margin-right:auto;
 }
 
 .trending-item{
@@ -276,21 +302,21 @@ background:var(--bg3);
 
 /* ===== MOBILE ===== */
 @media(max-width:900px){
-.generator{grid-template-columns:1fr}
+.generator{
+grid-template-columns:1fr;
+}
 }
 </style>
 </head>
 
 <body>
 
-<div class="version-badge">
-v6.1.0
-<span>Auto-refreshes every 2 minutes</span>
-</div>
+<div class="version-badge">v6.2.0</div>
 
 <div class="container">
 <h1>BlockState</h1>
 
+<!-- GENERATOR -->
 <div class="section">
 <div class="generator">
 
@@ -317,8 +343,16 @@ v6.1.0
 </div>
 </div>
 
+<!-- TRENDING -->
 <div class="section">
-<h2 style="text-align:center;margin-bottom:16px">Trending (Top 10)</h2>
+<div class="trending-controls">
+<select id="trendMode" onchange="App.renderTrending()">
+<option value="movers">Biggest Movers</option>
+<option value="top">Top 10</option>
+<option value="random">Trending</option>
+</select>
+</div>
+
 <div id="trending" class="trending-list"></div>
 </div>
 
@@ -329,6 +363,7 @@ v6.1.0
 <script>
 const App={
 coins:[],
+current:null,
 
 formatPrice(v){
 if(v>=1) return v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -344,6 +379,10 @@ const r=await fetch(
 this.coins=await r.json();
 this.populateList();
 this.renderTrending();
+if(this.current){
+const c=this.coins.find(x=>x.id===this.current.id);
+if(c) this.show(c);
+}
 },
 
 populateList(){
@@ -357,12 +396,13 @@ list.appendChild(o);
 },
 
 build(c){
+this.current=c;
 const pos=c.price_change_percentage_24h>=0;
 return `
 <div class="widget ${pos?'positive':'negative'}">
 <div class="widget-header">
 <div class="widget-left">
-<img src="${c.image}">
+<img src="${c.image}" crossorigin="anonymous">
 <div>
 <div class="widget-name">${c.name}</div>
 <div class="widget-symbol">${c.symbol.toUpperCase()}</div>
@@ -398,10 +438,20 @@ Captured • ${new Date().toUTCString()}<br>BLOCKSTATE.LIVE
 renderTrending(){
 const el=document.getElementById('trending');
 el.innerHTML='';
-[...this.coins]
-.sort((a,b)=>Math.abs(b.price_change_percentage_24h)-Math.abs(a.price_change_percentage_24h))
-.slice(0,10)
-.forEach(c=>{
+let list=[...this.coins];
+const mode=document.getElementById('trendMode').value;
+
+if(mode==='movers'){
+list.sort((a,b)=>Math.abs(b.price_change_percentage_24h)-Math.abs(a.price_change_percentage_24h));
+}
+if(mode==='top'){
+list.sort((a,b)=>a.market_cap_rank-b.market_cap_rank);
+}
+if(mode==='random'){
+list=list.sort(()=>0.5-Math.random());
+}
+
+list.slice(0,10).forEach(c=>{
 const d=document.createElement('div');
 d.className='trending-item';
 d.innerHTML=`<span>${c.name}</span><span>${c.price_change_percentage_24h.toFixed(2)}%</span>`;
@@ -431,16 +481,34 @@ document.getElementById('preview').innerHTML=this.build(c);
 },
 
 async export(){
-const w=document.querySelector('.widget');
-const canvas=await html2canvas(w,{scale:2,backgroundColor:'#12121d'});
+const widget=document.querySelector('.widget');
+await new Promise(r=>setTimeout(r,100));
+const canvas=await html2canvas(widget,{
+scale:2,
+backgroundColor:'#12121d',
+useCORS:true,
+allowTaint:false
+});
 const a=document.createElement('a');
-a.href=canvas.toDataURL();
+a.href=canvas.toDataURL('image/png');
 a.download='blockstate.png';
 a.click();
 },
 
-share(){
-alert('Share API hook ready');
+async share(){
+if(!navigator.share){alert('Sharing not supported');return;}
+const widget=document.querySelector('.widget');
+await new Promise(r=>setTimeout(r,100));
+const canvas=await html2canvas(widget,{
+scale:2,
+backgroundColor:'#12121d',
+useCORS:true,
+allowTaint:false
+});
+const blob=await new Promise(r=>canvas.toBlob(r));
+navigator.share({
+files:[new File([blob],'blockstate.png',{type:'image/png'})]
+});
 }
 };
 
