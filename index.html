@@ -1,289 +1,318 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BlockState — One block. One moment.</title>
 
 <style>
-:root {
-    --bg-dark:#0a0a0f;
-    --bg-dark-2:#15151f;
-    --bg-dark-3:#1a1a28;
-    --text:#ffffff;
-    --muted:#a0a0b0;
-    --accent:#6c7cff;
-    --green:#22c55e;
-    --red:#ef4444;
-    --border:#2a2a3a;
+:root{
+--bg:#0a0a0f;
+--bg2:#15151f;
+--bg3:#1a1a28;
+--text:#fff;
+--muted:#a0a0b0;
+--accent:#6c7cff;
+--green:#22c55e;
+--red:#ef4444;
+--border:#2a2a3a;
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
 
 html,body{
-    width:100%;
-    overflow-x:hidden;
-    background:var(--bg-dark);
-    color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+background:var(--bg);
+color:var(--text);
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+overflow-x:hidden;
 }
 
 /* Version */
 .version-badge{
-    position:fixed;
-    top:24px;
-    left:24px;
-    padding:6px 14px;
-    border-radius:8px;
-    background:rgba(108,124,255,.15);
-    border:1px solid var(--accent);
-    font-size:.75rem;
-    font-weight:700;
-    color:var(--accent);
-    z-index:10;
+position:fixed;
+top:24px;
+left:24px;
+padding:6px 14px;
+border-radius:8px;
+border:1px solid var(--accent);
+background:rgba(108,124,255,.15);
+color:var(--accent);
+font-size:.75rem;
+font-weight:700;
+z-index:10;
 }
 
 /* Hero */
 .hero{
-    text-align:center;
-    padding:80px 20px 50px;
+text-align:center;
+padding:80px 20px 40px;
 }
 
 .hero-title{
-    font-size:3rem;
-    font-weight:900;
-    background:linear-gradient(135deg,var(--accent),#8b5cf6);
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
+font-size:3rem;
+font-weight:900;
+background:linear-gradient(135deg,var(--accent),#8b5cf6);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
 }
 
 .hero-subtitle{
-    margin-top:12px;
-    font-size:1.1rem;
-    color:var(--muted);
+margin-top:12px;
+color:var(--muted);
 }
 
 /* Section */
 .section-title{
-    text-align:center;
-    font-size:2rem;
-    margin:50px 0 30px;
+text-align:center;
+font-size:2rem;
+margin:50px 0 30px;
+}
+
+/* Trending carousel */
+.carousel{
+position:relative;
+max-width:100%;
+overflow:hidden;
+margin-bottom:60px;
+}
+
+.carousel-track{
+display:flex;
+transition:transform .6s ease;
+}
+
+.carousel-card{
+min-width:100%;
+display:flex;
+justify-content:center;
+padding:0 20px;
 }
 
 /* Generator */
 .generator-section{
-    max-width:1200px;
-    margin:0 auto;
-    padding:0 20px 80px;
+max-width:1200px;
+margin:0 auto;
+padding:0 20px 80px;
 }
 
 .generator-container{
-    display:grid;
-    grid-template-columns:360px 1fr;
-    gap:50px;
+display:grid;
+grid-template-columns:360px 1fr;
+gap:50px;
 }
 
 .generator-controls{
-    background:var(--bg-dark-2);
-    padding:30px;
-    border-radius:20px;
-    border:1px solid var(--border);
+background:var(--bg2);
+padding:30px;
+border-radius:20px;
+border:1px solid var(--border);
 }
 
 label{
-    display:block;
-    font-size:.8rem;
-    color:var(--muted);
-    font-weight:700;
-    letter-spacing:1px;
-    margin-bottom:8px;
+font-size:.8rem;
+color:var(--muted);
+font-weight:700;
+letter-spacing:1px;
+display:block;
+margin-bottom:8px;
 }
 
-input[type=text]{
-    width:100%;
-    padding:16px;
-    border-radius:12px;
-    border:2px solid var(--border);
-    background:var(--bg-dark-3);
-    color:white;
-    font-size:1.1rem;
-    margin-bottom:14px;
+input{
+width:100%;
+padding:16px;
+border-radius:12px;
+border:2px solid var(--border);
+background:var(--bg3);
+color:var(--text);
+font-size:1.1rem;
+margin-bottom:14px;
 }
 
 .quick-buttons{
-    display:flex;
-    gap:8px;
-    margin-bottom:20px;
+display:flex;
+gap:8px;
+margin-bottom:20px;
 }
 
 .quick-buttons button{
-    flex:1;
-    padding:10px;
-    background:var(--bg-dark-3);
-    border:2px solid var(--border);
-    border-radius:10px;
-    color:white;
-    font-weight:700;
-    cursor:pointer;
+flex:1;
+padding:10px;
+border-radius:10px;
+border:2px solid var(--border);
+background:var(--bg3);
+color:white;
+font-weight:700;
+cursor:pointer;
 }
 
-.quick-buttons button:hover{
-    border-color:var(--accent);
-}
+.quick-buttons button:hover{border-color:var(--accent)}
 
 .btn-primary{
-    width:100%;
-    padding:18px;
-    font-size:1rem;
-    font-weight:800;
-    border:none;
-    border-radius:12px;
-    background:linear-gradient(135deg,var(--accent),#8b5cf6);
-    color:white;
-    cursor:pointer;
+width:100%;
+padding:18px;
+border:none;
+border-radius:12px;
+font-weight:800;
+background:linear-gradient(135deg,var(--accent),#8b5cf6);
+color:white;
+cursor:pointer;
 }
 
 /* Preview */
 .preview-widget-container{
-    min-height:600px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
-
-.preview-actions button{
-    margin-top:20px;
-    width:100%;
-    padding:18px;
-    border:none;
-    border-radius:12px;
-    font-weight:800;
-    background:linear-gradient(135deg,var(--green),#16a34a);
-    color:white;
-    cursor:pointer;
+min-height:620px;
+display:flex;
+justify-content:center;
+align-items:center;
 }
 
 /* Widget */
 .widget-card{
-    width:100%;
-    max-width:480px;
-    background:linear-gradient(135deg,var(--bg-dark-3),#1f1f30);
-    border:3px solid var(--border);
-    border-radius:24px;
-    padding:40px;
-    box-shadow:0 14px 40px rgba(0,0,0,.45);
+width:100%;
+max-width:480px;
+background:linear-gradient(135deg,var(--bg3),#1f1f30);
+border:3px solid var(--border);
+border-radius:24px;
+padding:32px;
+box-shadow:0 14px 40px rgba(0,0,0,.45);
 }
 
 .widget-card.positive{border-color:var(--green)}
 .widget-card.negative{border-color:var(--red)}
 
 .widget-header{
-    text-align:center;
-    border-bottom:2px solid var(--border);
-    padding-bottom:20px;
-    margin-bottom:24px;
+text-align:center;
+padding-bottom:18px;
+border-bottom:2px solid var(--border);
+margin-bottom:18px;
 }
 
 .widget-name{
-    font-size:2rem;
-    font-weight:900;
+font-size:2rem;
+font-weight:900;
 }
 
 .widget-ticker{
-    margin-top:6px;
-    font-weight:700;
-    color:var(--accent);
+margin-top:6px;
+color:var(--accent);
+font-weight:700;
+}
+
+.chart-wrap{
+margin:20px 0;
+}
+
+canvas{
+width:100%;
+height:160px;
 }
 
 .widget-price{
-    text-align:center;
-    font-size:3.4rem;
-    font-weight:900;
-    margin:20px 0;
+text-align:center;
+font-size:3.2rem;
+font-weight:900;
+margin:16px 0;
 }
 
 .widget-change{
-    text-align:center;
-    font-size:1.4rem;
-    font-weight:800;
+text-align:center;
+font-size:1.3rem;
+font-weight:800;
 }
 
 .widget-change.positive{color:var(--green)}
 .widget-change.negative{color:var(--red)}
 
 .widget-change-label{
-    text-align:center;
-    font-size:.75rem;
-    opacity:.7;
-    margin-top:6px;
+text-align:center;
+font-size:.75rem;
+opacity:.7;
+margin-top:6px;
 }
 
 .widget-stats{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:14px;
-    margin:28px 0;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:14px;
+margin:24px 0;
 }
 
 .widget-stat{
-    background:var(--bg-dark-2);
-    padding:14px;
-    border-radius:12px;
-    text-align:center;
+background:var(--bg2);
+padding:14px;
+border-radius:12px;
+text-align:center;
 }
 
 .widget-stat-label{
-    font-size:.7rem;
-    opacity:.7;
-    margin-bottom:6px;
+font-size:.7rem;
+opacity:.7;
+margin-bottom:6px;
 }
 
 .widget-stat-value{
-    font-weight:800;
+font-weight:800;
 }
 
 .widget-footer{
-    border-top:2px solid var(--border);
-    padding-top:18px;
-    text-align:center;
+border-top:2px solid var(--border);
+padding-top:18px;
+text-align:center;
 }
 
 .widget-timestamp{
-    font-size:.75rem;
-    color:var(--muted);
+font-size:.75rem;
+color:var(--muted);
 }
 
 .widget-branding{
-    margin-top:8px;
-    font-size:.7rem;
-    letter-spacing:2px;
-    opacity:.85;
+margin-top:8px;
+font-size:.7rem;
+letter-spacing:2px;
+opacity:.85;
 }
 
-/* Responsive */
+.preview-actions button{
+margin-top:20px;
+width:100%;
+padding:18px;
+border:none;
+border-radius:12px;
+font-weight:800;
+background:linear-gradient(135deg,var(--green),#16a34a);
+color:white;
+cursor:pointer;
+}
+
 @media(max-width:900px){
-    .generator-container{grid-template-columns:1fr}
+.generator-container{grid-template-columns:1fr}
 }
 </style>
 </head>
 
 <body>
 
-<div class="version-badge">v5.1.0</div>
+<div class="version-badge">v5.2.0</div>
 
 <header class="hero">
-    <h1 class="hero-title">BlockState</h1>
-    <p class="hero-subtitle">One block. One moment.</p>
+<h1 class="hero-title">BlockState</h1>
+<p class="hero-subtitle">One block. One moment.</p>
 </header>
 
 <section class="generator-section">
+<h2 class="section-title">Trending States</h2>
+
+<div class="carousel">
+<div id="carouselTrack" class="carousel-track"></div>
+</div>
+
 <h2 class="section-title">Create a BlockState</h2>
 
 <div class="generator-container">
 
 <div class="generator-controls">
 <label>Symbol</label>
-<input id="symbolInput" type="text" value="BTC" />
+<input id="symbolInput" value="BTC">
 
 <div class="quick-buttons">
 <button onclick="App.quick('BTC')">BTC</button>
@@ -298,7 +327,7 @@ input[type=text]{
 
 <div>
 <div id="preview" class="preview-widget-container">
-    <div style="opacity:.6">Capture a block state</div>
+<div style="opacity:.6">Capture a block state</div>
 </div>
 <div class="preview-actions">
 <button id="saveBtn" onclick="App.save()" disabled>Save Image</button>
@@ -312,74 +341,120 @@ input[type=text]{
 
 <script>
 const App={
-async generate(){
-    const symbol=document.getElementById('symbolInput').value.trim().toUpperCase();
-    const preview=document.getElementById('preview');
-    const saveBtn=document.getElementById('saveBtn');
+symbols:['BTC','ETH','SOL','BNB','XRP'],
+carouselIndex:0,
 
-    preview.innerHTML='Capturing state…';
-    saveBtn.disabled=true;
-
-    try{
-        let data;
-
-        try{
-            const r=await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${symbol}USDT`,{cache:'no-store'});
-            if(!r.ok)throw'binance';
-            data=await r.json();
-        }catch{
-            const map={BTC:'bitcoin',ETH:'ethereum',SOL:'solana',BNB:'binancecoin',XRP:'ripple'};
-            const r=await fetch(`https://api.coingecko.com/api/v3/coins/${map[symbol]}`);
-            const g=await r.json();
-            data={
-                lastPrice:g.market_data.current_price.usd,
-                priceChangePercent:g.market_data.price_change_percentage_24h,
-                highPrice:g.market_data.high_24h.usd,
-                lowPrice:g.market_data.low_24h.usd,
-                openPrice:g.market_data.current_price.usd-g.market_data.price_change_24h,
-                quoteVolume:g.market_data.total_volume.usd
-            };
-        }
-
-        const pos=data.priceChangePercent>=0;
-
-        preview.innerHTML=`
-        <div class="widget-card ${pos?'positive':'negative'}">
-            <div class="widget-header">
-                <div class="widget-name">${symbol}</div>
-                <div class="widget-ticker">${symbol}/USD</div>
-            </div>
-            <div class="widget-price">$${Number(data.lastPrice).toLocaleString()}</div>
-            <div class="widget-change ${pos?'positive':'negative'}">
-                ${pos?'▲':'▼'} ${Number(data.priceChangePercent).toFixed(2)}%
-            </div>
-            <div class="widget-change-label">24h Change</div>
-            <div class="widget-stats">
-                <div class="widget-stat"><div class="widget-stat-label">24h High</div><div class="widget-stat-value">$${Number(data.highPrice).toLocaleString()}</div></div>
-                <div class="widget-stat"><div class="widget-stat-label">24h Low</div><div class="widget-stat-value">$${Number(data.lowPrice).toLocaleString()}</div></div>
-                <div class="widget-stat"><div class="widget-stat-label">24h Open</div><div class="widget-stat-value">$${Number(data.openPrice).toLocaleString()}</div></div>
-                <div class="widget-stat"><div class="widget-stat-label">Volume</div><div class="widget-stat-value">${(data.quoteVolume/1e9).toFixed(2)}B</div></div>
-            </div>
-            <div class="widget-footer">
-                <div class="widget-timestamp">State captured • ${new Date().toUTCString()}</div>
-                <div class="widget-branding">BLOCKSTATE.LIVE</div>
-            </div>
-        </div>`;
-        saveBtn.disabled=false;
-    }catch{
-        preview.innerHTML='<span style="color:#ef4444">Failed to capture state</span>';
-    }
+async init(){
+this.buildCarousel();
+setInterval(()=>this.rotateCarousel(),5000);
 },
-quick(s){document.getElementById('symbolInput').value=s;this.generate()},
+
+rotateCarousel(){
+this.carouselIndex=(this.carouselIndex+1)%this.symbols.length;
+document.getElementById('carouselTrack').style.transform=
+`translateX(-${this.carouselIndex*100}%)`;
+},
+
+async buildCarousel(){
+const track=document.getElementById('carouselTrack');
+for(const s of this.symbols){
+const card=document.createElement('div');
+card.className='carousel-card';
+card.innerHTML='<div class="widget-card">Loading…</div>';
+track.appendChild(card);
+this.buildWidget(s,card.firstChild,true);
+}
+},
+
+async buildWidget(symbol,target,isStatic=false){
+const r=await fetch(`https://api.binance.com/api/v3/klines?symbol=${symbol}USDT&interval=15m&limit=40`);
+const klines=await r.json();
+
+const ohlc=klines.map(k=>({
+o:+k[1],h:+k[2],l:+k[3],c:+k[4]
+}));
+
+const last=ohlc[ohlc.length-1];
+const change=((last.c-ohlc[0].o)/ohlc[0].o)*100;
+const pos=change>=0;
+
+target.innerHTML=`
+<div class="widget-card ${pos?'positive':'negative'}">
+<div class="widget-header">
+<div class="widget-name">${symbol}</div>
+<div class="widget-ticker">${symbol}/USDT</div>
+</div>
+
+<div class="chart-wrap">
+<canvas></canvas>
+</div>
+
+<div class="widget-price">$${last.c.toLocaleString()}</div>
+<div class="widget-change ${pos?'positive':'negative'}">
+${pos?'▲':'▼'} ${change.toFixed(2)}%
+</div>
+<div class="widget-change-label">15m trend</div>
+
+<div class="widget-footer">
+<div class="widget-timestamp">State captured • ${new Date().toUTCString()}</div>
+<div class="widget-branding">BLOCKSTATE.LIVE</div>
+</div>
+</div>`;
+
+this.drawCandles(target.querySelector('canvas'),ohlc);
+if(!isStatic)document.getElementById('saveBtn').disabled=false;
+},
+
+drawCandles(canvas,data){
+const ctx=canvas.getContext('2d');
+const w=canvas.width=canvas.offsetWidth*2;
+const h=canvas.height=canvas.offsetHeight*2;
+ctx.scale(2,2);
+
+const max=Math.max(...data.map(d=>d.h));
+const min=Math.min(...data.map(d=>d.l));
+const cw=w/2/data.length;
+
+data.forEach((d,i)=>{
+const x=i*cw+cw/2;
+const openY=h-(d.o-min)/(max-min)*h;
+const closeY=h-(d.c-min)/(max-min)*h;
+const highY=h-(d.h-min)/(max-min)*h;
+const lowY=h-(d.l-min)/(max-min)*h;
+
+ctx.strokeStyle=d.c>=d.o?'#22c55e':'#ef4444';
+ctx.fillStyle=ctx.strokeStyle;
+
+ctx.beginPath();
+ctx.moveTo(x,highY);
+ctx.lineTo(x,lowY);
+ctx.stroke();
+
+ctx.fillRect(x-cw/4,Math.min(openY,closeY),cw/2,Math.abs(openY-closeY)||1);
+});
+},
+
+async generate(){
+const s=document.getElementById('symbolInput').value.toUpperCase();
+this.buildWidget(s,document.getElementById('preview'));
+},
+
+quick(s){
+document.getElementById('symbolInput').value=s;
+this.generate();
+},
+
 async save(){
-    const w=document.querySelector('.widget-card');
-    const c=await html2canvas(w,{scale:2,backgroundColor:'#1a1a28'});
-    const a=document.createElement('a');
-    a.href=c.toDataURL();
-    a.download=`blockstate-${Date.now()}.png`;
-    a.click();
+const w=document.querySelector('#preview .widget-card');
+const c=await html2canvas(w,{scale:2,backgroundColor:'#1a1a28'});
+const a=document.createElement('a');
+a.href=c.toDataURL();
+a.download=`blockstate-${Date.now()}.png`;
+a.click();
 }
 };
+
+App.init();
 </script>
 
 </body>
