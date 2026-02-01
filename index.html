@@ -45,7 +45,7 @@ z-index:10;
 /* Hero */
 .hero{
 text-align:center;
-padding:64px 20px 24px;
+padding:64px 20px 28px;
 }
 
 .hero-title{
@@ -71,47 +71,34 @@ padding:0 20px 80px;
 .section-title{
 text-align:center;
 font-size:2rem;
-margin:40px 0 24px;
+margin:36px 0 20px;
 }
 
-/* Trending */
-.trending-wrap{
+/* Trending stack */
+.trending-stack{
 display:flex;
-justify-content:center;
-align-items:center;
-min-height:520px;
-position:relative;
-overflow:hidden;
+gap:20px;
+overflow-x:auto;
+scroll-snap-type:x mandatory;
+padding-bottom:10px;
 }
 
-.trending-wrap .widget-card{
-position:absolute;
-opacity:0;
-animation:fadeSlide 5s infinite;
+.trending-stack::-webkit-scrollbar{
+display:none;
 }
 
-.trending-wrap .widget-card:nth-child(1){animation-delay:0s}
-.trending-wrap .widget-card:nth-child(2){animation-delay:5s}
-.trending-wrap .widget-card:nth-child(3){animation-delay:10s}
-.trending-wrap .widget-card:nth-child(4){animation-delay:15s}
-.trending-wrap .widget-card:nth-child(5){animation-delay:20s}
-
-@keyframes fadeSlide{
-0%{opacity:0;transform:translateY(16px)}
-10%{opacity:1;transform:translateY(0)}
-40%{opacity:1;transform:translateY(0)}
-50%{opacity:0;transform:translateY(-12px)}
-100%{opacity:0}
+.trending-stack .widget-card{
+scroll-snap-align:center;
+flex:0 0 86%;
+max-width:420px;
 }
 
 /* Widget */
 .widget-card{
-max-width:480px;
-width:100%;
 background:linear-gradient(135deg,var(--bg3),#1f1f30);
 border:3px solid var(--border);
 border-radius:26px;
-padding:26px 26px 22px;
+padding:26px;
 box-shadow:0 18px 48px rgba(0,0,0,.5);
 position:relative;
 }
@@ -226,7 +213,7 @@ opacity:.85;
 .generator-grid{
 display:grid;
 grid-template-columns:360px 1fr;
-gap:50px;
+gap:40px;
 margin-top:10px;
 }
 
@@ -287,6 +274,13 @@ color:white;
 cursor:pointer;
 }
 
+.preview-wrap{
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:520px;
+}
+
 @media(max-width:900px){
 .generator-grid{grid-template-columns:1fr}
 }
@@ -295,7 +289,7 @@ cursor:pointer;
 
 <body>
 
-<div class="version-badge">v5.3.0-stable</div>
+<div class="version-badge">v5.3.1-stable</div>
 
 <header class="hero">
 <h1 class="hero-title">BlockState</h1>
@@ -304,8 +298,8 @@ cursor:pointer;
 
 <div class="container">
 
-<h2 class="section-title">Trending</h2>
-<div id="trending" class="trending-wrap"></div>
+<h2 class="section-title">Trending — Biggest Movers (24h)</h2>
+<div id="trending" class="trending-stack"></div>
 
 <h2 class="section-title">Create a BlockState</h2>
 
@@ -327,7 +321,7 @@ cursor:pointer;
 <button class="btn-primary" onclick="App.generate()">Generate BlockState</button>
 </div>
 
-<div id="preview" class="trending-wrap">
+<div id="preview" class="preview-wrap">
 <div style="opacity:.6">Search and generate a block state</div>
 </div>
 
@@ -337,7 +331,6 @@ cursor:pointer;
 <script>
 const App={
 coins:[],
-trendingIds:['bitcoin','ethereum','solana','binancecoin','ripple'],
 
 async init(){
 const r=await fetch(
@@ -384,8 +377,8 @@ ${pos?'▲':'▼'} ${c.price_change_percentage_24h.toFixed(2)}%
 
 <div class="widget-stats">
 <div class="widget-stat">
-<div class="widget-stat-label">24h Range</div>
-<div class="widget-stat-value">$${c.low_24h.toLocaleString()} – $${c.high_24h.toLocaleString()}</div>
+<div class="widget-stat-label">24h High / Low</div>
+<div class="widget-stat-value">$${c.high_24h.toLocaleString()} / $${c.low_24h.toLocaleString()}</div>
 </div>
 <div class="widget-stat">
 <div class="widget-stat-label">24h Change</div>
@@ -411,9 +404,13 @@ ${pos?'▲':'▼'} ${c.price_change_percentage_24h.toFixed(2)}%
 renderTrending(){
 const wrap=document.getElementById('trending');
 wrap.innerHTML='';
-this.trendingIds.forEach(id=>{
-const c=this.coins.find(x=>x.id===id);
-if(c)wrap.innerHTML+=this.build(c);
+const movers=[...this.coins]
+.filter(c=>c.price_change_percentage_24h!==null)
+.sort((a,b)=>Math.abs(b.price_change_percentage_24h)-Math.abs(a.price_change_percentage_24h))
+.slice(0,10);
+
+movers.forEach(c=>{
+wrap.innerHTML+=this.build(c);
 });
 },
 
