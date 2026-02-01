@@ -110,9 +110,6 @@ cursor:pointer;
 font-size:14px;
 }
 
-.no-export{}
-
-/* Widget header */
 .widget-header{
 display:flex;
 align-items:center;
@@ -221,7 +218,7 @@ margin-bottom:8px;
 display:block;
 }
 
-select{
+input{
 width:100%;
 padding:16px;
 border-radius:12px;
@@ -271,7 +268,7 @@ cursor:pointer;
 
 <body>
 
-<div class="version-badge">v5.2.0-stable</div>
+<div class="version-badge">v5.2.1-stable</div>
 
 <header class="hero">
 <h1 class="hero-title">BlockState</h1>
@@ -288,8 +285,9 @@ cursor:pointer;
 <div class="generator-grid">
 
 <div class="controls">
-<label>Crypto (Top 1000 by Market Cap)</label>
-<select id="coinSelect"></select>
+<label>Search Crypto (Top 250 by Market Cap)</label>
+<input id="coinInput" list="coinList" placeholder="BTC or Bitcoin">
+<datalist id="coinList"></datalist>
 
 <div class="quick-buttons">
 <button onclick="App.generateById('bitcoin')">BTC</button>
@@ -303,7 +301,7 @@ cursor:pointer;
 </div>
 
 <div id="preview" class="widget-wrap">
-<div style="opacity:.6">Select a crypto</div>
+<div style="opacity:.6">Search and generate a block state</div>
 </div>
 
 </div>
@@ -315,36 +313,36 @@ coins:[],
 trendIndex:0,
 trendingIds:['bitcoin','ethereum','solana','binancecoin','ripple'],
 
-async fetchCoins(page){
-const r=await fetch(
-`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=${page}`
-);
-return r.json();
-},
-
 async init(){
-for(let p=1;p<=4;p++){
-this.coins.push(...await this.fetchCoins(p));
-}
-this.populateSelect();
+const r=await fetch(
+'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1'
+);
+this.coins=await r.json();
+this.populateList();
 this.startTrending();
 },
 
-populateSelect(){
-const sel=document.getElementById('coinSelect');
+populateList(){
+const list=document.getElementById('coinList');
 this.coins.forEach(c=>{
 const o=document.createElement('option');
-o.value=c.id;
-o.textContent=`${c.symbol.toUpperCase()} — ${c.name}`;
-sel.appendChild(o);
+o.value=`${c.symbol.toUpperCase()} — ${c.name}`;
+list.appendChild(o);
 });
+},
+
+findCoinFromInput(){
+const val=document.getElementById('coinInput').value.toLowerCase();
+return this.coins.find(c=>
+val.includes(c.symbol) || val.includes(c.name.toLowerCase())
+);
 },
 
 build(c){
 const pos=c.price_change_percentage_24h>=0;
 return `
 <div class="widget-card ${pos?'positive':'negative'}">
-<button class="refresh-btn no-export" onclick="App.refresh('${c.id}')">↻</button>
+<button class="refresh-btn" onclick="App.refresh('${c.id}')">↻</button>
 
 <div class="widget-header">
 <img src="${c.image}">
@@ -365,6 +363,7 @@ ${pos?'▲':'▼'} ${c.price_change_percentage_24h.toFixed(2)}%
 <div class="widget-stat"><div class="widget-stat-label">24h High</div><div class="widget-stat-value">$${c.high_24h.toLocaleString()}</div></div>
 <div class="widget-stat"><div class="widget-stat-label">24h Low</div><div class="widget-stat-value">$${c.low_24h.toLocaleString()}</div></div>
 <div class="widget-stat"><div class="widget-stat-label">Market Cap</div><div class="widget-stat-value">$${(c.market_cap/1e9).toFixed(2)}B</div></div>
+<div class="widget-stat"><div class="widget-stat-label">MC Rank</div><div class="widget-stat-value">#${c.market_cap_rank}</div></div>
 </div>
 
 <div class="widget-footer">
@@ -387,14 +386,14 @@ this.trendIndex=(this.trendIndex+1)%this.trendingIds.length;
 },
 
 generate(){
-const id=document.getElementById('coinSelect').value;
-const c=this.coins.find(x=>x.id===id);
+const c=this.findCoinFromInput();
+if(!c){alert('Select a crypto from the list');return;}
 document.getElementById('preview').innerHTML=this.build(c);
 },
 
 generateById(id){
-document.getElementById('coinSelect').value=id;
-this.generate();
+const c=this.coins.find(x=>x.id===id);
+document.getElementById('preview').innerHTML=this.build(c);
 },
 
 async refresh(id){
