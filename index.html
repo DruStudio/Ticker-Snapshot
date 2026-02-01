@@ -55,23 +55,22 @@ padding:64px 20px 28px;
 font-size:3rem;
 font-weight:900;
 background:linear-gradient(
-  120deg,
-  #6c7cff,
-  #8b5cf6,
-  #22c55e,
-  #ec4899,
-  #6c7cff
+120deg,
+#6c7cff,
+#8b5cf6,
+#22c55e,
+#ec4899,
+#6c7cff
 );
-background-size:300% 300%;
-animation:gradientFlow 8s ease infinite;
+background-size:400% 400%;
+animation:slowFlow 60s linear infinite;
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
 }
 
-@keyframes gradientFlow{
+@keyframes slowFlow{
 0%{background-position:0% 50%}
-50%{background-position:100% 50%}
-100%{background-position:0% 50%}
+100%{background-position:100% 50%}
 }
 
 .hero-subtitle{
@@ -151,15 +150,9 @@ margin-bottom:16px;
 width:36px;
 height:36px;
 object-fit:contain;
-loading:eager;
-referrerpolicy:no-referrer;
-crossorigin:anonymous;
 }
 
-.widget-title{
-display:flex;
-flex-direction:column;
-}
+.widget-title{display:flex;flex-direction:column}
 
 .widget-name-row{
 display:flex;
@@ -239,7 +232,7 @@ letter-spacing:2px;
 opacity:.85;
 }
 
-/* Generator (centered) */
+/* Generator */
 .generator{
 display:flex;
 flex-direction:column;
@@ -313,7 +306,7 @@ min-height:520px;
 
 <body>
 
-<div class="version-badge">v5.3.6-stable</div>
+<div class="version-badge">v5.3.7-stable</div>
 
 <header class="hero">
 <h1 class="hero-title">BlockState</h1>
@@ -330,7 +323,7 @@ min-height:520px;
 <div class="generator">
 <div class="controls">
 <label>Search Crypto (Top 250)</label>
-<input id="coinInput" list="coinList" placeholder="BONK, BTC, SOL">
+<input id="coinInput" list="coinList" placeholder="BTC, SOL, BONK">
 <datalist id="coinList"></datalist>
 
 <div class="quick-buttons">
@@ -352,18 +345,141 @@ min-height:520px;
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script>
-/* Enable mouse-wheel horizontal scroll for trending */
-const trending=document.getElementById('trending');
-trending?.addEventListener('wheel',e=>{
-if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){
-e.preventDefault();
-trending.scrollLeft+=e.deltaY;
+const App={
+coins:[],activeId:null,
+
+formatPrice(v){
+if(v>=1) return v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+if(v>=0.01) return v.toFixed(4);
+if(v>=0.0001) return v.toFixed(6);
+return v.toFixed(8);
+},
+
+async init(){
+const r=await fetch(
+'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1'
+);
+this.coins=await r.json();
+this.populateList();
+this.renderTrending();
+},
+
+populateList(){
+const list=document.getElementById('coinList');
+this.coins.forEach(c=>{
+const o=document.createElement('option');
+o.value=`${c.symbol.toUpperCase()} — ${c.name}`;
+list.appendChild(o);
+});
+},
+
+build(c){
+const pos=c.price_change_percentage_24h>=0;
+return `
+<div class="widget-card ${pos?'positive':'negative'}">
+<button class="share-btn no-export" onclick="App.share(this)">⤴</button>
+<button class="export-btn no-export" onclick="App.export(this)">⤓</button>
+
+<div class="widget-header">
+<img src="${c.image}">
+<div class="widget-title">
+<div class="widget-name-row">
+<div class="widget-name">${c.name}</div>
+<div class="widget-percent ${pos?'positive':'negative'}">
+${pos?'▲':'▼'} ${c.price_change_percentage_24h.toFixed(2)}%
+</div>
+</div>
+<div class="widget-symbol">${c.symbol.toUpperCase()}</div>
+</div>
+</div>
+
+<div class="widget-price">$${this.formatPrice(c.current_price)}</div>
+
+<div class="widget-stats">
+<div class="widget-stat"><div class="widget-stat-label">24h High</div><div class="widget-stat-value">$${this.formatPrice(c.high_24h)}</div></div>
+<div class="widget-stat"><div class="widget-stat-label">24h Low</div><div class="widget-stat-value">$${this.formatPrice(c.low_24h)}</div></div>
+<div class="widget-stat"><div class="widget-stat-label">Market Cap</div><div class="widget-stat-value">$${(c.market_cap/1e9).toFixed(2)}B</div></div>
+<div class="widget-stat"><div class="widget-stat-label">MC Rank</div><div class="widget-stat-value">#${c.market_cap_rank}</div></div>
+</div>
+
+<div class="widget-footer">
+<div class="widget-timestamp">Captured • ${new Date().toUTCString()}</div>
+<div class="widget-branding">BLOCKSTATE.LIVE</div>
+</div>
+</div>`;
+},
+
+renderTrending(){
+const wrap=document.getElementById('trending');
+wrap.innerHTML='';
+[...this.coins]
+.sort((a,b)=>Math.abs(b.price_change_percentage_24h)-Math.abs(a.price_change_percentage_24h))
+.slice(0,10)
+.forEach(c=>wrap.innerHTML+=this.build(c));
+},
+
+findCoin(){
+const v=document.getElementById('coinInput').value.toLowerCase();
+return this.coins.find(c=>v.includes(c.symbol)||v.includes(c.name.toLowerCase()));
+},
+
+generate(){
+const c=this.findCoin();
+if(!c){alert('Select a crypto');return;}
+this.activeId=c.id;
+document.getElementById('preview').innerHTML=this.build(c);
+},
+
+generateById(id){
+const c=this.coins.find(x=>x.id===id);
+this.activeId=id;
+document.getElementById('preview').innerHTML=this.build(c);
+},
+
+async export(btn){
+const widget=btn.closest('.widget-card');
+document.body.classList.add('exporting');
+const canvas=await html2canvas(widget,{scale:2,backgroundColor:'#1a1a28'});
+const a=document.createElement('a');
+a.href=canvas.toDataURL('image/png');
+a.download='blockstate.png';
+a.click();
+document.body.classList.remove('exporting');
+},
+
+async share(btn){
+const widget=btn.closest('.widget-card');
+document.body.classList.add('exporting');
+const canvas=await html2canvas(widget,{scale:2,backgroundColor:'#1a1a28'});
+document.body.classList.remove('exporting');
+if(navigator.share){
+const blob=await new Promise(r=>canvas.toBlob(r));
+navigator.share({files:[new File([blob],'blockstate.png',{type:'image/png'})]});
 }
-},{passive:false});
+}
+};
+
+App.init();
 </script>
 
 <script>
-/* JS logic unchanged from v5.3.5 — stable data pipeline */
+/* Auto-snap nearest card on scroll end */
+const stack=document.getElementById('trending');
+let snapTimeout;
+stack.addEventListener('scroll',()=>{
+clearTimeout(snapTimeout);
+snapTimeout=setTimeout(()=>{
+const cards=[...stack.children];
+const center=stack.scrollLeft+stack.offsetWidth/2;
+let closest=cards[0],dist=Infinity;
+cards.forEach(c=>{
+const cCenter=c.offsetLeft+c.offsetWidth/2;
+const d=Math.abs(center-cCenter);
+if(d<dist){dist=d;closest=c;}
+});
+closest.scrollIntoView({behavior:'smooth',inline:'center'});
+},120);
+});
 </script>
 
 </body>
