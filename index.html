@@ -8,8 +8,8 @@
 <style>
 :root{
 --bg:#0a0a0f;
---bg2:#11111a;
---bg3:#1a1a28;
+--bg2:#14141e;
+--bg3:#1b1b2a;
 --card:#161625;
 --text:#ffffff;
 --muted:#9aa0b4;
@@ -20,6 +20,7 @@
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
+
 html,body{
 background:radial-gradient(1200px 600px at 70% -10%, #1d1d3a 0%, var(--bg) 60%);
 color:var(--text);
@@ -27,7 +28,7 @@ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 overflow-x:hidden;
 }
 
-/* ---------- GLOBAL ---------- */
+/* ===== GLOBAL ===== */
 .container{
 max-width:1200px;
 margin:0 auto;
@@ -35,85 +36,76 @@ padding:0 24px;
 }
 
 .section{
-padding:80px 0;
+padding:72px 0;
 }
 
-h1,h2,h3{font-weight:900;letter-spacing:-.5px}
-p{color:var(--muted);line-height:1.6}
-
-/* ---------- HERO ---------- */
-.hero{
-padding:120px 0 80px;
-display:grid;
-grid-template-columns:1.2fr .8fr;
-gap:60px;
-align-items:center;
+h1,h2,h3{
+font-weight:900;
+letter-spacing:-.4px;
 }
 
-.hero h1{
-font-size:3.6rem;
-line-height:1.05;
+p{
+color:var(--muted);
+line-height:1.6;
+}
+
+/* ===== HEADER / TITLE ===== */
+.site-header{
+padding:36px 0 48px;
+text-align:center;
+}
+
+.site-title{
+font-size:3.4rem;
 background:linear-gradient(120deg,#6c7cff,#8b5cf6,#22c55e);
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
 }
 
-.hero p{
-font-size:1.15rem;
-margin:24px 0 32px;
-max-width:520px;
+.site-tagline{
+margin-top:10px;
+font-size:1.05rem;
+color:var(--muted);
 }
 
-.hero-actions{
-display:flex;
-gap:16px;
-}
-
-.btn{
-padding:14px 22px;
-border-radius:14px;
-font-weight:800;
-border:none;
-cursor:pointer;
-}
-
-.btn-primary{
-background:linear-gradient(135deg,var(--accent),#8b5cf6);
-color:white;
-}
-
-.btn-secondary{
-background:transparent;
+/* ===== INFO / INSTRUCTIONS ===== */
+.info-card{
+max-width:900px;
+margin:0 auto;
+background:linear-gradient(135deg,var(--card),#1f1f30);
 border:1px solid var(--border);
-color:white;
+border-radius:26px;
+padding:36px;
+text-align:center;
+box-shadow:0 20px 60px rgba(0,0,0,.5);
 }
 
-/* ---------- VALUE PROPS ---------- */
-.features{
+.info-steps{
 display:grid;
 grid-template-columns:repeat(3,1fr);
 gap:24px;
-margin-top:40px;
+margin-top:28px;
 }
 
-.feature{
-background:linear-gradient(135deg,var(--card),#1f1f30);
-border:1px solid var(--border);
-border-radius:22px;
-padding:28px;
+.info-step{
+background:var(--bg3);
+border-radius:18px;
+padding:24px;
 }
 
-.feature h3{
+.info-step h3{
 margin-bottom:8px;
-font-size:1.25rem;
+font-size:1.1rem;
 }
 
-/* ---------- GENERATOR ---------- */
+/* ===== GENERATOR ===== */
 .generator-grid{
 display:grid;
 grid-template-columns:360px minmax(0,420px);
 gap:36px;
 justify-content:center;
+align-items:flex-start;
+margin-top:48px;
 }
 
 .controls{
@@ -138,24 +130,18 @@ border-radius:12px;
 border:2px solid var(--border);
 background:var(--bg3);
 color:var(--text);
-margin-bottom:14px;
+margin-bottom:18px;
 }
 
-.quick-buttons{
-display:flex;
-gap:8px;
-margin-bottom:16px;
-}
-
-.quick-buttons button{
-flex:1;
-padding:10px;
-border-radius:10px;
-border:1px solid var(--border);
-background:var(--bg3);
-color:white;
-font-weight:700;
+button.primary{
+width:100%;
+padding:16px;
+border-radius:14px;
+border:none;
+font-weight:800;
 cursor:pointer;
+background:linear-gradient(135deg,var(--accent),#8b5cf6);
+color:white;
 }
 
 .preview-wrap{
@@ -164,7 +150,7 @@ justify-content:center;
 align-items:flex-start;
 }
 
-/* ---------- WIDGET ---------- */
+/* ===== WIDGET ===== */
 .widget{
 background:linear-gradient(135deg,#1b1b2f,#12121d);
 border-radius:26px;
@@ -198,10 +184,18 @@ gap:12px;
 width:36px;
 height:36px;
 border-radius:50%;
+background:#000;
 }
 
-.widget-name{font-size:1.4rem;font-weight:900}
-.widget-symbol{font-size:.75rem;color:var(--accent)}
+.widget-name{
+font-size:1.4rem;
+font-weight:900;
+}
+
+.widget-symbol{
+font-size:.75rem;
+color:var(--accent);
+}
 
 .widget-percent{
 font-size:1.4rem;
@@ -232,8 +226,15 @@ padding:12px;
 text-align:center;
 }
 
-.stat-label{font-size:.7rem;color:var(--muted)}
-.stat-value{font-weight:800;margin-top:4px}
+.stat-label{
+font-size:.7rem;
+color:var(--muted);
+}
+
+.stat-value{
+font-weight:800;
+margin-top:4px;
+}
 
 .widget-footer{
 border-top:1px solid var(--border);
@@ -243,7 +244,7 @@ font-size:.7rem;
 color:var(--muted);
 }
 
-/* share/export */
+/* share / export */
 .widget-actions{
 position:absolute;
 bottom:14px;
@@ -264,7 +265,7 @@ color:white;
 cursor:pointer;
 }
 
-/* ---------- TRENDING ---------- */
+/* ===== TRENDING ===== */
 .trending{
 display:flex;
 gap:20px;
@@ -282,19 +283,9 @@ flex:0 0 340px;
 scroll-snap-align:center;
 }
 
-/* ---------- FOOTER ---------- */
-footer{
-padding:40px 0;
-border-top:1px solid var(--border);
-text-align:center;
-font-size:.75rem;
-color:var(--muted);
-}
-
-/* ---------- RESPONSIVE ---------- */
+/* ===== RESPONSIVE ===== */
 @media(max-width:900px){
-.hero{grid-template-columns:1fr}
-.features{grid-template-columns:1fr}
+.info-steps{grid-template-columns:1fr}
 .generator-grid{grid-template-columns:1fr}
 }
 </style>
@@ -302,82 +293,126 @@ color:var(--muted);
 
 <body>
 
-<!-- HERO -->
-<section class="hero container">
-<div>
-<h1>Create, capture, and share crypto market moments</h1>
-<p>
-BlockState lets you snapshot a crypto’s state at a single moment in time —
-perfect for sharing market moves, tracking history, and posting to social media.
-</p>
-<div class="hero-actions">
-<button class="btn btn-primary">Create BlockState</button>
-<button class="btn btn-secondary">View Trending</button>
-</div>
-</div>
-</section>
+<!-- SITE TITLE -->
+<header class="site-header container">
+<h1 class="site-title">BlockState</h1>
+<p class="site-tagline">One block. One moment.</p>
+</header>
 
-<!-- FEATURES -->
-<section class="container">
-<div class="features">
-<div class="feature">
-<h3>📸 Snapshot the Market</h3>
-<p>Freeze prices, ranks, and market data at an exact moment in time.</p>
+<!-- WHAT IS BLOCKSTATE -->
+<section class="section container">
+<div class="info-card">
+<p>
+<strong>BlockState</strong> captures a crypto asset’s market state at a single moment in time —
+price, rank, and key metrics frozen for sharing.
+</p>
+
+<div class="info-steps">
+<div class="info-step">
+<h3>1. Generate</h3>
+<p>Create a BlockState for any major crypto.</p>
 </div>
-<div class="feature">
-<h3>📤 Share Anywhere</h3>
-<p>Export beautiful images or share instantly to social platforms.</p>
+<div class="info-step">
+<h3>2. Capture</h3>
+<p>Lock in price, rank, and market context.</p>
 </div>
-<div class="feature">
-<h3>🔥 See What’s Moving</h3>
-<p>Browse trending BlockStates to catch major movers instantly.</p>
+<div class="info-step">
+<h3>3. Share</h3>
+<p>Export an image or post it anywhere.</p>
+</div>
 </div>
 </div>
 </section>
 
 <!-- GENERATOR -->
 <section class="section container">
-<h2 style="text-align:center;margin-bottom:40px">Create a BlockState</h2>
+<h2 style="text-align:center;margin-bottom:32px">Create a BlockState</h2>
 
 <div class="generator-grid">
 <div class="controls">
 <label>Search Crypto (Top 250)</label>
-<input placeholder="BTC, SOL, BONK">
+<input id="coinInput" list="coinList" placeholder="BTC, SOL, BONK">
+<datalist id="coinList"></datalist>
 
-<div class="quick-buttons">
-<button>BTC</button>
-<button>ETH</button>
-<button>SOL</button>
-<button>BONK</button>
+<button class="primary" onclick="App.generate()">Generate BlockState</button>
 </div>
 
-<button class="btn btn-primary" style="width:100%">Generate BlockState</button>
+<div id="preview" class="preview-wrap">
+<div style="opacity:.6">Your BlockState will appear here</div>
 </div>
+</div>
+</section>
 
-<div class="preview-wrap">
-<div class="widget negative">
+<!-- TRENDING -->
+<section class="section container">
+<h2 style="text-align:center;margin-bottom:28px">Trending BlockStates</h2>
+<div id="trending" class="trending"></div>
+</section>
+
+<footer class="section container" style="text-align:center;font-size:.75rem;color:var(--muted)">
+© BlockState.live
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script>
+const App={
+coins:[],
+
+formatPrice(v){
+if(v>=1) return v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+if(v>=0.01) return v.toFixed(4);
+if(v>=0.0001) return v.toFixed(6);
+return v.toFixed(8);
+},
+
+async init(){
+const r=await fetch(
+'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1'
+);
+this.coins=await r.json();
+this.populateList();
+this.renderTrending();
+},
+
+populateList(){
+const list=document.getElementById('coinList');
+this.coins.forEach(c=>{
+const o=document.createElement('option');
+o.value=`${c.symbol.toUpperCase()} — ${c.name}`;
+list.appendChild(o);
+});
+},
+
+build(c){
+const pos=c.price_change_percentage_24h>=0;
+return `
+<div class="widget ${pos?'positive':'negative'}">
 <div class="widget-header">
 <div class="widget-left">
-<img src="https://assets.coingecko.com/coins/images/1/large/bitcoin.png">
+<img src="${c.image}">
 <div>
-<div class="widget-name">Bitcoin</div>
-<div class="widget-symbol">BTC</div>
+<div class="widget-name">${c.name}</div>
+<div class="widget-symbol">${c.symbol.toUpperCase()}</div>
 </div>
 </div>
-<div class="widget-percent negative">▼ 5.52%</div>
+<div class="widget-percent ${pos?'positive':'negative'}">
+${pos?'▲':'▼'} ${c.price_change_percentage_24h.toFixed(2)}%
+</div>
 </div>
 
-<div class="widget-price">$77,205.00</div>
+<div class="widget-price">$${this.formatPrice(c.current_price)}</div>
 
 <div class="widget-stats">
-<div class="stat"><div class="stat-label">24h High</div><div class="stat-value">$81,717</div></div>
-<div class="stat"><div class="stat-label">24h Low</div><div class="stat-value">$76,898</div></div>
-<div class="stat"><div class="stat-label">Market Cap</div><div class="stat-value">$1.54T</div></div>
-<div class="stat"><div class="stat-label">MC Rank</div><div class="stat-value">#1</div></div>
+<div class="stat"><div class="stat-label">24h High</div><div class="stat-value">$${this.formatPrice(c.high_24h)}</div></div>
+<div class="stat"><div class="stat-label">24h Low</div><div class="stat-value">$${this.formatPrice(c.low_24h)}</div></div>
+<div class="stat"><div class="stat-label">Market Cap</div><div class="stat-value">$${(c.market_cap/1e9).toFixed(2)}B</div></div>
+<div class="stat"><div class="stat-label">MC Rank</div><div class="stat-value">#${c.market_cap_rank}</div></div>
 </div>
 
 <div class="widget-footer">
-Captured • BLOCKSTATE.LIVE
+Captured • ${new Date().toUTCString()}<br>
+BLOCKSTATE.LIVE
 </div>
 
 <div class="widget-actions left">
@@ -386,22 +421,32 @@ Captured • BLOCKSTATE.LIVE
 <div class="widget-actions right">
 <button class="icon-btn">⤓</button>
 </div>
-</div>
-</div>
-</div>
-</section>
+</div>`;
+},
 
-<!-- TRENDING -->
-<section class="section container">
-<h2 style="text-align:center;margin-bottom:24px">View Trending</h2>
-<div class="trending">
-<!-- widgets injected here later -->
-</div>
-</section>
+renderTrending(){
+const el=document.getElementById('trending');
+el.innerHTML='';
+[...this.coins]
+.sort((a,b)=>Math.abs(b.price_change_percentage_24h)-Math.abs(a.price_change_percentage_24h))
+.slice(0,10)
+.forEach(c=>el.innerHTML+=this.build(c));
+},
 
-<footer>
-© BlockState.live — One block. One moment.
-</footer>
+findCoin(){
+const v=document.getElementById('coinInput').value.toLowerCase();
+return this.coins.find(c=>v.includes(c.symbol)||v.includes(c.name.toLowerCase()));
+},
+
+generate(){
+const c=this.findCoin();
+if(!c){alert('Select a crypto');return;}
+document.getElementById('preview').innerHTML=this.build(c);
+}
+};
+
+App.init();
+</script>
 
 </body>
 </html>
