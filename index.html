@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BlockState — One block. One moment.</title>
+<title>BlockState</title>
 
 <style>
 :root{
 --bg:#0a0a0f;
 --bg2:#15151f;
 --bg3:#1a1a28;
---text:#ffffff;
+--text:#fff;
 --muted:#a0a0b0;
 --accent:#6c7cff;
 --green:#22c55e;
@@ -45,7 +45,7 @@ z-index:10;
 /* Hero */
 .hero{
 text-align:center;
-padding:80px 20px 40px;
+padding:80px 20px 50px;
 }
 
 .hero-title{
@@ -61,34 +61,6 @@ margin-top:10px;
 color:var(--muted);
 }
 
-/* Quick steps */
-.steps{
-display:flex;
-justify-content:center;
-gap:40px;
-margin-top:30px;
-}
-
-.step{
-display:flex;
-flex-direction:column;
-align-items:center;
-font-size:.9rem;
-color:var(--muted);
-}
-
-.step-icon{
-width:44px;
-height:44px;
-border-radius:12px;
-background:var(--bg2);
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:1.2rem;
-margin-bottom:8px;
-}
-
 /* Sections */
 .section-title{
 text-align:center;
@@ -96,43 +68,21 @@ font-size:2rem;
 margin:60px 0 30px;
 }
 
-/* Trending */
-.trending-stage{
-position:relative;
-min-height:520px;
-display:flex;
-justify-content:center;
-align-items:center;
-overflow:hidden;
-}
-
-.trending-stage .widget-card{
-position:absolute;
-opacity:0;
-transform:translateY(20px);
-transition:opacity .6s ease, transform .6s ease;
-}
-
-.trending-stage .widget-card.active{
-opacity:1;
-transform:translateY(0);
-}
-
-/* Generator */
-.generator-section{
+/* Layout */
+.container{
 max-width:1200px;
 margin:0 auto;
 padding:0 20px 80px;
 }
 
-.generator-container{
+.generator-grid{
 display:grid;
 grid-template-columns:360px 1fr;
 gap:50px;
 }
 
 /* Controls */
-.generator-controls{
+.controls{
 background:var(--bg2);
 padding:30px;
 border-radius:20px;
@@ -156,7 +106,7 @@ border:2px solid var(--border);
 background:var(--bg3);
 color:var(--text);
 font-size:1.1rem;
-margin-bottom:14px;
+margin-bottom:16px;
 }
 
 .quick-buttons{
@@ -196,29 +146,51 @@ width:100%;
 background:linear-gradient(135deg,var(--bg3),#1f1f30);
 border:3px solid var(--border);
 border-radius:24px;
-padding:28px;
+padding:26px;
 box-shadow:0 14px 40px rgba(0,0,0,.45);
+position:relative;
 }
 
 .widget-card.positive{border-color:var(--green)}
 .widget-card.negative{border-color:var(--red)}
+
+.refresh-btn{
+position:absolute;
+top:14px;
+right:14px;
+width:32px;
+height:32px;
+border-radius:50%;
+border:none;
+background:var(--bg2);
+color:var(--text);
+cursor:pointer;
+font-size:14px;
+}
+
+.no-export{}
+
+/* Hide refresh when exporting */
+.exporting .no-export{
+display:none !important;
+}
 
 .widget-header{
 display:flex;
 align-items:center;
 gap:14px;
 border-bottom:2px solid var(--border);
-padding-bottom:16px;
-margin-bottom:18px;
+padding-bottom:14px;
+margin-bottom:16px;
 }
 
 .widget-header img{
-width:40px;
-height:40px;
+width:38px;
+height:38px;
 }
 
 .widget-name{
-font-size:1.6rem;
+font-size:1.5rem;
 font-weight:900;
 }
 
@@ -248,7 +220,7 @@ font-weight:800;
 display:grid;
 grid-template-columns:1fr 1fr;
 gap:12px;
-margin:20px 0;
+margin:18px 0;
 }
 
 .widget-stat{
@@ -287,50 +259,39 @@ letter-spacing:2px;
 opacity:.85;
 }
 
-.preview-widget-container{
+.preview{
 min-height:520px;
 display:flex;
 justify-content:center;
 align-items:center;
 }
 
+/* Responsive */
 @media(max-width:900px){
-.generator-container{grid-template-columns:1fr}
-.steps{flex-direction:column;gap:20px}
+.generator-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
 
 <body>
 
-<div class="version-badge">v5.6.0</div>
+<div class="version-badge">v5.1.1-stable</div>
 
 <header class="hero">
 <h1 class="hero-title">BlockState</h1>
 <p class="hero-subtitle">One block. One moment.</p>
-
-<div class="steps">
-<div class="step">
-<div class="step-icon">①</div>
-<div>Generate BlockState</div>
-</div>
-<div class="step">
-<div class="step-icon">②</div>
-<div>Share Snapshot</div>
-</div>
-</div>
 </header>
 
-<section class="generator-section">
+<div class="container">
 
 <h2 class="section-title">Trending</h2>
-<div id="trendingStage" class="trending-stage"></div>
+<div id="trending" class="preview"></div>
 
 <h2 class="section-title">Create a BlockState</h2>
 
-<div class="generator-container">
+<div class="generator-grid">
 
-<div class="generator-controls">
+<div class="controls">
 <label>Symbol</label>
 <input id="symbolInput" placeholder="BTC">
 
@@ -342,31 +303,22 @@ align-items:center;
 <button onclick="App.generate('ripple')">XRP</button>
 </div>
 
-<button class="btn-primary" onclick="App.generate()">Capture State</button>
+<button class="btn-primary" onclick="App.generate()">Generate BlockState</button>
 </div>
 
-<div>
-<div id="preview" class="preview-widget-container">
+<div class="preview" id="preview">
 <div style="opacity:.6">Generate a block state</div>
 </div>
-</div>
 
 </div>
-</section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script>
-const MAP={
-BTC:'bitcoin',
-ETH:'ethereum',
-SOL:'solana',
-BNB:'binancecoin',
-XRP:'ripple'
-};
+const MAP={BTC:'bitcoin',ETH:'ethereum',SOL:'solana',BNB:'binancecoin',XRP:'ripple'};
 
 const App={
-trending:['bitcoin','ethereum','solana','binancecoin','ripple'],
-index:0,
-
 async fetchCoin(id){
 const r=await fetch(
 `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${id}`
@@ -374,10 +326,12 @@ const r=await fetch(
 return (await r.json())[0];
 },
 
-buildWidget(d){
+build(d){
 const pos=d.price_change_percentage_24h>=0;
 return `
 <div class="widget-card ${pos?'positive':'negative'}">
+<button class="refresh-btn no-export" onclick="App.refresh('${d.id}')">↻</button>
+
 <div class="widget-header">
 <img src="${d.image}">
 <div>
@@ -396,47 +350,32 @@ ${pos?'▲':'▼'} ${d.price_change_percentage_24h.toFixed(2)}%
 <div class="widget-stat"><div class="widget-stat-label">24h Change</div><div class="widget-stat-value">$${d.price_change_24h.toFixed(2)}</div></div>
 <div class="widget-stat"><div class="widget-stat-label">24h High</div><div class="widget-stat-value">$${d.high_24h.toLocaleString()}</div></div>
 <div class="widget-stat"><div class="widget-stat-label">24h Low</div><div class="widget-stat-value">$${d.low_24h.toLocaleString()}</div></div>
-<div class="widget-stat"><div class="widget-stat-label">Volume</div><div class="widget-stat-value">$${(d.total_volume/1e9).toFixed(2)}B</div></div>
 <div class="widget-stat"><div class="widget-stat-label">Market Cap</div><div class="widget-stat-value">$${(d.market_cap/1e9).toFixed(2)}B</div></div>
-<div class="widget-stat"><div class="widget-stat-label">Rank</div><div class="widget-stat-value">#${d.market_cap_rank}</div></div>
 </div>
 
 <div class="widget-footer">
-<div class="widget-timestamp">State captured • ${new Date().toUTCString()}</div>
+<div class="widget-timestamp">Captured • ${new Date().toUTCString()}</div>
 <div class="widget-branding">BLOCKSTATE.LIVE</div>
 </div>
 </div>`;
 },
 
-async loadTrending(){
-const stage=document.getElementById('trendingStage');
-for(const id of this.trending){
+async refresh(id){
 const d=await this.fetchCoin(id);
-const el=document.createElement('div');
-el.innerHTML=this.buildWidget(d);
-stage.appendChild(el.firstChild);
-}
-stage.children[0].classList.add('active');
-},
-
-rotateTrending(){
-const stage=document.getElementById('trendingStage');
-stage.children[this.index].classList.remove('active');
-this.index=(this.index+1)%stage.children.length;
-stage.children[this.index].classList.add('active');
+document.querySelector('.widget-card').outerHTML=this.build(d);
 },
 
 async generate(forced){
 const input=document.getElementById('symbolInput').value.toUpperCase();
 const id=forced||MAP[input];
-if(!id){alert('Use BTC, ETH, SOL, BNB, or XRP');return;}
+if(!id){alert('Use BTC, ETH, SOL, BNB, XRP');return;}
 const d=await this.fetchCoin(id);
-document.getElementById('preview').innerHTML=this.buildWidget(d);
+document.getElementById('preview').innerHTML=this.build(d);
 },
 
 async init(){
-await this.loadTrending();
-setInterval(()=>this.rotateTrending(),5000);
+const d=await this.fetchCoin('bitcoin');
+document.getElementById('trending').innerHTML=this.build(d);
 }
 };
 
