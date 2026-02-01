@@ -16,6 +16,7 @@
 --accent:#6c7cff;
 --green:#22c55e;
 --red:#ef4444;
+--export-bg:#0e0e16;
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
@@ -62,10 +63,18 @@ left:14px;
 z-index:10;
 background:#10101a;
 border:1px solid var(--border);
-border-radius:10px;
+border-radius:12px;
 padding:8px 12px;
 font-size:.75rem;
 font-weight:700;
+line-height:1.2;
+}
+
+.version small{
+display:block;
+font-size:.6rem;
+color:var(--muted);
+margin-top:4px;
 }
 
 /* ===============================
@@ -80,19 +89,14 @@ padding:80px 20px 120px;
 display:flex;
 flex-direction:column;
 align-items:center;
+min-height:100vh;
 }
 
 h1{
 font-size:3rem;
 font-weight:900;
 text-align:center;
-background:linear-gradient(
-120deg,
-#6c7cff,
-#8b5cf6,
-#22c55e,
-#6c7cff
-);
+background:linear-gradient(120deg,#6c7cff,#8b5cf6,#22c55e,#6c7cff);
 background-size:400% 400%;
 animation:titleFlow 180s linear infinite;
 -webkit-background-clip:text;
@@ -121,6 +125,7 @@ grid-template-columns:360px 420px;
 gap:40px;
 width:100%;
 justify-content:center;
+align-items:flex-start;
 }
 
 .panel{
@@ -128,16 +133,7 @@ background:linear-gradient(135deg,var(--panel),#1f1f30);
 border:1px solid var(--border);
 border-radius:20px;
 padding:24px;
-transition:
-transform .25s ease,
-box-shadow .25s ease,
-border-color .25s ease;
-}
-
-.panel:hover{
-transform:translateY(-2px);
-box-shadow:0 12px 40px rgba(108,124,255,.15);
-border-color:rgba(108,124,255,.4);
+transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
 }
 
 label{
@@ -173,16 +169,6 @@ background:#10101a;
 color:white;
 font-weight:700;
 cursor:pointer;
-transition:
-background .2s ease,
-transform .15s ease,
-box-shadow .15s ease;
-}
-
-.presets button:hover{
-background:rgba(108,124,255,.15);
-transform:translateY(-1px);
-box-shadow:0 6px 20px rgba(108,124,255,.25);
 }
 
 .primary{
@@ -194,19 +180,18 @@ font-weight:800;
 cursor:pointer;
 background:linear-gradient(135deg,var(--accent),#8b5cf6);
 color:white;
-transition:
-transform .15s ease,
-box-shadow .2s ease;
-}
-
-.primary:hover{
-transform:translateY(-1px);
-box-shadow:0 10px 30px rgba(108,124,255,.35);
 }
 
 /* ===============================
-   WIDGET
+   OUTPUT / WIDGET
    =============================== */
+#output{
+min-height:520px;
+width:100%;
+display:flex;
+justify-content:center;
+}
+
 @keyframes widgetIn{
 from{opacity:0;transform:translateY(16px) scale(.98)}
 to{opacity:1;transform:translateY(0) scale(1)}
@@ -221,14 +206,6 @@ max-width:420px;
 width:100%;
 position:relative;
 animation:widgetIn .28s ease-out;
-transition:
-transform .25s ease,
-box-shadow .25s ease;
-}
-
-.widget:hover{
-transform:translateY(-3px);
-box-shadow:0 18px 50px rgba(0,0,0,.45);
 }
 
 .widget.positive{border-color:var(--green)}
@@ -327,56 +304,14 @@ border:none;
 background:#0d0d16;
 color:white;
 cursor:pointer;
-transition:
-transform .15s ease,
-background .15s ease,
-box-shadow .15s ease;
-}
-
-.icon:hover{
-transform:scale(1.08);
-background:rgba(108,124,255,.2);
-box-shadow:0 6px 20px rgba(108,124,255,.35);
 }
 
 /* ===============================
-   TRENDING
-   =============================== */
-.trending{
-margin-top:50px;
-max-width:420px;
-width:100%;
-}
-
-.row{
-display:flex;
-justify-content:space-between;
-padding:12px 14px;
-border-bottom:1px solid var(--border);
-cursor:pointer;
-font-weight:700;
-transition:
-background .2s ease,
-transform .15s ease,
-padding-left .15s ease;
-}
-
-.row:hover{
-background:rgba(108,124,255,.08);
-transform:translateX(4px);
-padding-left:18px;
-}
-
-/* ===============================
-   MOBILE POLISH
+   MOBILE
    =============================== */
 @media(max-width:900px){
 .generator{grid-template-columns:1fr}
 h1{font-size:2.4rem}
-.panel{padding:26px}
-input{padding:16px}
-.primary{padding:18px}
-.widget{margin-top:20px}
 }
 </style>
 </head>
@@ -384,7 +319,11 @@ input{padding:16px}
 <body>
 
 <div id="particles"></div>
-<div class="version">v6.6.4</div>
+
+<div class="version">
+v6.6.5
+<small>Auto refresh: <span id="timer">120</span>s</small>
+</div>
 
 <div class="container">
 <h1>BlockState</h1>
@@ -403,14 +342,12 @@ input{padding:16px}
 
 <div id="output"></div>
 </div>
-
-<div class="trending panel" id="trending"></div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 /* ===============================
-   PARTICLES INIT
+   PARTICLES
    =============================== */
 const p=document.getElementById("particles");
 for(let i=0;i<90;i++){
@@ -423,10 +360,10 @@ p.appendChild(d);
 }
 
 /* ===============================
-   APP LOGIC (STABLE)
+   APP
    =============================== */
 const App={
-coins:[],icons:{},
+coins:[],icons:{},refresh:120,
 
 fmtCap(v){
 if(v>=1e12)return'$'+(v/1e12).toFixed(2)+'T';
@@ -441,14 +378,11 @@ return v.toFixed(8);
 },
 
 async load(){
-const r=await fetch(
-'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1'
-);
+const r=await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1');
 this.coins=await r.json();
 await this.cacheIcons();
 this.populate();
-this.show(this.coins[0]); // BTC preload
-this.renderTrending();
+this.show(this.coins[0]);
 },
 
 async cacheIcons(){
@@ -465,8 +399,7 @@ reader.readAsDataURL(blob);
 populate(){
 const dl=document.getElementById("coins");
 const p=document.getElementById("presets");
-dl.innerHTML="";
-p.innerHTML="";
+dl.innerHTML=""; p.innerHTML="";
 this.coins.forEach(c=>{
 const o=document.createElement("option");
 o.value=`${c.symbol.toUpperCase()} — ${c.name}`;
@@ -515,21 +448,6 @@ Captured • ${new Date().toUTCString()}<br>BLOCKSTATE.LIVE
 </div>`;
 },
 
-renderTrending(){
-const t=document.getElementById("trending");
-t.innerHTML="<b>Biggest Movers</b><br><br>";
-[...this.coins]
-.sort((a,b)=>Math.abs(b.price_change_percentage_24h)-Math.abs(a.price_change_percentage_24h))
-.slice(0,10)
-.forEach(c=>{
-const d=document.createElement("div");
-d.className="row";
-d.innerHTML=`<span>${c.name}</span><span>${c.price_change_percentage_24h.toFixed(2)}%</span>`;
-d.onclick=()=>this.show(c);
-t.appendChild(d);
-});
-},
-
 find(){
 const v=document.getElementById("search").value.toLowerCase();
 return this.coins.find(c=>v.includes(c.symbol)||v.includes(c.name.toLowerCase()));
@@ -548,7 +466,7 @@ async export(){
 const w=document.querySelector(".widget");
 w.querySelectorAll(".actions").forEach(a=>a.style.display="none");
 await new Promise(r=>setTimeout(r,50));
-const canvas=await html2canvas(w,{scale:2,backgroundColor:null});
+const canvas=await html2canvas(w,{scale:2,backgroundColor:getComputedStyle(document.documentElement).getPropertyValue('--export-bg')});
 w.querySelectorAll(".actions").forEach(a=>a.style.display="flex");
 const a=document.createElement("a");
 a.href=canvas.toDataURL();
@@ -561,14 +479,31 @@ if(!navigator.share)return alert("Sharing not supported");
 const w=document.querySelector(".widget");
 w.querySelectorAll(".actions").forEach(a=>a.style.display="none");
 await new Promise(r=>setTimeout(r,50));
-const canvas=await html2canvas(w,{scale:2,backgroundColor:null});
+const canvas=await html2canvas(w,{scale:2,backgroundColor:getComputedStyle(document.documentElement).getPropertyValue('--export-bg')});
 w.querySelectorAll(".actions").forEach(a=>a.style.display="flex");
 const blob=await new Promise(r=>canvas.toBlob(r));
 navigator.share({files:[new File([blob],"blockstate.png",{type:"image/png"})]});
 }
 };
 
+/* ===============================
+   INIT (FIXED LOAD ORDER)
+   =============================== */
+document.addEventListener("DOMContentLoaded",()=>{
+requestAnimationFrame(()=>{
 App.load();
+});
+});
+
+/* ===============================
+   AUTO REFRESH TIMER
+   =============================== */
+setInterval(()=>{
+App.refresh--;
+document.getElementById("timer").textContent=App.refresh;
+if(App.refresh<=0)location.reload();
+},1000);
 </script>
+
 </body>
 </html>
