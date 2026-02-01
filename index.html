@@ -3,127 +3,128 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BlockState</title>
+<title>BlockState — One block. One moment.</title>
 
 <style>
 :root{
 --bg:#0a0a0f;
---bg2:#15151f;
+--bg2:#11111a;
 --bg3:#1a1a28;
+--card:#161625;
 --text:#ffffff;
---muted:#a0a0b0;
+--muted:#9aa0b4;
 --accent:#6c7cff;
 --green:#22c55e;
 --red:#ef4444;
---border:#2a2a3a;
+--border:#26263a;
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
-
 html,body{
-background:var(--bg);
+background:radial-gradient(1200px 600px at 70% -10%, #1d1d3a 0%, var(--bg) 60%);
 color:var(--text);
 font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 overflow-x:hidden;
-overflow-y:auto;
 }
 
-/* Version */
-.version-badge{
-position:fixed;
-top:16px;
-left:16px;
-padding:6px 12px;
-border-radius:8px;
-border:1px solid var(--accent);
-background:rgba(108,124,255,.15);
-color:var(--accent);
-font-size:.75rem;
-font-weight:700;
-z-index:9999;
-}
-
-/* Hero */
-.hero{
-text-align:center;
-padding:64px 20px 24px;
-}
-.hero-title{
-font-size:3rem;
-font-weight:900;
-background:linear-gradient(120deg,#6c7cff,#8b5cf6,#22c55e,#ec4899,#6c7cff);
-background-size:400% 400%;
-animation:slowFlow 80s linear infinite;
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-}
-@keyframes slowFlow{
-0%{background-position:0% 50%}
-100%{background-position:100% 50%}
-}
-.hero-subtitle{margin-top:6px;color:var(--muted)}
-
+/* ---------- GLOBAL ---------- */
 .container{
 max-width:1200px;
 margin:0 auto;
-padding:0 20px 100px;
+padding:0 24px;
 }
 
-.section-title{
-text-align:center;
-font-size:2rem;
-margin:40px 0 20px;
+.section{
+padding:80px 0;
 }
 
-/* Card base */
-.card{
-background:linear-gradient(135deg,var(--bg3),#1f1f30);
-border:2px solid var(--border);
+h1,h2,h3{font-weight:900;letter-spacing:-.5px}
+p{color:var(--muted);line-height:1.6}
+
+/* ---------- HERO ---------- */
+.hero{
+padding:120px 0 80px;
+display:grid;
+grid-template-columns:1.2fr .8fr;
+gap:60px;
+align-items:center;
+}
+
+.hero h1{
+font-size:3.6rem;
+line-height:1.05;
+background:linear-gradient(120deg,#6c7cff,#8b5cf6,#22c55e);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+.hero p{
+font-size:1.15rem;
+margin:24px 0 32px;
+max-width:520px;
+}
+
+.hero-actions{
+display:flex;
+gap:16px;
+}
+
+.btn{
+padding:14px 22px;
+border-radius:14px;
+font-weight:800;
+border:none;
+cursor:pointer;
+}
+
+.btn-primary{
+background:linear-gradient(135deg,var(--accent),#8b5cf6);
+color:white;
+}
+
+.btn-secondary{
+background:transparent;
+border:1px solid var(--border);
+color:white;
+}
+
+/* ---------- VALUE PROPS ---------- */
+.features{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:24px;
+margin-top:40px;
+}
+
+.feature{
+background:linear-gradient(135deg,var(--card),#1f1f30);
+border:1px solid var(--border);
 border-radius:22px;
-padding:24px;
-box-shadow:0 16px 40px rgba(0,0,0,.45);
+padding:28px;
 }
 
-/* =========================
-   WHAT IS BLOCKSTATE
-========================= */
-.info-card{
-max-width:820px;
-margin:0 auto 36px;
-text-align:center;
-}
-.info-card p{
-color:var(--muted);
-line-height:1.6;
-font-size:1.05rem;
+.feature h3{
+margin-bottom:8px;
+font-size:1.25rem;
 }
 
-/* =========================
-   GENERATOR
-========================= */
+/* ---------- GENERATOR ---------- */
 .generator-grid{
 display:grid;
 grid-template-columns:360px minmax(0,420px);
-gap:32px;
+gap:36px;
 justify-content:center;
-align-items:flex-start;
 }
 
 .controls{
-background:var(--bg2);
-padding:26px;
-border-radius:22px;
+background:linear-gradient(135deg,var(--card),#1f1f30);
 border:1px solid var(--border);
-}
-
-.preview-wrap{
-display:flex;
-justify-content:center;
-align-items:flex-start;
+border-radius:22px;
+padding:26px;
 }
 
 label{
-font-size:.8rem;
+font-size:.75rem;
 color:var(--muted);
 font-weight:700;
 margin-bottom:8px;
@@ -132,64 +133,58 @@ display:block;
 
 input{
 width:100%;
-padding:16px;
+padding:14px;
 border-radius:12px;
 border:2px solid var(--border);
 background:var(--bg3);
 color:var(--text);
-margin-bottom:16px;
+margin-bottom:14px;
 }
 
 .quick-buttons{
 display:flex;
 gap:8px;
-margin-bottom:20px;
+margin-bottom:16px;
 }
 
 .quick-buttons button{
 flex:1;
 padding:10px;
 border-radius:10px;
-border:2px solid var(--border);
+border:1px solid var(--border);
 background:var(--bg3);
 color:white;
 font-weight:700;
 cursor:pointer;
 }
 
-.btn-primary{
-width:100%;
-padding:18px;
-border:none;
-border-radius:12px;
-font-weight:800;
-background:linear-gradient(135deg,var(--accent),#8b5cf6);
-color:white;
-cursor:pointer;
+.preview-wrap{
+display:flex;
+justify-content:center;
+align-items:flex-start;
 }
 
-/* =========================
-   WIDGET
-========================= */
-.widget-card{
-background:linear-gradient(135deg,var(--bg3),#1f1f30);
-border:3px solid var(--border);
+/* ---------- WIDGET ---------- */
+.widget{
+background:linear-gradient(135deg,#1b1b2f,#12121d);
 border-radius:26px;
 padding:26px;
-box-shadow:0 18px 48px rgba(0,0,0,.5);
+border:2px solid var(--border);
+box-shadow:0 20px 60px rgba(0,0,0,.6);
 width:100%;
 max-width:420px;
+position:relative;
 }
 
-.widget-card.positive{border-color:var(--green)}
-.widget-card.negative{border-color:var(--red)}
+.widget.positive{border-color:var(--green)}
+.widget.negative{border-color:var(--red)}
 
 .widget-header{
 display:flex;
 justify-content:space-between;
 align-items:center;
-padding-bottom:14px;
 border-bottom:1px solid var(--border);
+padding-bottom:14px;
 margin-bottom:16px;
 }
 
@@ -199,29 +194,28 @@ align-items:center;
 gap:12px;
 }
 
-.widget-header img{
+.widget img{
 width:36px;
 height:36px;
-object-fit:contain;
 border-radius:50%;
-background:#000;
 }
 
 .widget-name{font-size:1.4rem;font-weight:900}
-.widget-symbol{font-size:.75rem;color:var(--accent);font-weight:700}
+.widget-symbol{font-size:.75rem;color:var(--accent)}
 
 .widget-percent{
-font-size:1.5rem;
+font-size:1.4rem;
 font-weight:900;
 }
+
 .widget-percent.positive{color:var(--green)}
 .widget-percent.negative{color:var(--red)}
 
 .widget-price{
 text-align:center;
-font-size:3.1rem;
+font-size:3rem;
 font-weight:900;
-margin:14px 0 10px;
+margin:14px 0;
 }
 
 .widget-stats{
@@ -231,49 +225,76 @@ gap:12px;
 margin-bottom:18px;
 }
 
-.widget-stat{
-background:var(--bg2);
-padding:12px;
+.stat{
+background:#0f0f1a;
 border-radius:14px;
+padding:12px;
 text-align:center;
 }
 
-.widget-stat-label{font-size:.7rem;opacity:.7;margin-bottom:4px}
-.widget-stat-value{font-weight:800;font-size:.95rem}
+.stat-label{font-size:.7rem;color:var(--muted)}
+.stat-value{font-weight:800;margin-top:4px}
 
 .widget-footer{
 border-top:1px solid var(--border);
-padding-top:14px;
+padding-top:12px;
 text-align:center;
+font-size:.7rem;
+color:var(--muted);
 }
 
-.widget-timestamp{font-size:.7rem;color:var(--muted)}
-.widget-branding{margin-top:6px;font-size:.65rem;letter-spacing:2px;opacity:.85}
+/* share/export */
+.widget-actions{
+position:absolute;
+bottom:14px;
+display:flex;
+gap:10px;
+}
 
-/* =========================
-   TRENDING SLIDER
-========================= */
-.trending-slider{
+.widget-actions.left{left:14px}
+.widget-actions.right{right:14px}
+
+.icon-btn{
+width:34px;
+height:34px;
+border-radius:50%;
+border:none;
+background:#0f0f1a;
+color:white;
+cursor:pointer;
+}
+
+/* ---------- TRENDING ---------- */
+.trending{
 display:flex;
 gap:20px;
 overflow-x:auto;
 scroll-snap-type:x mandatory;
-padding:10px 0 20px;
+padding-bottom:10px;
 cursor:grab;
 user-select:none;
 }
 
-.trending-slider:active{cursor:grabbing}
+.trending::-webkit-scrollbar{display:none}
 
-.trending-slider::-webkit-scrollbar{display:none}
-
-.trending-slider .widget-card{
-scroll-snap-align:center;
+.trending .widget{
 flex:0 0 340px;
+scroll-snap-align:center;
 }
 
-/* Mobile */
+/* ---------- FOOTER ---------- */
+footer{
+padding:40px 0;
+border-top:1px solid var(--border);
+text-align:center;
+font-size:.75rem;
+color:var(--muted);
+}
+
+/* ---------- RESPONSIVE ---------- */
 @media(max-width:900px){
+.hero{grid-template-columns:1fr}
+.features{grid-template-columns:1fr}
 .generator-grid{grid-template-columns:1fr}
 }
 </style>
@@ -281,140 +302,106 @@ flex:0 0 340px;
 
 <body>
 
-<div class="version-badge">v5.4.1-stable</div>
-
-<header class="hero">
-<h1 class="hero-title">BlockState</h1>
-<p class="hero-subtitle">One block. One moment.</p>
-</header>
-
-<div class="container">
-
-<div class="card info-card">
+<!-- HERO -->
+<section class="hero container">
+<div>
+<h1>Create, capture, and share crypto market moments</h1>
 <p>
-A <strong>BlockState</strong> is a snapshot of a crypto asset at a single moment in time.
-Create your own, view what’s trending, and share the state with friends or on social media.
+BlockState lets you snapshot a crypto’s state at a single moment in time —
+perfect for sharing market moves, tracking history, and posting to social media.
 </p>
+<div class="hero-actions">
+<button class="btn btn-primary">Create BlockState</button>
+<button class="btn btn-secondary">View Trending</button>
 </div>
+</div>
+</section>
 
-<h2 class="section-title">Create a BlockState</h2>
+<!-- FEATURES -->
+<section class="container">
+<div class="features">
+<div class="feature">
+<h3>📸 Snapshot the Market</h3>
+<p>Freeze prices, ranks, and market data at an exact moment in time.</p>
+</div>
+<div class="feature">
+<h3>📤 Share Anywhere</h3>
+<p>Export beautiful images or share instantly to social platforms.</p>
+</div>
+<div class="feature">
+<h3>🔥 See What’s Moving</h3>
+<p>Browse trending BlockStates to catch major movers instantly.</p>
+</div>
+</div>
+</section>
+
+<!-- GENERATOR -->
+<section class="section container">
+<h2 style="text-align:center;margin-bottom:40px">Create a BlockState</h2>
 
 <div class="generator-grid">
 <div class="controls">
 <label>Search Crypto (Top 250)</label>
-<input id="coinInput" list="coinList" placeholder="BTC, SOL, BONK">
-<datalist id="coinList"></datalist>
+<input placeholder="BTC, SOL, BONK">
 
 <div class="quick-buttons">
-<button onclick="App.generateById('bitcoin')">BTC</button>
-<button onclick="App.generateById('ethereum')">ETH</button>
-<button onclick="App.generateById('solana')">SOL</button>
-<button onclick="App.generateById('bonk')">BONK</button>
+<button>BTC</button>
+<button>ETH</button>
+<button>SOL</button>
+<button>BONK</button>
 </div>
 
-<button class="btn-primary" onclick="App.generate()">Generate BlockState</button>
+<button class="btn btn-primary" style="width:100%">Generate BlockState</button>
 </div>
 
-<div id="preview" class="preview-wrap">
-<div style="opacity:.6">Your BlockState will appear here</div>
-</div>
-</div>
-
-<h2 class="section-title">View Trending</h2>
-<div id="trending" class="trending-slider"></div>
-
-</div>
-
-<script>
-const App={
-coins:[],
-
-formatPrice(v){
-if(v>=1) return v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
-if(v>=0.01) return v.toFixed(4);
-if(v>=0.0001) return v.toFixed(6);
-return v.toFixed(8);
-},
-
-async init(){
-const r=await fetch(
-'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1'
-);
-this.coins=await r.json();
-this.populateList();
-this.renderTrending();
-},
-
-populateList(){
-const list=document.getElementById('coinList');
-this.coins.forEach(c=>{
-const o=document.createElement('option');
-o.value=`${c.symbol.toUpperCase()} — ${c.name}`;
-list.appendChild(o);
-});
-},
-
-build(c){
-const pos=c.price_change_percentage_24h>=0;
-return `
-<div class="widget-card ${pos?'positive':'negative'}">
+<div class="preview-wrap">
+<div class="widget negative">
 <div class="widget-header">
 <div class="widget-left">
-<img src="${c.image}" loading="eager">
+<img src="https://assets.coingecko.com/coins/images/1/large/bitcoin.png">
 <div>
-<div class="widget-name">${c.name}</div>
-<div class="widget-symbol">${c.symbol.toUpperCase()}</div>
+<div class="widget-name">Bitcoin</div>
+<div class="widget-symbol">BTC</div>
 </div>
 </div>
-<div class="widget-percent ${pos?'positive':'negative'}">
-${pos?'▲':'▼'} ${c.price_change_percentage_24h.toFixed(2)}%
-</div>
+<div class="widget-percent negative">▼ 5.52%</div>
 </div>
 
-<div class="widget-price">$${this.formatPrice(c.current_price)}</div>
+<div class="widget-price">$77,205.00</div>
 
 <div class="widget-stats">
-<div class="widget-stat"><div class="widget-stat-label">24h High</div><div class="widget-stat-value">$${this.formatPrice(c.high_24h)}</div></div>
-<div class="widget-stat"><div class="widget-stat-label">24h Low</div><div class="widget-stat-value">$${this.formatPrice(c.low_24h)}</div></div>
-<div class="widget-stat"><div class="widget-stat-label">Market Cap</div><div class="widget-stat-value">$${(c.market_cap/1e9).toFixed(2)}B</div></div>
-<div class="widget-stat"><div class="widget-stat-label">MC Rank</div><div class="widget-stat-value">#${c.market_cap_rank}</div></div>
+<div class="stat"><div class="stat-label">24h High</div><div class="stat-value">$81,717</div></div>
+<div class="stat"><div class="stat-label">24h Low</div><div class="stat-value">$76,898</div></div>
+<div class="stat"><div class="stat-label">Market Cap</div><div class="stat-value">$1.54T</div></div>
+<div class="stat"><div class="stat-label">MC Rank</div><div class="stat-value">#1</div></div>
 </div>
 
 <div class="widget-footer">
-<div class="widget-timestamp">Captured • ${new Date().toUTCString()}</div>
-<div class="widget-branding">BLOCKSTATE.LIVE</div>
+Captured • BLOCKSTATE.LIVE
 </div>
-</div>`;
-},
 
-renderTrending(){
-const el=document.getElementById('trending');
-el.innerHTML='';
-[...this.coins]
-.sort((a,b)=>Math.abs(b.price_change_percentage_24h)-Math.abs(a.price_change_percentage_24h))
-.slice(0,12)
-.forEach(c=>el.innerHTML+=this.build(c));
-},
+<div class="widget-actions left">
+<button class="icon-btn">⤴</button>
+</div>
+<div class="widget-actions right">
+<button class="icon-btn">⤓</button>
+</div>
+</div>
+</div>
+</div>
+</section>
 
-findCoin(){
-const v=document.getElementById('coinInput').value.toLowerCase();
-return this.coins.find(c=>v.includes(c.symbol)||v.includes(c.name.toLowerCase()));
-},
+<!-- TRENDING -->
+<section class="section container">
+<h2 style="text-align:center;margin-bottom:24px">View Trending</h2>
+<div class="trending">
+<!-- widgets injected here later -->
+</div>
+</section>
 
-generate(){
-const c=this.findCoin();
-if(!c){alert('Select a crypto');return;}
-document.getElementById('preview').innerHTML=this.build(c);
-},
-
-generateById(id){
-const c=this.coins.find(x=>x.id===id);
-document.getElementById('preview').innerHTML=this.build(c);
-}
-};
-
-App.init();
-</script>
+<footer>
+© BlockState.live — One block. One moment.
+</footer>
 
 </body>
 </html>
