@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>BlockState — Crypto</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet">
@@ -21,7 +21,7 @@
 --down:#ef4444;
 }
 
-*{margin:0;padding:0;box-sizing:border-box}
+*{box-sizing:border-box;margin:0;padding:0}
 html,body{
 background:var(--bg);
 font-family:Inter,system-ui,sans-serif;
@@ -37,7 +37,7 @@ width:100%;
 z-index:10;
 display:flex;
 justify-content:center;
-gap:20px;
+gap:24px;
 padding:14px;
 background:rgba(7,7,12,.6);
 backdrop-filter:blur(8px);
@@ -47,7 +47,7 @@ color:var(--muted);
 text-decoration:none;
 font-weight:800;
 font-size:.75rem;
-letter-spacing:.2em;
+letter-spacing:.25em;
 }
 
 /* PARTICLES */
@@ -67,6 +67,7 @@ margin:0 auto;
 padding:120px 20px 160px;
 }
 
+/* HEADER */
 h1{
 text-align:center;
 font-size:3rem;
@@ -90,7 +91,7 @@ justify-content:center;
 align-items:start;
 }
 
-/* SECTION TITLES */
+/* SECTION TITLE */
 .section-title{
 text-align:center;
 font-size:.7rem;
@@ -136,7 +137,7 @@ font-weight:900;
 cursor:pointer;
 }
 
-/* PRIMARY */
+/* BUTTONS */
 .primary{
 width:100%;
 padding:14px;
@@ -147,6 +148,19 @@ cursor:pointer;
 background:linear-gradient(135deg,var(--accent),#8b5cf6);
 color:white;
 margin-bottom:14px;
+}
+.secondary{
+padding:14px;
+border-radius:14px;
+border:1px solid var(--border);
+background:#0b0b18;
+color:white;
+font-weight:800;
+cursor:pointer;
+}
+.secondary.copied{
+border-color:var(--up);
+color:var(--up);
 }
 
 /* TOGGLE */
@@ -189,20 +203,20 @@ height:18px;
 border-radius:50%;
 }
 
-/* BLOCKSTATE (FIXED SIZE) */
+/* BLOCKSTATE */
 .widget{
 width:100%;
 max-width:420px;
-height:360px;
+height:420px;
 background:linear-gradient(180deg,#14142a,#0e0e1c);
-border-radius:26px;
+border-radius:28px;
 padding:28px;
 border:1px solid var(--border);
-text-align:center;
 display:flex;
 flex-direction:column;
 justify-content:center;
-gap:12px;
+gap:14px;
+text-align:center;
 }
 
 .asset{
@@ -229,11 +243,32 @@ margin-left:6px;
 .price{
 font-size:2.1rem;
 font-weight:900;
-margin-top:6px;
 }
 .change{
 font-size:1.1rem;
 font-weight:800;
+}
+
+/* STATS */
+.stats{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin-top:10px;
+}
+.stat{
+background:#0b0b18;
+border:1px solid var(--border);
+border-radius:14px;
+padding:10px;
+font-size:.8rem;
+}
+.stat span{
+display:block;
+font-size:.6rem;
+letter-spacing:.15em;
+color:var(--muted);
+margin-bottom:4px;
 }
 
 /* SHARE */
@@ -248,24 +283,6 @@ border:1px solid var(--border);
 border-radius:16px;
 padding:14px;
 font-size:.85rem;
-}
-.share-actions{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
-}
-.secondary{
-padding:14px;
-border-radius:14px;
-border:1px solid var(--border);
-background:#0b0b18;
-color:white;
-font-weight:800;
-cursor:pointer;
-}
-.secondary.copied{
-border-color:var(--up);
-color:var(--up);
 }
 
 @media(max-width:900px){
@@ -320,7 +337,7 @@ color:var(--up);
 <div class="panel share">
 <button class="primary" onclick="App.saveImage()">Save BlockState</button>
 <div class="caption" id="caption">Generate a caption to share this BlockState.</div>
-<div class="share-actions">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
 <button class="secondary" onclick="App.makeCaption()">Generate Caption</button>
 <button class="secondary" id="copyBtn" onclick="App.copyCaption()">Copy Caption</button>
 </div>
@@ -354,6 +371,13 @@ requestAnimationFrame(tick);
 /* APP */
 const App={
 coins:[],current:null,
+
+fmtCap(v){
+if(v>=1e12)return (v/1e12).toFixed(2)+" T";
+if(v>=1e9)return (v/1e9).toFixed(2)+" B";
+if(v>=1e6)return (v/1e6).toFixed(2)+" M";
+return v.toLocaleString();
+},
 
 async load(){
 const r=await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1");
@@ -426,6 +450,13 @@ output.innerHTML=`
 <div class="change" style="color:${c.price_change_percentage_24h>=0?'var(--up)':'var(--down)'}">
 ${c.price_change_percentage_24h.toFixed(2)}%
 </div>
+
+<div class="stats">
+<div class="stat"><span>24H HIGH</span>$${c.high_24h.toLocaleString()}</div>
+<div class="stat"><span>24H LOW</span>$${c.low_24h.toLocaleString()}</div>
+<div class="stat"><span>MARKET CAP</span>${this.fmtCap(c.market_cap)}</div>
+<div class="stat"><span>MC RANK</span>#${c.market_cap_rank}</div>
+</div>
 </div>`;
 },
 
@@ -442,7 +473,7 @@ makeCaption(){
 const c=this.current;
 caption.textContent=
 `${c.name} (${c.symbol.toUpperCase()}) is ${c.price_change_percentage_24h.toFixed(2)}% over the last 24 hours.
-Currently trading at $${c.current_price.toLocaleString()}. #${c.symbol.toUpperCase()} #Crypto #BlockState`;
+Currently trading at $${c.current_price.toLocaleString()} with a market cap of ${this.fmtCap(c.market_cap)}.`;
 },
 
 copyCaption(){
