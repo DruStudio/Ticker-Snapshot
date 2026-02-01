@@ -265,7 +265,7 @@ color:var(--muted);
 text-align:center;
 }
 
-/* SHARE EXAMPLES */
+/* SHARE */
 .share{
 margin-top:14px;
 }
@@ -303,7 +303,7 @@ h1{font-size:2.4rem}
 <canvas id="particles"></canvas>
 
 <div class="bottom-left">
-<div class="badge">v6.7.3</div>
+<div class="badge">v6.7.4</div>
 <div class="badge">FAQ</div>
 </div>
 
@@ -317,7 +317,7 @@ h1{font-size:2.4rem}
 <div class="section-title">CREATE</div>
 <div class="panel">
 <label>Search Crypto (Top 250)</label>
-<input id="search" list="coins" placeholder="BTC, SOL, BONK">
+<input id="search" list="coins" placeholder="e.g Bitcoin">
 <datalist id="coins"></datalist>
 
 <div class="presets" id="presets"></div>
@@ -414,12 +414,16 @@ this.show(this.coins[0]);
 populate(){
 const dl=document.getElementById("coins");
 const p=document.getElementById("presets");
+
 this.coins.forEach(c=>{
 const o=document.createElement("option");
 o.value=`${c.symbol.toUpperCase()} — ${c.name}`;
 dl.appendChild(o);
 });
-this.coins.slice(0,5).forEach(c=>{
+
+["bitcoin","ethereum","binancecoin","ripple","dogecoin"].forEach(id=>{
+const c=this.coins.find(x=>x.id===id);
+if(!c)return;
 const b=document.createElement("button");
 b.textContent=c.symbol.toUpperCase();
 b.onclick=()=>this.show(c);
