@@ -150,14 +150,13 @@ font-size:.95rem;
 cursor:pointer;
 background:linear-gradient(135deg,var(--accent),#8b5cf6);
 color:white;
-margin-bottom:18px;
 }
 
 /* TOGGLE */
 .toggle{
 display:flex;
 gap:10px;
-margin-bottom:14px;
+margin:18px 0 14px;
 }
 .toggle button{
 flex:1;
@@ -196,19 +195,19 @@ border-radius:50%;
 /* WIDGET */
 .widget{
 width:420px;
-height:500px;
+height:520px;
 border-radius:28px;
-padding:28px;
+padding:26px;
 background:linear-gradient(180deg,#12132b,#0a0b1a);
 border:1px solid var(--border);
 display:flex;
 flex-direction:column;
 justify-content:center;
-gap:12px;
+gap:10px;
 margin:0 auto;
 }
-.widget.up{box-shadow:0 0 18px rgba(34,197,94,.2)}
-.widget.down{box-shadow:0 0 18px rgba(239,68,68,.2)}
+.widget.up{box-shadow:0 0 16px rgba(34,197,94,.22)}
+.widget.down{box-shadow:0 0 16px rgba(239,68,68,.22)}
 
 .asset{
 display:flex;
@@ -220,7 +219,6 @@ gap:2px;
 width:56px;
 height:56px;
 border-radius:50%;
-margin-bottom:0;
 }
 .asset-name{
 font-size:2.2rem;
@@ -231,18 +229,6 @@ line-height:1.1;
 font-size:1rem;
 color:var(--muted);
 margin-left:6px;
-}
-
-/* hide long names automatically */
-.asset-name.long span{
-display:inline;
-}
-.asset-name.long{
-font-size:0;
-}
-.asset-name.long span{
-font-size:1.4rem;
-font-weight:900;
 }
 
 .price{
@@ -290,22 +276,28 @@ line-height:1.4;
 .actions{
 display:grid;
 grid-template-columns:1fr 1fr;
-gap:12px;
-margin-bottom:12px;
+gap:14px;
+margin-bottom:14px;
 }
-.secondary{
+.action-btn{
 padding:16px;
 border-radius:18px;
-border:1px solid var(--border);
-background:#0b0c1b;
-color:white;
+border:none;
 font-weight:900;
+font-size:.9rem;
 cursor:pointer;
+background:linear-gradient(135deg,var(--accent),#8b5cf6);
+color:white;
 }
-.secondary.copied{
-border-color:var(--up);
-color:var(--up);
+.action-btn.secondary{
+background:#0b0c1b;
+border:1px solid var(--border);
 }
+.action-btn.copied{
+background:var(--up);
+color:#07130a;
+}
+
 .caption{
 background:#0b0c1b;
 border:1px solid var(--border);
@@ -322,7 +314,6 @@ left:0;
 right:0;
 display:flex;
 justify-content:center;
-gap:28px;
 font-size:.7rem;
 letter-spacing:.25em;
 color:var(--muted);
@@ -392,8 +383,8 @@ z-index:20;
 <div class="section" style="margin-top:36px;">SHARE</div>
 <div class="panel">
 <div class="actions">
-<button class="primary" onclick="App.save()">Save BlockState</button>
-<button class="secondary" id="copyBtn" onclick="App.copy()">Copy Caption</button>
+<button class="action-btn" onclick="App.save()">Save BlockState</button>
+<button class="action-btn secondary" id="copyBtn" onclick="App.copy()">Copy Caption</button>
 </div>
 <div class="caption" id="caption"></div>
 </div>
@@ -409,12 +400,10 @@ z-index:20;
 <!-- FAQ MODAL -->
 <div class="modal" id="faq">
 <div class="panel">
-<h3>What is a Crypto BlockState?</h3>
-<p>A Crypto BlockState is a visual snapshot of market conditions for a cryptocurrency at a specific moment.</p>
-<h3>Where does the data come from?</h3>
-<p>All pricing and market data is provided by CoinGecko. Data is informational only and not financial advice.</p>
-<h3>Sharing</h3>
-<p>You can save and share BlockStates freely on social media.</p>
+<h3>Crypto BlockState FAQ</h3>
+<p>A Crypto BlockState is a visual snapshot of price, change, and market data at a specific moment.</p>
+<p>All data is sourced from CoinGecko. This site does not provide financial advice.</p>
+<p>You may freely save and share BlockStates on social media.</p>
 <button class="primary" onclick="FAQ.close()">Close</button>
 </div>
 </div>
@@ -448,8 +437,8 @@ requestAnimationFrame(t);
 
 /* FAQ */
 const FAQ={
-open(){document.getElementById("faq").style.display="flex"},
-close(){document.getElementById("faq").style.display="none"}
+open(){faq.style.display="flex"},
+close(){faq.style.display="none"}
 };
 
 /* APP */
@@ -544,16 +533,12 @@ this.current=c;
 const up=c.price_change_percentage_24h>=0;
 const arrow=up?'▲':'▼';
 const delta=Math.abs(c.price_change_24h);
-const longName=c.name.length>16;
 
 output.innerHTML=`
 <div class="widget ${up?'up':'down'}" id="widget">
 <div class="asset">
 <img src="${c.image}">
-<div class="asset-name ${longName?'long':''}">
-${longName?``:`${c.name}`}
-<span>${c.symbol.toUpperCase()}</span>
-</div>
+<div class="asset-name">${c.name.length>16?c.symbol.toUpperCase():c.name}<span>${c.symbol.toUpperCase()}</span></div>
 </div>
 
 <div class="price">$${this.fmt(c.current_price)}</div>
@@ -584,9 +569,7 @@ const node=document.getElementById("widget");
 html2canvas(node,{
 backgroundColor:null,
 useCORS:true,
-scale:window.devicePixelRatio>1?2:1,
-width:1080,
-height:1080,
+scale:2
 }).then(canvas=>{
 const a=document.createElement("a");
 a.download="blockstate.png";
@@ -599,7 +582,10 @@ copy(){
 navigator.clipboard.writeText(caption.textContent);
 copyBtn.classList.add("copied");
 copyBtn.textContent="Copied ✓";
-setTimeout(()=>{copyBtn.classList.remove("copied");copyBtn.textContent="Copy Caption"},1600);
+setTimeout(()=>{
+copyBtn.classList.remove("copied");
+copyBtn.textContent="Copy Caption";
+},1600);
 }
 };
 
