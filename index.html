@@ -28,7 +28,33 @@ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 overflow-x:hidden;
 }
 
+canvas#particles{
+position:fixed;
+inset:0;
+z-index:0;
+pointer-events:none;
+}
+
+.bottom-left{
+position:fixed;
+bottom:14px;
+left:14px;
+z-index:10;
+display:flex;
+gap:8px;
+}
+.badge{
+background:#10101a;
+border:1px solid var(--border);
+border-radius:12px;
+padding:8px 12px;
+font-size:.75rem;
+font-weight:700;
+}
+
 .container{
+position:relative;
+z-index:2;
 max-width:1200px;
 margin:0 auto;
 padding:70px 20px 120px;
@@ -55,6 +81,7 @@ display:grid;
 grid-template-columns:420px 420px;
 gap:36px;
 justify-content:center;
+align-items:start;
 }
 
 .panel{
@@ -74,6 +101,23 @@ color:white;
 margin-bottom:14px;
 }
 
+.presets{
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:8px;
+margin-bottom:14px;
+}
+
+.presets button{
+padding:10px;
+border-radius:10px;
+border:1px solid var(--border);
+background:#10101a;
+color:white;
+font-weight:800;
+cursor:pointer;
+}
+
 .primary{
 width:100%;
 padding:14px;
@@ -83,8 +127,25 @@ font-weight:900;
 cursor:pointer;
 background:linear-gradient(135deg,var(--accent),#8b5cf6);
 color:white;
-margin-top:12px;
+margin-bottom:18px;
 }
+
+.trending h3{
+font-size:.75rem;
+margin-bottom:8px;
+color:var(--muted);
+}
+.trending ul{list-style:none}
+.trending li{
+display:flex;
+justify-content:space-between;
+padding:10px 6px;
+border-bottom:1px solid var(--border);
+cursor:pointer;
+}
+.trending li:last-child{border-bottom:none}
+.up{color:var(--green)}
+.down{color:var(--red)}
 
 .widget{
 background:var(--panel2);
@@ -92,6 +153,9 @@ border-radius:22px;
 padding:22px;
 border:2px solid var(--border);
 }
+
+.widget.positive{border-color:var(--green)}
+.widget.negative{border-color:var(--red)}
 
 .header{
 display:flex;
@@ -121,12 +185,33 @@ border-radius:50%;
 font-size:1.4rem;
 font-weight:900;
 }
+.change.positive{color:var(--green)}
+.change.negative{color:var(--red)}
 
 .price{
 text-align:center;
 font-size:2.8rem;
 font-weight:900;
 margin:14px 0;
+}
+
+.stats{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+}
+
+.stat{
+background:#0d0d16;
+border-radius:14px;
+padding:10px;
+text-align:center;
+}
+.stat span{
+display:block;
+font-size:.65rem;
+color:var(--muted);
+margin-bottom:4px;
 }
 
 .footer{
@@ -138,6 +223,25 @@ color:var(--muted);
 text-align:center;
 }
 
+.share-actions{
+display:flex;
+gap:14px;
+justify-content:center;
+}
+
+.share-btn{
+width:56px;
+height:56px;
+border-radius:14px;
+background:#10101a;
+border:1px solid var(--border);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:1.4rem;
+cursor:pointer;
+}
+
 @media(max-width:900px){
 .main{grid-template-columns:1fr}
 h1{font-size:2.4rem}
@@ -147,30 +251,46 @@ h1{font-size:2.4rem}
 
 <body>
 
+<canvas id="particles"></canvas>
+
+<div class="bottom-left">
+<div class="badge">v6.7.5</div>
+<div class="badge">FAQ</div>
+</div>
+
 <div class="container">
 <h1>BlockState</h1>
 
 <div class="main">
 
-<!-- CREATE -->
 <div>
 <div class="section-title">CREATE</div>
 <div class="panel">
 <input id="search" list="coins" placeholder="Search crypto (Top 250)">
 <datalist id="coins"></datalist>
+
+<div class="presets" id="presets"></div>
+
 <button class="primary" onclick="App.generate()">Create BlockState</button>
+
+<div class="trending">
+<h3>Trending (24h movers)</h3>
+<ul id="trendList"></ul>
+</div>
 </div>
 </div>
 
-<!-- CAPTURE -->
 <div>
 <div class="section-title">CAPTURE</div>
 <div id="output"></div>
 
 <div class="section-title">SHARE</div>
 <div class="panel">
+<div class="share-actions">
+<div class="share-btn" onclick="App.shareX()">𝕏</div>
+<div class="share-btn" onclick="App.shareIG()">📸</div>
+</div>
 <button class="primary" onclick="App.save()">Save Image</button>
-<button class="primary" onclick="App.copy()">Copy Description</button>
 </div>
 </div>
 
@@ -180,8 +300,12 @@ h1{font-size:2.4rem}
 <script>
 const App={
 coins:[],
-current:null,
 
+fmtCap(v){
+if(v>=1e12)return'$'+(v/1e12).toFixed(2)+'T';
+if(v>=1e9)return'$'+(v/1e9).toFixed(2)+'B';
+return'$'+v.toLocaleString();
+},
 fmt(v){
 if(v>=1)return v.toFixed(2);
 if(v>=0.01)return v.toFixed(4);
@@ -191,19 +315,49 @@ return v.toFixed(6);
 async load(){
 const r=await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1");
 this.coins=await r.json();
+this.populate();
+this.renderTrending();
+this.show(this.coins[0]);
+},
+
+populate(){
 const dl=document.getElementById("coins");
+const p=document.getElementById("presets");
 this.coins.forEach(c=>{
 const o=document.createElement("option");
 o.value=`${c.symbol.toUpperCase()} — ${c.name}`;
 dl.appendChild(o);
 });
-this.show(this.coins[0]);
+["bitcoin","ethereum","binancecoin","ripple","dogecoin"].forEach(id=>{
+const c=this.coins.find(x=>x.id===id);
+if(!c)return;
+const b=document.createElement("button");
+b.textContent=c.symbol.toUpperCase();
+b.onclick=()=>this.show(c);
+p.appendChild(b);
+});
+},
+
+renderTrending(){
+const list=document.getElementById("trendList");
+[...this.coins]
+.sort((a,b)=>b.price_change_percentage_24h-a.price_change_percentage_24h)
+.slice(0,10)
+.forEach(c=>{
+const li=document.createElement("li");
+li.innerHTML=`<span>${c.name}</span>
+<span class="${c.price_change_percentage_24h>=0?'up':'down'}">
+${c.price_change_percentage_24h>=0?'▲':'▼'} ${c.price_change_percentage_24h.toFixed(2)}%
+</span>`;
+li.onclick=()=>this.show(c);
+list.appendChild(li);
+});
 },
 
 build(c){
-const up=c.price_change_percentage_24h>=0;
+const pos=c.price_change_percentage_24h>=0;
 return `
-<div class="widget" id="widget">
+<div class="widget ${pos?'positive':'negative'}" id="widget">
 <div class="header">
 <div class="left">
 <img class="coin-img" src="${c.image}">
@@ -212,12 +366,19 @@ return `
 <div class="symbol">${c.symbol.toUpperCase()}</div>
 </div>
 </div>
-<div class="change" style="color:${up?'var(--green)':'var(--red)'}">
-${up?'▲':'▼'} ${c.price_change_percentage_24h.toFixed(2)}%
+<div class="change ${pos?'positive':'negative'}">
+${pos?'▲':'▼'} ${c.price_change_percentage_24h.toFixed(2)}%
 </div>
 </div>
 
 <div class="price">$${this.fmt(c.current_price)}</div>
+
+<div class="stats">
+<div class="stat"><span>24h High</span>$${this.fmt(c.high_24h)}</div>
+<div class="stat"><span>24h Low</span>$${this.fmt(c.low_24h)}</div>
+<div class="stat"><span>Market Cap</span>${this.fmtCap(c.market_cap)}</div>
+<div class="stat"><span>MC Rank</span>#${c.market_cap_rank}</div>
+</div>
 
 <div class="footer">
 Captured • ${new Date().toUTCString()}<br>BLOCKSTATE.LIVE
@@ -226,7 +387,6 @@ Captured • ${new Date().toUTCString()}<br>BLOCKSTATE.LIVE
 },
 
 show(c){
-this.current=c;
 document.getElementById("output").innerHTML=this.build(c);
 },
 
@@ -245,20 +405,11 @@ a.click();
 });
 },
 
-copy(){
-if(!this.current)return;
-const c=this.current;
-const up=c.price_change_percentage_24h>=0;
-const text=
-`${c.name} is ${up?'up':'down'} ${Math.abs(c.price_change_percentage_24h).toFixed(2)}% in the last 24 hours.
-
-Price: $${this.fmt(c.current_price)}
-Market Cap Rank: #${c.market_cap_rank}
-
-#${c.symbol.toUpperCase()} #BlockState`;
-
-navigator.clipboard.writeText(text);
-alert("BlockState description copied");
+shareX(){
+window.open("https://twitter.com/intent/tweet?text=BlockState%20Snapshot","_blank");
+},
+shareIG(){
+alert("Save image, then upload to Instagram.");
 }
 };
 
