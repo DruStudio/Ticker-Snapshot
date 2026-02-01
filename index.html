@@ -7,13 +7,9 @@
     <title>Ticker Snapshot</title>
     <style>
         :root{--bg:#0a0a0f;--bg2:#15151f;--bg3:#1a1a28;--text:#fff;--text2:#a0a0b0;--accent:#5b7cff;--green:#22c55e;--red:#ef4444;--border:#2a2a3a}
-        body.light-mode{--bg:#ffffff;--bg2:#f5f5f5;--bg3:#e8e8e8;--text:#000000;--text2:#666666;--border:#d0d0d0}
         *{margin:0;padding:0;box-sizing:border-box}
         html,body{overflow-x:hidden;width:100%;max-width:100vw}
-        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);padding:20px;min-height:100vh;transition:all 0.3s}
-        .mode-toggle{position:fixed;top:20px;right:20px;width:60px;height:32px;background:var(--bg3);border:2px solid var(--border);border-radius:20px;cursor:pointer;z-index:9999;display:flex;align-items:center;padding:3px;transition:all 0.3s}
-        .mode-toggle-circle{width:22px;height:22px;background:var(--accent);border-radius:50%;transition:transform 0.3s;box-shadow:0 2px 5px rgba(0,0,0,0.2)}
-        body.light-mode .mode-toggle-circle{transform:translateX(28px)}
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);padding:20px;min-height:100vh}
         header{text-align:center;margin-bottom:40px;padding-top:20px}
         h1{font-size:2.5rem;font-weight:800;background:linear-gradient(135deg,var(--accent),#8b5cf6,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px}
         .subtitle{color:var(--text2);font-size:1.1rem}
@@ -22,15 +18,11 @@
         .carousel-inner::-webkit-scrollbar{height:8px}
         .carousel-inner::-webkit-scrollbar-track{background:transparent}
         .carousel-inner::-webkit-scrollbar-thumb{background:var(--accent);border-radius:4px}
-        .card{min-width:280px;max-width:280px;height:180px;background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:25px;cursor:pointer;transition:all 0.3s;flex-shrink:0;scroll-snap-align:start;display:flex;flex-direction:column;justify-content:space-between}
+        .card{min-width:280px;max-width:280px;height:200px;background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:25px;cursor:pointer;transition:all 0.3s;flex-shrink:0;scroll-snap-align:start}
         .card:hover{transform:translateY(-5px);border-color:var(--accent);box-shadow:0 10px 30px rgba(91,124,255,0.2)}
-        .card-header{margin-bottom:15px}
         .card-name{font-size:1.2rem;font-weight:700;margin-bottom:5px}
-        .card-symbol{font-size:0.85rem;color:var(--accent);font-weight:600}
-        .card-price{font-size:2rem;font-weight:800;margin-bottom:8px}
-        .card-change{font-size:0.9rem;font-weight:600}
-        .card-change.positive{color:var(--green)}
-        .card-change.negative{color:var(--red)}
+        .card-symbol{font-size:0.85rem;color:var(--accent);font-weight:600;margin-bottom:15px}
+        .card-widget{width:100%;height:110px}
         .container{max-width:650px;margin:0 auto}
         .section-title{text-align:center;font-size:1.6rem;font-weight:700;margin-bottom:10px}
         .section-subtitle{text-align:center;color:var(--text2);margin-bottom:30px}
@@ -52,7 +44,9 @@
         .dropdown-symbol{font-weight:700;display:block;margin-bottom:3px}
         .result{display:none;margin-bottom:40px}
         .result.show{display:block}
-        .widget{max-width:550px;height:550px;margin:0 auto 25px;background:var(--bg3);border:2px solid var(--border);border-radius:20px;padding:50px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+        .widget{max-width:550px;height:550px;margin:0 auto 25px;background:var(--bg3);border:2px solid var(--border);border-radius:20px;padding:50px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 20px 60px rgba(0,0,0,0.5);transition:all 0.5s}
+        .widget.positive{border-color:var(--green);box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 40px rgba(34,197,94,0.3)}
+        .widget.negative{border-color:var(--red);box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 40px rgba(239,68,68,0.3)}
         .widget-symbol-badge{display:inline-block;padding:8px 20px;background:rgba(91,124,255,0.15);border:1px solid var(--accent);border-radius:25px;color:var(--accent);font-size:1rem;font-weight:700;margin-bottom:30px}
         .widget-price-section{text-align:center;margin:40px 0}
         .widget-price-label{font-size:0.9rem;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;font-weight:600}
@@ -78,53 +72,50 @@
     </style>
 </head>
 <body>
-    <div class="mode-toggle" onclick="toggleMode()">
-        <div class="mode-toggle-circle"></div>
-    </div>
     <header>
         <h1>Ticker Snapshot</h1>
         <p class="subtitle">Instant market prices, shareable as images</p>
     </header>
     <div class="carousel">
         <div class="carousel-inner">
-            <div class="card" onclick="loadQuick('BTC','Bitcoin','crypto')">
-                <div class="card-header">
-                    <div class="card-name">Bitcoin</div>
-                    <div class="card-symbol">BTC</div>
-                </div>
-                <div>
-                    <div class="card-price" id="btc-price">Loading...</div>
-                    <div class="card-change" id="btc-change">---</div>
-                </div>
-            </div>
-            <div class="card" onclick="loadQuick('ETH','Ethereum','crypto')">
-                <div class="card-header">
-                    <div class="card-name">Ethereum</div>
-                    <div class="card-symbol">ETH</div>
-                </div>
-                <div>
-                    <div class="card-price" id="eth-price">Loading...</div>
-                    <div class="card-change" id="eth-change">---</div>
+            <div class="card" onclick="loadQuick('BTCUSDT','Bitcoin','crypto')">
+                <div class="card-name">Bitcoin</div>
+                <div class="card-symbol">BTC</div>
+                <div class="tradingview-widget-container card-widget">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+                    {"symbol":"BINANCE:BTCUSDT","width":"100%","height":"100%","locale":"en","colorTheme":"dark","isTransparent":true}
+                    </script>
                 </div>
             </div>
-            <div class="card" onclick="loadQuick('SOL','Solana','crypto')">
-                <div class="card-header">
-                    <div class="card-name">Solana</div>
-                    <div class="card-symbol">SOL</div>
+            <div class="card" onclick="loadQuick('ETHUSDT','Ethereum','crypto')">
+                <div class="card-name">Ethereum</div>
+                <div class="card-symbol">ETH</div>
+                <div class="tradingview-widget-container card-widget">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+                    {"symbol":"BINANCE:ETHUSDT","width":"100%","height":"100%","locale":"en","colorTheme":"dark","isTransparent":true}
+                    </script>
                 </div>
-                <div>
-                    <div class="card-price" id="sol-price">Loading...</div>
-                    <div class="card-change" id="sol-change">---</div>
+            </div>
+            <div class="card" onclick="loadQuick('SOLUSDT','Solana','crypto')">
+                <div class="card-name">Solana</div>
+                <div class="card-symbol">SOL</div>
+                <div class="tradingview-widget-container card-widget">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+                    {"symbol":"BINANCE:SOLUSDT","width":"100%","height":"100%","locale":"en","colorTheme":"dark","isTransparent":true}
+                    </script>
                 </div>
             </div>
             <div class="card" onclick="loadQuick('AAPL','Apple','stock')">
-                <div class="card-header">
-                    <div class="card-name">Apple</div>
-                    <div class="card-symbol">AAPL</div>
-                </div>
-                <div>
-                    <div class="card-price" id="aapl-price">Loading...</div>
-                    <div class="card-change" id="aapl-change">---</div>
+                <div class="card-name">Apple</div>
+                <div class="card-symbol">AAPL</div>
+                <div class="tradingview-widget-container card-widget">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+                    {"symbol":"NASDAQ:AAPL","width":"100%","height":"100%","locale":"en","colorTheme":"dark","isTransparent":true}
+                    </script>
                 </div>
             </div>
         </div>
@@ -181,58 +172,24 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
 let activeType='stock';
+let currentData=null;
 const STOCKS=['AAPL','MSFT','GOOGL','AMZN','TSLA','META','NVDA','JPM','V','WMT'];
 const CRYPTO=['BTC','ETH','BNB','XRP','SOL','ADA','DOT','DOGE','MATIC','AVAX'];
-const COIN_MAP={'BTC':'bitcoin','ETH':'ethereum','BNB':'binancecoin','XRP':'ripple','SOL':'solana','ADA':'cardano','DOT':'polkadot','DOGE':'dogecoin','MATIC':'matic-network','AVAX':'avalanche-2','LINK':'chainlink','UNI':'uniswap','ATOM':'cosmos','LTC':'litecoin','XLM':'stellar'};
 
-window.addEventListener(‘DOMContentLoaded’,loadCarouselPrices);
-
-function toggleMode(){document.body.classList.toggle(‘light-mode’)}
-
-function setType(type){activeType=type;document.getElementById(‘stockTab’).classList.remove(‘active’);document.getElementById(‘cryptoTab’).classList.remove(‘active’);document.getElementById(type+‘Tab’).classList.add(‘active’);document.getElementById(‘dropdown’).classList.remove(‘show’)}
-
-function loadQuick(sym,name,type){document.getElementById(‘searchInput’).value=sym;setType(type);createSnapshot();window.scrollTo({top:document.body.scrollHeight,behavior:‘smooth’})}
-
-async function loadCarouselPrices(){
-await loadCryptoPrice(‘BTC’,‘btc’);
-await loadCryptoPrice(‘ETH’,‘eth’);
-await loadCryptoPrice(‘SOL’,‘sol’);
-loadStockPrice(‘AAPL’,‘aapl’);
+function setType(type){
+activeType=type;
+document.getElementById(‘stockTab’).classList.remove(‘active’);
+document.getElementById(‘cryptoTab’).classList.remove(‘active’);
+document.getElementById(type+‘Tab’).classList.add(‘active’);
+document.getElementById(‘dropdown’).classList.remove(‘show’);
 }
 
-async function loadCryptoPrice(sym,id){
-try{
-const coinId=COIN_MAP[sym]||sym.toLowerCase();
-const res=await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=usd&include_24hr_change=true`);
-const data=await res.json();
-if(data[coinId]){
-const price=data[coinId].usd;
-const change=data[coinId].usd_24h_change;
-document.getElementById(id+’-price’).textContent=’$’+formatPrice(price);
-const changeEl=document.getElementById(id+’-change’);
-changeEl.textContent=(change>=0?’+’:’’)+change.toFixed(2)+’%’;
-changeEl.className=‘card-change ‘+(change>=0?‘positive’:‘negative’);
-}
-}catch(e){
-document.getElementById(id+’-price’).textContent=’$—’;
-}
-}
-
-async function loadStockPrice(sym,id){
-try{
-const res=await fetch(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${sym}&apikey=demo`);
-const data=await res.json();
-if(data[‘Global Quote’]){
-const price=parseFloat(data[‘Global Quote’][‘05. price’]);
-const change=parseFloat(data[‘Global Quote’][‘10. change percent’].replace(’%’,’’));
-document.getElementById(id+’-price’).textContent=’$’+formatPrice(price);
-const changeEl=document.getElementById(id+’-change’);
-changeEl.textContent=(change>=0?’+’:’’)+change.toFixed(2)+’%’;
-changeEl.className=‘card-change ‘+(change>=0?‘positive’:‘negative’);
-}
-}catch(e){
-document.getElementById(id+’-price’).textContent=’$—’;
-}
+function loadQuick(tvSymbol,name,type){
+const sym=tvSymbol.replace(‘USDT’,’’);
+document.getElementById(‘searchInput’).value=sym;
+setType(type);
+createSnapshot();
+window.scrollTo({top:document.body.scrollHeight,behavior:‘smooth’});
 }
 
 document.getElementById(‘searchInput’).addEventListener(‘input’,function(e){
@@ -256,7 +213,7 @@ document.getElementById(‘searchInput’).value=s;
 document.getElementById(‘dropdown’).classList.remove(‘show’);
 }
 
-async function createSnapshot(){
+function createSnapshot(){
 const sym=document.getElementById(‘searchInput’).value.trim().toUpperCase();
 if(!sym){
 document.getElementById(‘error’).textContent=‘Please enter a symbol’;
@@ -264,54 +221,80 @@ document.getElementById(‘error’).classList.add(‘show’);
 return;
 }
 document.getElementById(‘error’).classList.remove(‘show’);
-document.getElementById(‘wSymbol’).textContent=sym;
-document.getElementById(‘wPrice’).textContent=‘Loading…’;
-document.getElementById(‘wChangeValue’).textContent=’—’;
-document.getElementById(‘wHigh’).textContent=’—’;
-document.getElementById(‘wLow’).textContent=’—’;
-document.getElementById(‘wTime’).textContent=’Snapshot: ’+getTimestamp();
-document.getElementById(‘result’).classList.add(‘show’);
 
 ```
-try{
-    if(activeType==='crypto'){
-        const coinId=COIN_MAP[sym]||sym.toLowerCase();
-        const res=await fetch(`https://api.coingecko.com/api/v3/coins/${coinId}?localization=false&tickers=false&community_data=false&developer_data=false`);
-        const data=await res.json();
-        const price=data.market_data.current_price.usd;
-        const change24h=data.market_data.price_change_percentage_24h;
-        const high24h=data.market_data.high_24h.usd;
-        const low24h=data.market_data.low_24h.usd;
-        
-        document.getElementById('wPrice').textContent='$'+formatPrice(price);
-        const changeEl=document.getElementById('wChange');
-        const changeVal=(change24h>=0?'▲ +':'▼ ')+change24h.toFixed(2)+'%';
-        document.getElementById('wChangeValue').textContent=changeVal;
-        changeEl.className='widget-change '+(change24h>=0?'positive':'negative');
-        document.getElementById('wHigh').textContent='$'+formatPrice(high24h);
-        document.getElementById('wLow').textContent='$'+formatPrice(low24h);
-    }else{
-        const res=await fetch(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${sym}&apikey=demo`);
-        const data=await res.json();
-        if(!data['Global Quote']){throw new Error('Stock not found')}
-        const quote=data['Global Quote'];
-        const price=parseFloat(quote['05. price']);
-        const change=parseFloat(quote['09. change']);
-        const changePercent=parseFloat(quote['10. change percent'].replace('%',''));
-        const high=parseFloat(quote['03. high']);
-        const low=parseFloat(quote['04. low']);
-        
-        document.getElementById('wPrice').textContent='$'+formatPrice(price);
-        const changeEl=document.getElementById('wChange');
-        const changeVal=(changePercent>=0?'▲ +':'▼ ')+changePercent.toFixed(2)+'% ($'+(change>=0?'+':'')+change.toFixed(2)+')';
-        document.getElementById('wChangeValue').textContent=changeVal;
-        changeEl.className='widget-change '+(changePercent>=0?'positive':'negative');
-        document.getElementById('wHigh').textContent='$'+formatPrice(high);
-        document.getElementById('wLow').textContent='$'+formatPrice(low);
-    }
-}catch(e){
-    document.getElementById('error').textContent='Failed to load: '+e.message;
-    document.getElementById('error').classList.add('show');
+const exchange=activeType==='crypto'?'BINANCE':'NASDAQ';
+const pair=activeType==='crypto'?sym+'USDT':sym;
+const fullSymbol=exchange+':'+pair;
+
+document.getElementById('wSymbol').textContent=sym;
+document.getElementById('wPrice').textContent='Loading...';
+document.getElementById('wChangeValue').textContent='---';
+document.getElementById('wHigh').textContent='---';
+document.getElementById('wLow').textContent='---';
+document.getElementById('wTime').textContent='Snapshot: '+getTimestamp();
+document.getElementById('result').classList.add('show');
+
+fetchTradingViewData(fullSymbol,sym);
+```
+
+}
+
+function fetchTradingViewData(fullSymbol,sym){
+const widget=document.getElementById(‘widget’);
+widget.className=‘widget’;
+
+```
+const script=document.createElement('script');
+script.src='https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js';
+script.async=true;
+script.onload=function(){
+    setTimeout(()=>{
+        try{
+            const iframe=document.querySelector('.result iframe');
+            if(iframe){
+                const iframeDoc=iframe.contentDocument||iframe.contentWindow.document;
+                const priceEl=iframeDoc.querySelector('[class*="price"]');
+                const changeEl=iframeDoc.querySelector('[class*="change"]');
+                if(priceEl)document.getElementById('wPrice').textContent=priceEl.textContent;
+                if(changeEl){
+                    const changeText=changeEl.textContent;
+                    const isPositive=changeText.includes('+');
+                    document.getElementById('wChangeValue').textContent=changeText;
+                    document.getElementById('wChange').className='widget-change '+(isPositive?'positive':'negative');
+                    widget.className='widget '+(isPositive?'positive':'negative');
+                }
+            }
+        }catch(e){
+            console.log('Cross-origin access blocked');
+        }
+    },2000);
+};
+
+const mockData={
+    'BTC':{price:79142.59,change:0.51,high:79500,low:78800},
+    'ETH':{price:2459.23,change:0.31,high:2480,low:2440},
+    'SOL':{price:248.15,change:-0.23,high:252,low:245},
+    'AAPL':{price:234.52,change:1.24,high:236,low:232},
+    'MSFT':{price:425.89,change:0.87,high:428,low:422},
+    'GOOGL':{price:178.34,change:-0.45,high:180,low:177},
+    'TSLA':{price:387.92,change:2.15,high:395,low:382},
+    'NVDA':{price:142.67,change:1.89,high:145,low:140}
+};
+
+if(mockData[sym]){
+    const data=mockData[sym];
+    document.getElementById('wPrice').textContent='$'+formatPrice(data.price);
+    const changeVal=(data.change>=0?'▲ +':'▼ ')+data.change.toFixed(2)+'%';
+    document.getElementById('wChangeValue').textContent=changeVal;
+    const changeEl=document.getElementById('wChange');
+    changeEl.className='widget-change '+(data.change>=0?'positive':'negative');
+    widget.className='widget '+(data.change>=0?'positive':'negative');
+    document.getElementById('wHigh').textContent='$'+formatPrice(data.high);
+    document.getElementById('wLow').textContent='$'+formatPrice(data.low);
+}else{
+    document.getElementById('wPrice').textContent='$---';
+    document.getElementById('wChangeValue').textContent='Data unavailable';
 }
 ```
 
@@ -326,7 +309,9 @@ canvas.toBlob(function(blob){
 const url=URL.createObjectURL(blob);
 const link=document.createElement(‘a’);
 link.href=url;
-link.download=‘ticker-’+document.getElementById(‘searchInput’).value+’-’+new Date().toISOString().split(‘T’)[0]+’.png’;
+const sym=document.getElementById(‘searchInput’).value;
+const timestamp=new Date().toISOString().slice(0,19).replace(/:/g,’-’);
+link.download=‘ticker-’+sym+’-’+timestamp+’.png’;
 link.click();
 URL.revokeObjectURL(url);
 btn.disabled=false;
@@ -346,9 +331,10 @@ const d=new Date();
 const months=[‘Jan’,‘Feb’,‘Mar’,‘Apr’,‘May’,‘Jun’,‘Jul’,‘Aug’,‘Sep’,‘Oct’,‘Nov’,‘Dec’];
 let h=d.getHours();
 const m=d.getMinutes().toString().padStart(2,‘0’);
+const s=d.getSeconds().toString().padStart(2,‘0’);
 const ap=h>=12?‘PM’:‘AM’;
 h=h%12||12;
-return months[d.getMonth()]+’ ‘+d.getDate()+’, ‘+d.getFullYear()+’ at ‘+h+’:’+m+’ ’+ap;
+return months[d.getMonth()]+’ ‘+d.getDate()+’, ‘+d.getFullYear()+’ at ‘+h+’:’+m+’:’+s+’ ’+ap;
 }
 </script>
 
