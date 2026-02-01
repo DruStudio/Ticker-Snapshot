@@ -14,7 +14,6 @@
             --text2:#a0a0b0;
             --accent:#5b7cff;
             --green:#22c55e;
-            --red:#ef4444;
             --border:#2a2a3a;
         }
 
@@ -29,6 +28,7 @@
     }
     
     *{margin:0;padding:0;box-sizing:border-box}
+    html,body{overflow-x:hidden;width:100%}
     body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);padding:20px;min-height:100vh;transition:background 0.3s,color 0.3s}
     
     .mode-toggle{position:fixed;top:20px;right:20px;width:60px;height:32px;background:var(--bg3);border:2px solid var(--border);border-radius:20px;cursor:pointer;transition:all 0.3s;z-index:9999;display:flex;align-items:center;padding:3px}
@@ -39,13 +39,16 @@
     h1{font-size:2.5rem;font-weight:800;background:linear-gradient(135deg,var(--accent),#8b5cf6,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px}
     .subtitle{color:var(--text2);font-size:1.1rem}
     
-    .carousel{max-width:1200px;margin:0 auto 60px;overflow-x:auto;padding:20px 0}
-    .carousel-inner{display:flex;gap:20px}
-    .card{min-width:280px;height:280px;background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:25px;cursor:pointer;transition:all 0.3s;flex-shrink:0;position:relative}
+    .carousel{max-width:100%;margin:0 auto 60px;overflow:hidden}
+    .carousel-inner{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;padding:20px 0;scrollbar-width:thin;scrollbar-color:var(--accent) transparent;-webkit-overflow-scrolling:touch}
+    .carousel-inner::-webkit-scrollbar{height:8px}
+    .carousel-inner::-webkit-scrollbar-track{background:transparent}
+    .carousel-inner::-webkit-scrollbar-thumb{background:var(--accent);border-radius:4px}
+    .card{min-width:300px;max-width:300px;height:340px;background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:25px;cursor:pointer;transition:all 0.3s;flex-shrink:0;scroll-snap-align:start}
     .card:hover{transform:translateY(-5px);border-color:var(--accent);box-shadow:0 10px 30px rgba(91,124,255,0.2)}
-    .card-name{font-size:1.1rem;font-weight:700;margin-bottom:5px}
-    .card-symbol{font-size:0.9rem;color:var(--accent);margin-bottom:15px}
-    .card-widget{width:100%;height:180px}
+    .card-name{font-size:1.2rem;font-weight:700;margin-bottom:5px}
+    .card-symbol{font-size:0.95rem;color:var(--accent);margin-bottom:15px}
+    .card-widget{width:100%;height:240px}
     
     .container{max-width:650px;margin:0 auto}
     .section-title{text-align:center;font-size:1.6rem;font-weight:700;margin-bottom:10px}
@@ -74,25 +77,24 @@
     
     .result{display:none;margin-bottom:40px}
     .result.show{display:block}
-    .widget{max-width:550px;height:550px;margin:0 auto 25px;background:var(--bg3);border:2px solid var(--border);border-radius:20px;padding:45px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
-    .widget-header{display:flex;justify-content:space-between;align-items:flex-start}
+    .widget{max-width:550px;height:600px;margin:0 auto 25px;background:var(--bg3);border:2px solid var(--border);border-radius:20px;padding:45px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+    .widget-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
     .widget-name{font-size:1.5rem;font-weight:800;margin-bottom:8px}
     .widget-symbol{font-size:1.1rem;color:var(--accent);font-weight:700}
-    .chart-toggle{display:flex;gap:8px;background:var(--bg3);padding:5px;border-radius:8px;border:1px solid var(--border)}
-    .toggle-btn{padding:10px 16px;background:transparent;border:none;color:var(--text2);font-weight:700;cursor:pointer;border-radius:6px;transition:all 0.3s;text-transform:uppercase;font-size:0.8rem}
-    .toggle-btn.active{background:var(--accent);color:#fff}
-    .widget-price{text-align:center;margin:30px 0}
-    .widget-price-value{font-size:3.8rem;font-weight:900;line-height:1}
-    .widget-price-currency{font-size:1.1rem;color:var(--text2);margin-top:10px}
-    .widget-chart-container{height:160px;margin:30px 0}
-    .widget-time{text-align:center;color:var(--text2);font-size:0.9rem;margin-bottom:15px}
+    .widget-chart-container{flex:1;min-height:300px;margin:20px 0}
+    .widget-time{text-align:center;color:var(--text2);font-size:0.9rem;margin-top:20px;margin-bottom:15px}
     .widget-brand{text-align:center;color:var(--text2);font-size:0.9rem;font-weight:700}
     
     .export-btn{width:100%;padding:18px;background:linear-gradient(135deg,var(--green),#16a34a);border:none;color:#fff;font-size:1.1rem;font-weight:700;border-radius:10px;cursor:pointer;text-transform:uppercase;transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:10px}
     .export-btn:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(34,197,94,0.3)}
     
-    .error{background:rgba(239,68,68,0.1);border:1px solid var(--red);padding:20px;border-radius:10px;color:var(--red);text-align:center;margin-bottom:30px;display:none}
+    .error{background:rgba(239,68,68,0.1);border:1px solid #ef4444;padding:20px;border-radius:10px;color:#ef4444;text-align:center;margin-bottom:30px;display:none}
     .error.show{display:block}
+    
+    @media(max-width:768px){
+        .card{min-width:260px;max-width:260px;height:300px}
+        .card-widget{height:200px}
+    }
 </style>
 ```
 
@@ -110,23 +112,23 @@
 
 <div class="carousel">
     <div class="carousel-inner">
-        <div class="card" onclick="quickLoad('BTCUSD','Bitcoin','crypto')">
+        <div class="card" onclick="quickLoad('BTC','Bitcoin','crypto')">
             <div class="card-name">Bitcoin</div>
             <div class="card-symbol">BTC</div>
             <div class="tradingview-widget-container card-widget">
                 <div class="tradingview-widget-container__widget"></div>
-                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
-                {"symbol":"BINANCE:BTCUSDT","width":"100%","height":"100%","locale":"en","colorTheme":"dark","isTransparent":true}
+                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js" async>
+                {"symbols":[["BINANCE:BTCUSDT|1D"]],"chartOnly":false,"width":"100%","height":"100%","locale":"en","colorTheme":"dark","autosize":true,"showVolume":false,"showMA":false,"hideDateRanges":true,"hideMarketStatus":false,"hideSymbolLogo":false,"scalePosition":"right","scaleMode":"Normal","fontFamily":"-apple-system, BlinkMacSystemFont, Trebuchet MS, Roboto, Ubuntu, sans-serif","fontSize":"10","noTimeScale":false,"valuesTracking":"1","changeMode":"price-and-percent","chartType":"area","lineWidth":2,"lineType":0,"dateRanges":["1d|1","1m|30","3m|60"]}
                 </script>
             </div>
         </div>
-        <div class="card" onclick="quickLoad('ETHUSD','Ethereum','crypto')">
+        <div class="card" onclick="quickLoad('ETH','Ethereum','crypto')">
             <div class="card-name">Ethereum</div>
             <div class="card-symbol">ETH</div>
             <div class="tradingview-widget-container card-widget">
                 <div class="tradingview-widget-container__widget"></div>
-                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
-                {"symbol":"BINANCE:ETHUSDT","width":"100%","height":"100%","locale":"en","colorTheme":"dark","isTransparent":true}
+                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js" async>
+                {"symbols":[["BINANCE:ETHUSDT|1D"]],"chartOnly":false,"width":"100%","height":"100%","locale":"en","colorTheme":"dark","autosize":true,"showVolume":false,"showMA":false,"hideDateRanges":true,"hideMarketStatus":false,"hideSymbolLogo":false,"scalePosition":"right","scaleMode":"Normal","fontFamily":"-apple-system, BlinkMacSystemFont, Trebuchet MS, Roboto, Ubuntu, sans-serif","fontSize":"10","noTimeScale":false,"valuesTracking":"1","changeMode":"price-and-percent","chartType":"area","lineWidth":2,"lineType":0,"dateRanges":["1d|1","1m|30","3m|60"]}
                 </script>
             </div>
         </div>
@@ -135,8 +137,8 @@
             <div class="card-symbol">AAPL</div>
             <div class="tradingview-widget-container card-widget">
                 <div class="tradingview-widget-container__widget"></div>
-                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
-                {"symbol":"NASDAQ:AAPL","width":"100%","height":"100%","locale":"en","colorTheme":"dark","isTransparent":true}
+                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js" async>
+                {"symbols":[["NASDAQ:AAPL|1D"]],"chartOnly":false,"width":"100%","height":"100%","locale":"en","colorTheme":"dark","autosize":true,"showVolume":false,"showMA":false,"hideDateRanges":true,"hideMarketStatus":false,"hideSymbolLogo":false,"scalePosition":"right","scaleMode":"Normal","fontFamily":"-apple-system, BlinkMacSystemFont, Trebuchet MS, Roboto, Ubuntu, sans-serif","fontSize":"10","noTimeScale":false,"valuesTracking":"1","changeMode":"price-and-percent","chartType":"area","lineWidth":2,"lineType":0,"dateRanges":["1d|1","1m|30","3m|60"]}
                 </script>
             </div>
         </div>
@@ -145,8 +147,8 @@
             <div class="card-symbol">TSLA</div>
             <div class="tradingview-widget-container card-widget">
                 <div class="tradingview-widget-container__widget"></div>
-                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
-                {"symbol":"NASDAQ:TSLA","width":"100%","height":"100%","locale":"en","colorTheme":"dark","isTransparent":true}
+                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js" async>
+                {"symbols":[["NASDAQ:TSLA|1D"]],"chartOnly":false,"width":"100%","height":"100%","locale":"en","colorTheme":"dark","autosize":true,"showVolume":false,"showMA":false,"hideDateRanges":true,"hideMarketStatus":false,"hideSymbolLogo":false,"scalePosition":"right","scaleMode":"Normal","fontFamily":"-apple-system, BlinkMacSystemFont, Trebuchet MS, Roboto, Ubuntu, sans-serif","fontSize":"10","noTimeScale":false,"valuesTracking":"1","changeMode":"price-and-percent","chartType":"area","lineWidth":2,"lineType":0,"dateRanges":["1d|1","1m|30","3m|60"]}
                 </script>
             </div>
         </div>
@@ -167,7 +169,7 @@
             <input type="text" class="search-input" id="searchInput" placeholder="Type symbol (e.g., AAPL, BTC)..." autocomplete="off">
             <div class="dropdown" id="dropdown"></div>
         </div>
-        <button class="generate-btn" id="generateBtn" onclick="generate()">Create Snapshot</button>
+        <button class="generate-btn" onclick="generate()">Create Snapshot</button>
     </div>
 
     <div class="error" id="error"></div>
@@ -179,14 +181,6 @@
                     <div class="widget-name" id="wName">---</div>
                     <div class="widget-symbol" id="wSymbol">---</div>
                 </div>
-                <div class="chart-toggle">
-                    <button class="toggle-btn active" id="candleBtn" onclick="setChart('candle')">Candle</button>
-                    <button class="toggle-btn" id="lineBtn" onclick="setChart('line')">Line</button>
-                </div>
-            </div>
-            <div class="widget-price">
-                <div class="widget-price-value" id="wPrice">$0.00</div>
-                <div class="widget-price-currency">USD</div>
             </div>
             <div class="widget-chart-container" id="wChart"></div>
             <div>
@@ -201,39 +195,24 @@
     </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"><\/script>
 <script>
 ```
 
 let activeType=‘stock’;
-let chartMode=‘candle’;
+const STOCKS=[‘AAPL’,‘MSFT’,‘GOOGL’,‘AMZN’,‘TSLA’,‘META’,‘NVDA’,‘JPM’,‘V’,‘WMT’];
+const CRYPTO=[‘BTC’,‘ETH’,‘BNB’,‘XRP’,‘ADA’,‘SOL’,‘DOT’,‘DOGE’,‘MATIC’,‘LTC’];
 
 function toggleMode(){
 document.body.classList.toggle(‘light’);
 }
 
-const STOCKS=[‘AAPL’,‘MSFT’,‘GOOGL’,‘AMZN’,‘TSLA’,‘META’,‘NVDA’,‘JPM’,‘V’,‘WMT’,‘JNJ’,‘PG’,‘DIS’,‘NFLX’,‘INTC’,‘CSCO’,‘VZ’,‘PFE’,‘KO’,‘PEP’,‘NKE’,‘BA’,‘IBM’,‘GE’,‘T’];
-const CRYPTO=[‘BTC’,‘ETH’,‘BNB’,‘XRP’,‘ADA’,‘SOL’,‘DOT’,‘DOGE’,‘MATIC’,‘LTC’,‘LINK’,‘UNI’,‘AVAX’,‘ATOM’,‘XLM’,‘ALGO’,‘VET’,‘FIL’,‘THETA’,‘XTZ’];
-
 function switchTab(type){
 activeType=type;
-const stockTab=document.getElementById(‘stockTab’);
-const cryptoTab=document.getElementById(‘cryptoTab’);
-
-```
-stockTab.classList.remove('active');
-cryptoTab.classList.remove('active');
-
-if(type==='stock'){
-    stockTab.classList.add('active');
-}else{
-    cryptoTab.classList.add('active');
-}
-
-document.getElementById('dropdown').classList.remove('show');
-document.getElementById('searchInput').value='';
-```
-
+document.getElementById(‘stockTab’).classList.remove(‘active’);
+document.getElementById(‘cryptoTab’).classList.remove(‘active’);
+document.getElementById(type+‘Tab’).classList.add(‘active’);
+document.getElementById(‘dropdown’).classList.remove(‘show’);
 }
 
 function quickLoad(symbol,name,type){
@@ -246,28 +225,12 @@ generate();
 document.getElementById(‘searchInput’).addEventListener(‘input’,e=>{
 const q=e.target.value.trim().toUpperCase();
 const dd=document.getElementById(‘dropdown’);
-
-```
-if(q.length<1){
-    dd.classList.remove('show');
-    return;
-}
-
-let results=[];
-if(activeType==='stock'){
-    results=STOCKS.filter(s=>s.includes(q)).slice(0,10).map(s=>({symbol:s,name:s}));
-}else{
-    results=CRYPTO.filter(c=>c.includes(q)).slice(0,10).map(c=>({symbol:c,name:c}));
-}
-
+if(q.length<1){dd.classList.remove(‘show’);return}
+let results=activeType===‘stock’?STOCKS.filter(s=>s.includes(q)):CRYPTO.filter(c=>c.includes(q));
 if(results.length){
-    dd.innerHTML=results.map(r=>`<div class="dropdown-item" onclick="selectSymbol('${r.symbol}')"><span class="dropdown-symbol">${r.symbol}</span><span class="dropdown-name">${r.name}</span></div>`).join('');
-    dd.classList.add('show');
-}else{
-    dd.classList.remove('show');
-}
-```
-
+dd.innerHTML=results.slice(0,10).map(r=>’<div class="dropdown-item" onclick="selectSymbol(\''+r+'\')"><span class="dropdown-symbol">’+r+’</span></div>’).join(’’);
+dd.classList.add(‘show’);
+}else{dd.classList.remove(‘show’)}
 });
 
 document.getElementById(‘searchInput’).addEventListener(‘keypress’,e=>{
@@ -279,76 +242,44 @@ document.getElementById(‘searchInput’).value=sym;
 document.getElementById(‘dropdown’).classList.remove(‘show’);
 }
 
-async function generate(){
+function generate(){
 const sym=document.getElementById(‘searchInput’).value.trim().toUpperCase();
 if(!sym){
 document.getElementById(‘error’).textContent=‘Please enter a symbol’;
 document.getElementById(‘error’).classList.add(‘show’);
 return;
 }
-
-```
-document.getElementById('error').classList.remove('show');
-document.getElementById('result').classList.remove('show');
-document.getElementById('generateBtn').disabled=true;
-document.getElementById('generateBtn').textContent='Loading...';
-
-const tvSymbol=activeType==='crypto'?`BINANCE:${sym}USDT`:`NASDAQ:${sym}`;
-
-document.getElementById('wName').textContent=sym;
-document.getElementById('wSymbol').textContent=sym;
-document.getElementById('wPrice').textContent='Live Price';
-document.getElementById('wTime').textContent=getTime();
-
-const chartContainer=document.getElementById('wChart');
-chartContainer.innerHTML=`
-    <div class="tradingview-widget-container" style="height:100%;width:100%">
-        <div class="tradingview-widget-container__widget"></div>
-        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-        {"symbol":"${tvSymbol}","width":"100%","height":"100%","locale":"en","dateRange":"1D","colorTheme":"${document.body.classList.contains('light')?'light':'dark'}","isTransparent":true,"autosize":true,"largeChartUrl":""}
-        </script>
-    </div>
-`;
-
-const newScript=document.createElement('script');
-newScript.type='text/javascript';
-newScript.src='https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js';
+document.getElementById(‘error’).classList.remove(‘show’);
+const tvSymbol=activeType===‘crypto’?‘BINANCE:’+sym+‘USDT’:‘NASDAQ:’+sym;
+document.getElementById(‘wName’).textContent=sym;
+document.getElementById(‘wSymbol’).textContent=sym;
+document.getElementById(‘wTime’).textContent=getTime();
+const chartContainer=document.getElementById(‘wChart’);
+const theme=document.body.classList.contains(‘light’)?‘light’:‘dark’;
+chartContainer.innerHTML=’<div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>{“autosize”:true,“symbol”:”’+tvSymbol+’”,“interval”:“D”,“timezone”:“Etc/UTC”,“theme”:”’+theme+’”,“style”:“1”,“locale”:“en”,“enable_publishing”:false,“hide_top_toolbar”:false,“hide_legend”:true,“save_image”:false,“container_id”:“tradingview_widget”}</script></div>’;
+const newScript=document.createElement(‘script’);
+newScript.type=‘text/javascript’;
+newScript.src=‘https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js’;
 newScript.async=true;
-newScript.textContent=JSON.stringify({"symbol":tvSymbol,"width":"100%","height":"100%","locale":"en","dateRange":"1D","colorTheme":document.body.classList.contains('light')?'light':'dark',"isTransparent":true,"autosize":true,"largeChartUrl":""});
-chartContainer.querySelector('.tradingview-widget-container').appendChild(newScript);
-
-document.getElementById('result').classList.add('show');
-document.getElementById('generateBtn').disabled=false;
-document.getElementById('generateBtn').textContent='Create Snapshot';
-```
-
+newScript.innerHTML=’{“autosize”:true,“symbol”:”’+tvSymbol+’”,“interval”:“D”,“timezone”:“Etc/UTC”,“theme”:”’+theme+’”,“style”:“1”,“locale”:“en”,“enable_publishing”:false,“hide_top_toolbar”:false,“hide_legend”:true,“save_image”:false,“container_id”:“tradingview_widget”}’;
+chartContainer.querySelector(’.tradingview-widget-container’).appendChild(newScript);
+document.getElementById(‘result’).classList.add(‘show’);
 }
 
-function setChart(mode){
-chartMode=mode;
-document.getElementById(‘candleBtn’).classList.remove(‘active’);
-document.getElementById(‘lineBtn’).classList.remove(‘active’);
-document.getElementById(mode+‘Btn’).classList.add(‘active’);
-}
-
-async function exportImg(){
+function exportImg(){
 const btn=event.target;
 btn.disabled=true;
 btn.innerHTML=’<span>⏳</span> Saving…’;
-try{
-const canvas=await html2canvas(document.getElementById(‘widget’),{scale:2,useCORS:true});
+html2canvas(document.getElementById(‘widget’),{scale:2,useCORS:true}).then(canvas=>{
 canvas.toBlob(b=>{
 const a=document.createElement(‘a’);
 a.href=URL.createObjectURL(b);
-a.download=`ticker-${document.getElementById('searchInput').value}-${new Date().toISOString().split('T')[0]}.png`;
+a.download=‘ticker-’+document.getElementById(‘searchInput’).value+’-’+new Date().toISOString().split(‘T’)[0]+’.png’;
 a.click();
 btn.disabled=false;
 btn.innerHTML=’<span>💾</span><span>Save as Image</span>’;
 });
-}catch(e){
-btn.disabled=false;
-btn.innerHTML=’<span>💾</span><span>Save as Image</span>’;
-}
+});
 }
 
 function getTime(){
@@ -356,7 +287,7 @@ const d=new Date(),m=[‘Jan’,‘Feb’,‘Mar’,‘Apr’,‘May’,‘Jun�
 let h=d.getHours();
 const mm=d.getMinutes().toString().padStart(2,‘0’),ap=h>=12?‘PM’:‘AM’;
 h=h%12||12;
-return `${m[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()} · ${h}:${mm} ${ap}`;
+return m[d.getMonth()]+’ ‘+d.getDate()+’, ‘+d.getFullYear()+’ · ‘+h+’:’+mm+’ ’+ap;
 }
 </script>
 
