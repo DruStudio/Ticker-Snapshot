@@ -26,9 +26,6 @@ font-family:Inter,system-ui,sans-serif;
 color:var(--text);
 }
 
-/* VERSION */
-#version{display:none}
-
 /* NAV */
 nav{
 position:absolute;
@@ -36,7 +33,7 @@ top:0;
 width:100%;
 display:flex;
 justify-content:center;
-gap:20px;
+gap:24px;
 padding:14px;
 z-index:5;
 }
@@ -45,7 +42,7 @@ color:var(--muted);
 text-decoration:none;
 font-weight:800;
 font-size:.75rem;
-letter-spacing:.2em;
+letter-spacing:.25em;
 }
 
 /* PARTICLES */
@@ -70,7 +67,7 @@ padding:40px;
 }
 
 h1{
-font-size:3.6rem;
+font-size:3.8rem;
 font-weight:900;
 color:var(--accent);
 }
@@ -92,23 +89,29 @@ text-decoration:none;
 font-weight:900;
 }
 
-/* FOOTER */
-.footer{
-position:absolute;
-bottom:16px;
-left:16px;
-display:flex;
-gap:8px;
+/* ICON GRID */
+.icons{
+margin-top:50px;
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:18px;
+max-width:520px;
 }
-
-.badge{
-padding:8px 12px;
-border-radius:12px;
-background:#0e0e18;
+.icon{
 border:1px solid var(--border);
-font-size:.7rem;
+border-radius:18px;
+padding:18px;
 font-weight:800;
-cursor:pointer;
+font-size:.8rem;
+color:var(--muted);
+background:#0b0b18;
+}
+.icon span{
+display:block;
+font-size:.6rem;
+letter-spacing:.15em;
+opacity:.6;
+margin-top:6px;
 }
 </style>
 </head>
@@ -127,19 +130,18 @@ cursor:pointer;
 <div class="tagline">
 A clean, visual snapshot of the current state of something — built to be shared.
 </div>
-<a class="cta" href="crypto.html">Crypto</a>
-</div>
 
-<div class="footer">
-<div class="badge" id="versionBadge"></div>
-<div class="badge" onclick="alert('BlockState creates shareable visual snapshots.')">FAQ</div>
+<a class="cta" href="crypto.html">Crypto</a>
+
+<div class="icons">
+<div class="icon">Crypto<span>LIVE</span></div>
+<div class="icon">Stocks<span>UNDER CONSTRUCTION</span></div>
+<div class="icon">Ideas<span>UNDER CONSTRUCTION</span></div>
+<div class="icon">Memes<span>UNDER CONSTRUCTION</span></div>
+</div>
 </div>
 
 <script>
-const VERSION = "v1.0.1";
-versionBadge.textContent = VERSION;
-
-/* PARTICLES */
 const c=document.getElementById("particles"),ctx=c.getContext("2d");
 let w,h,p=[];
 function resize(){w=c.width=innerWidth;h=c.height=innerHeight;}
