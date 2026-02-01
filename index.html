@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>BlockState</title>
+<title>BlockState — Crypto</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
@@ -63,27 +63,26 @@ z-index:2;
 max-width:1200px;
 margin:0 auto;
 padding:70px 20px 120px;
+text-align:center;
 }
 
 h1{
-text-align:center;
-font-size:3rem;
+font-size:3.1rem;
 font-weight:900;
 letter-spacing:-.02em;
 color:var(--accent);
 }
 
-.section-title{
-margin:36px 0 14px;
-text-align:center;
-font-size:.75rem;
-font-weight:800;
+.subtitle{
+margin-top:6px;
+font-size:.8rem;
 letter-spacing:.4em;
 color:var(--muted);
 }
 
 /* GRID */
 .main{
+margin-top:50px;
 display:grid;
 grid-template-columns:420px 420px;
 gap:36px;
@@ -97,6 +96,7 @@ background:linear-gradient(180deg,var(--panel),var(--panel2));
 border:1px solid var(--border);
 border-radius:20px;
 padding:22px;
+text-align:left;
 }
 
 label{
@@ -170,11 +170,11 @@ border-radius:50%;
 .up{color:var(--up)}
 .down{color:var(--down)}
 
-/* WIDGET (SIMPLIFIED COLORS) */
+/* WIDGET */
 .widget{
 background:linear-gradient(180deg,#14142a,#0e0e1c);
 border-radius:22px;
-padding:22px;
+padding:24px;
 border:1px solid var(--border);
 }
 
@@ -184,7 +184,6 @@ justify-content:space-between;
 align-items:center;
 border-bottom:1px solid var(--border);
 padding-bottom:14px;
-margin-bottom:14px;
 }
 
 .asset{
@@ -210,18 +209,22 @@ letter-spacing:.12em;
 color:var(--muted);
 }
 
+/* BIG % CHANGE */
 .change{
-font-weight:800;
-font-size:1.1rem;
+font-size:2.4rem;
+font-weight:900;
+line-height:1;
 }
 
+/* PRICE */
 .price{
 text-align:center;
 font-size:2.6rem;
 font-weight:900;
-margin:20px 0 18px;
+margin:22px 0 18px;
 }
 
+/* STATS */
 .stats{
 display:grid;
 grid-template-columns:1fr 1fr;
@@ -271,21 +274,18 @@ font-size:.8rem;
 resize:vertical;
 }
 
-/* FAQ */
-.faq-modal{
-display:none;
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.65);
-align-items:center;
-justify-content:center;
-z-index:30;
+.copy{
+background:#0b0b18;
+border:1px solid var(--border);
+border-radius:12px;
+padding:12px;
+font-weight:800;
+cursor:pointer;
+color:white;
 }
-.faq-modal .panel{max-width:560px}
 
 @media(max-width:900px){
 .main{grid-template-columns:1fr}
-h1{font-size:2.4rem}
 }
 </style>
 </head>
@@ -295,59 +295,47 @@ h1{font-size:2.4rem}
 <canvas id="particles"></canvas>
 
 <div class="bottom-left">
-<div class="badge">v6.9.1</div>
-<div class="badge" onclick="FAQ.open()">FAQ</div>
+<div class="badge">v6.9.2</div>
 </div>
 
 <div class="container">
 <h1>BlockState</h1>
+<div class="subtitle">CRYPTO SNAPSHOT</div>
 
 <div class="main">
 
 <!-- CREATE -->
 <div>
-<div class="section-title">CREATE</div>
 <div class="panel">
 <label>Search Crypto (Top 250)</label>
 <input id="search" list="coins" placeholder="e.g. Bitcoin">
 <datalist id="coins"></datalist>
+
 <button class="primary" onclick="App.generate()">Create BlockState</button>
 
-<div class="section-title">TRENDING</div>
 <div class="toggle">
 <button id="gBtn" class="active" onclick="App.showGainers()">GAINERS</button>
 <button id="lBtn" onclick="App.showLosers()">LOSERS</button>
 </div>
-<div class="trending"><ul id="trendList"></ul></div>
+
+<div class="trending">
+<ul id="trendList"></ul>
+</div>
 </div>
 </div>
 
 <!-- CAPTURE / SHARE -->
 <div>
-<div class="section-title">CAPTURE</div>
 <div id="output"></div>
 
-<div class="section-title">SHARE</div>
-<div class="panel">
+<div class="panel" style="margin-top:18px">
 <button class="primary" onclick="App.saveImage()">Save BlockState</button>
-<button class="primary" onclick="App.makeCaption()">Create Caption</button>
-<textarea id="caption" placeholder="Caption will appear here..." readonly></textarea>
+<button class="primary" onclick="App.makeCaption()">Generate Caption</button>
+<button class="copy" onclick="App.copyCaption()">Copy Caption</button>
+<textarea id="caption" placeholder="Caption will appear here…" readonly></textarea>
 </div>
 </div>
 
-</div>
-</div>
-
-<!-- FAQ -->
-<div class="faq-modal" id="faq">
-<div class="panel">
-<h3>What is BlockState?</h3>
-<p>BlockState creates clean, shareable snapshots of live cryptocurrency market data.</p>
-<h3>Data Source</h3>
-<p>Market data provided by CoinGecko. BlockState is not affiliated with CoinGecko.</p>
-<h3>Disclaimer</h3>
-<p>This site does not provide financial advice.</p>
-<button class="primary" onclick="FAQ.close()">Close</button>
 </div>
 </div>
 
@@ -379,8 +367,7 @@ fmt(v){return Number(v).toLocaleString(undefined,{minimumFractionDigits:2,maximu
 fmtCap(v){
 if(v>=1e12)return (v/1e12).toFixed(2)+' T';
 if(v>=1e9)return (v/1e9).toFixed(2)+' B';
-if(v>=1e6)return (v/1e6).toFixed(2)+' M';
-return v.toLocaleString();
+return (v/1e6).toFixed(2)+' M';
 },
 async load(){
 const r=await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1");
@@ -400,7 +387,7 @@ list.slice(0,10).forEach(c=>{
 const li=document.createElement("li");
 li.innerHTML=`<div class="left"><img src="${c.image}"><span>${c.name}</span></div>
 <span class="${c.price_change_percentage_24h>=0?'up':'down'}">
-${c.price_change_percentage_24h>=0?'▲':'▼'} ${c.price_change_percentage_24h.toFixed(2)}%</span>`;
+${c.price_change_percentage_24h.toFixed(2)}%</span>`;
 li.onclick=()=>this.show(c);
 trendList.appendChild(li);
 });
@@ -427,7 +414,7 @@ output.innerHTML=`<div class="widget" id="widget">
 </div>
 </div>
 <div class="change" style="color:${up?'var(--up)':'var(--down)'}">
-${up?'▲':'▼'} ${c.price_change_percentage_24h.toFixed(2)}%
+${up?'▲':'▼'} ${Math.abs(c.price_change_percentage_24h).toFixed(2)}%
 </div>
 </div>
 
@@ -440,9 +427,7 @@ ${up?'▲':'▼'} ${c.price_change_percentage_24h.toFixed(2)}%
 <div class="stat"><span>MC RANK</span><strong>#${c.market_cap_rank}</strong></div>
 </div>
 
-<div class="footer">
-CAPTURED • ${new Date().toUTCString()} • BLOCKSTATE
-</div>
+<div class="footer">CAPTURED • ${new Date().toUTCString()}</div>
 </div>`;
 },
 saveImage(){
@@ -457,9 +442,12 @@ makeCaption(){
 const c=this.current;if(!c)return;
 caption.value=`${c.name} is ${c.price_change_percentage_24h>=0?'up':'down'} ${Math.abs(c.price_change_percentage_24h).toFixed(2)}% in the last 24 hours, trading at $${this.fmt(c.current_price)}.
 #${c.symbol.toUpperCase()} #Crypto #BlockState`;
+},
+copyCaption(){
+navigator.clipboard.writeText(caption.value);
 }
 };
-const FAQ={open(){faq.style.display="flex"},close(){faq.style.display="none"}};
+
 document.addEventListener("DOMContentLoaded",()=>App.load());
 </script>
 
