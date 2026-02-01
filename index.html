@@ -10,7 +10,7 @@
 --bg:#0a0a0f;
 --bg2:#15151f;
 --bg3:#1a1a28;
---text:#fff;
+--text:#ffffff;
 --muted:#a0a0b0;
 --accent:#6c7cff;
 --green:#22c55e;
@@ -30,8 +30,8 @@ overflow-x:hidden;
 /* Version */
 .version-badge{
 position:fixed;
-top:18px;
-left:18px;
+top:16px;
+left:16px;
 padding:6px 12px;
 border-radius:8px;
 border:1px solid var(--accent);
@@ -45,7 +45,7 @@ z-index:10;
 /* Hero */
 .hero{
 text-align:center;
-padding:70px 20px 40px;
+padding:64px 20px 24px;
 }
 
 .hero-title{
@@ -57,7 +57,7 @@ background:linear-gradient(135deg,var(--accent),#8b5cf6);
 }
 
 .hero-subtitle{
-margin-top:8px;
+margin-top:6px;
 color:var(--muted);
 }
 
@@ -71,25 +71,48 @@ padding:0 20px 80px;
 .section-title{
 text-align:center;
 font-size:2rem;
-margin:60px 0 30px;
+margin:40px 0 24px;
 }
 
-/* Widget */
-.widget-wrap{
+/* Trending */
+.trending-wrap{
 display:flex;
 justify-content:center;
 align-items:center;
 min-height:520px;
+position:relative;
+overflow:hidden;
 }
 
+.trending-wrap .widget-card{
+position:absolute;
+opacity:0;
+animation:fadeSlide 5s infinite;
+}
+
+.trending-wrap .widget-card:nth-child(1){animation-delay:0s}
+.trending-wrap .widget-card:nth-child(2){animation-delay:5s}
+.trending-wrap .widget-card:nth-child(3){animation-delay:10s}
+.trending-wrap .widget-card:nth-child(4){animation-delay:15s}
+.trending-wrap .widget-card:nth-child(5){animation-delay:20s}
+
+@keyframes fadeSlide{
+0%{opacity:0;transform:translateY(16px)}
+10%{opacity:1;transform:translateY(0)}
+40%{opacity:1;transform:translateY(0)}
+50%{opacity:0;transform:translateY(-12px)}
+100%{opacity:0}
+}
+
+/* Widget */
 .widget-card{
 max-width:480px;
 width:100%;
 background:linear-gradient(135deg,var(--bg3),#1f1f30);
 border:3px solid var(--border);
-border-radius:24px;
-padding:26px;
-box-shadow:0 14px 40px rgba(0,0,0,.45);
+border-radius:26px;
+padding:26px 26px 22px;
+box-shadow:0 18px 48px rgba(0,0,0,.5);
 position:relative;
 }
 
@@ -110,13 +133,14 @@ cursor:pointer;
 font-size:14px;
 }
 
+/* Header */
 .widget-header{
 display:flex;
 align-items:center;
-gap:14px;
-border-bottom:2px solid var(--border);
+gap:12px;
 padding-bottom:14px;
-margin-bottom:16px;
+border-bottom:1px solid var(--border);
+margin-bottom:18px;
 }
 
 .widget-header img{
@@ -125,43 +149,46 @@ height:36px;
 }
 
 .widget-name{
-font-size:1.5rem;
+font-size:1.4rem;
 font-weight:900;
 }
 
 .widget-symbol{
-font-size:.85rem;
+font-size:.8rem;
 color:var(--accent);
 font-weight:700;
 }
 
+/* Price */
 .widget-price{
 text-align:center;
-font-size:3rem;
+font-size:3.1rem;
 font-weight:900;
-margin:16px 0;
+margin:14px 0 6px;
 }
 
 .widget-change{
 text-align:center;
-font-size:1.2rem;
+font-size:1.1rem;
 font-weight:800;
+margin-bottom:14px;
 }
 
 .widget-change.positive{color:var(--green)}
 .widget-change.negative{color:var(--red)}
 
+/* Stats */
 .widget-stats{
 display:grid;
 grid-template-columns:1fr 1fr;
 gap:12px;
-margin:18px 0;
+margin-bottom:18px;
 }
 
 .widget-stat{
 background:var(--bg2);
 padding:12px;
-border-radius:12px;
+border-radius:14px;
 text-align:center;
 }
 
@@ -176,8 +203,9 @@ font-weight:800;
 font-size:.95rem;
 }
 
+/* Footer */
 .widget-footer{
-border-top:2px solid var(--border);
+border-top:1px solid var(--border);
 padding-top:14px;
 text-align:center;
 }
@@ -199,13 +227,13 @@ opacity:.85;
 display:grid;
 grid-template-columns:360px 1fr;
 gap:50px;
-margin-top:20px;
+margin-top:10px;
 }
 
 .controls{
 background:var(--bg2);
-padding:30px;
-border-radius:20px;
+padding:28px;
+border-radius:22px;
 border:1px solid var(--border);
 }
 
@@ -259,7 +287,6 @@ color:white;
 cursor:pointer;
 }
 
-/* Responsive */
 @media(max-width:900px){
 .generator-grid{grid-template-columns:1fr}
 }
@@ -268,7 +295,7 @@ cursor:pointer;
 
 <body>
 
-<div class="version-badge">v5.2.1-stable</div>
+<div class="version-badge">v5.3.0-stable</div>
 
 <header class="hero">
 <h1 class="hero-title">BlockState</h1>
@@ -278,7 +305,7 @@ cursor:pointer;
 <div class="container">
 
 <h2 class="section-title">Trending</h2>
-<div id="trending" class="widget-wrap"></div>
+<div id="trending" class="trending-wrap"></div>
 
 <h2 class="section-title">Create a BlockState</h2>
 
@@ -300,7 +327,7 @@ cursor:pointer;
 <button class="btn-primary" onclick="App.generate()">Generate BlockState</button>
 </div>
 
-<div id="preview" class="widget-wrap">
+<div id="preview" class="trending-wrap">
 <div style="opacity:.6">Search and generate a block state</div>
 </div>
 
@@ -310,7 +337,6 @@ cursor:pointer;
 <script>
 const App={
 coins:[],
-trendIndex:0,
 trendingIds:['bitcoin','ethereum','solana','binancecoin','ripple'],
 
 async init(){
@@ -319,7 +345,7 @@ const r=await fetch(
 );
 this.coins=await r.json();
 this.populateList();
-this.startTrending();
+this.renderTrending();
 },
 
 populateList(){
@@ -331,11 +357,9 @@ list.appendChild(o);
 });
 },
 
-findCoinFromInput(){
-const val=document.getElementById('coinInput').value.toLowerCase();
-return this.coins.find(c=>
-val.includes(c.symbol) || val.includes(c.name.toLowerCase())
-);
+findCoin(){
+const v=document.getElementById('coinInput').value.toLowerCase();
+return this.coins.find(c=>v.includes(c.symbol)||v.includes(c.name.toLowerCase()));
 },
 
 build(c){
@@ -359,11 +383,22 @@ ${pos?'▲':'▼'} ${c.price_change_percentage_24h.toFixed(2)}%
 </div>
 
 <div class="widget-stats">
-<div class="widget-stat"><div class="widget-stat-label">24h Change</div><div class="widget-stat-value">$${c.price_change_24h.toFixed(2)}</div></div>
-<div class="widget-stat"><div class="widget-stat-label">24h High</div><div class="widget-stat-value">$${c.high_24h.toLocaleString()}</div></div>
-<div class="widget-stat"><div class="widget-stat-label">24h Low</div><div class="widget-stat-value">$${c.low_24h.toLocaleString()}</div></div>
-<div class="widget-stat"><div class="widget-stat-label">Market Cap</div><div class="widget-stat-value">$${(c.market_cap/1e9).toFixed(2)}B</div></div>
-<div class="widget-stat"><div class="widget-stat-label">MC Rank</div><div class="widget-stat-value">#${c.market_cap_rank}</div></div>
+<div class="widget-stat">
+<div class="widget-stat-label">24h Range</div>
+<div class="widget-stat-value">$${c.low_24h.toLocaleString()} – $${c.high_24h.toLocaleString()}</div>
+</div>
+<div class="widget-stat">
+<div class="widget-stat-label">24h Change</div>
+<div class="widget-stat-value">$${c.price_change_24h.toFixed(2)}</div>
+</div>
+<div class="widget-stat">
+<div class="widget-stat-label">Market Cap</div>
+<div class="widget-stat-value">$${(c.market_cap/1e9).toFixed(2)}B</div>
+</div>
+<div class="widget-stat">
+<div class="widget-stat-label">MC Rank</div>
+<div class="widget-stat-value">#${c.market_cap_rank}</div>
+</div>
 </div>
 
 <div class="widget-footer">
@@ -373,20 +408,17 @@ ${pos?'▲':'▼'} ${c.price_change_percentage_24h.toFixed(2)}%
 </div>`;
 },
 
-startTrending(){
-this.renderTrending();
-setInterval(()=>this.renderTrending(),5000);
-},
-
 renderTrending(){
-const id=this.trendingIds[this.trendIndex];
+const wrap=document.getElementById('trending');
+wrap.innerHTML='';
+this.trendingIds.forEach(id=>{
 const c=this.coins.find(x=>x.id===id);
-if(c)document.getElementById('trending').innerHTML=this.build(c);
-this.trendIndex=(this.trendIndex+1)%this.trendingIds.length;
+if(c)wrap.innerHTML+=this.build(c);
+});
 },
 
 generate(){
-const c=this.findCoinFromInput();
+const c=this.findCoin();
 if(!c){alert('Select a crypto from the list');return;}
 document.getElementById('preview').innerHTML=this.build(c);
 },
