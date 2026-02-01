@@ -4,305 +4,1172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ticker Snapshot</title>
+    <title>Crypto Widget Generator v4.0.0</title>
     <style>
-        :root{--bg:#0a0a0f;--bg2:#15151f;--bg3:#1a1a28;--text:#fff;--text2:#a0a0b0;--accent:#5b7cff;--green:#22c55e;--red:#ef4444;--border:#2a2a3a}
-        *{margin:0;padding:0;box-sizing:border-box}
-        html,body{overflow-x:hidden;width:100%;max-width:100vw}
-        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);padding:20px;min-height:100vh}
-        .version{position:fixed;top:20px;left:20px;padding:8px 16px;background:rgba(91,124,255,0.25);border:2px solid var(--accent);border-radius:8px;font-size:0.8rem;font-weight:700;color:var(--accent);z-index:9999;letter-spacing:0.5px}
-        header{text-align:center;margin-bottom:40px;padding-top:20px}
-        h1{font-size:2.5rem;font-weight:800;background:linear-gradient(135deg,var(--accent),#8b5cf6,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px}
-        .subtitle{color:var(--text2);font-size:1.1rem}
-        .carousel{width:100%;margin:0 auto 60px;overflow:hidden}
-        .carousel-inner{display:flex;gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;padding:24px 0;scrollbar-width:thin;scrollbar-color:var(--accent) transparent}
-        .carousel-inner::-webkit-scrollbar{height:8px}
-        .carousel-inner::-webkit-scrollbar-track{background:transparent}
-        .carousel-inner::-webkit-scrollbar-thumb{background:var(--accent);border-radius:4px}
-        .hero-card{min-width:380px;max-width:380px;height:280px;background:linear-gradient(135deg,var(--bg3),#1f1f30);border:3px solid var(--border);border-radius:20px;padding:32px;cursor:pointer;transition:all 0.4s;flex-shrink:0;scroll-snap-align:start;position:relative;display:flex;flex-direction:column;justify-content:space-between}
-        .hero-card:hover{transform:translateY(-8px);border-color:var(--accent)}
-        .hero-card.positive{border-color:var(--green);box-shadow:0 0 40px rgba(34,197,94,0.4),0 12px 35px rgba(34,197,94,0.3)}
-        .hero-card.negative{border-color:var(--red);box-shadow:0 0 40px rgba(239,68,68,0.4),0 12px 35px rgba(239,68,68,0.3)}
-        .hero-header{margin-bottom:20px}
-        .hero-name{font-size:1.4rem;font-weight:800;margin-bottom:6px;letter-spacing:-0.3px}
-        .hero-symbol{font-size:0.95rem;color:var(--accent);font-weight:600;letter-spacing:0.5px}
-        .hero-price{font-size:2.8rem;font-weight:900;margin-bottom:12px;letter-spacing:-1px;line-height:1}
-        .hero-change{font-size:1.1rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:6px}
-        .hero-change.positive{color:var(--green)}
-        .hero-change.negative{color:var(--red)}
-        .hero-stats{display:flex;justify-content:space-between;padding-top:16px;border-top:1px solid var(--border)}
-        .hero-stat{text-align:center}
-        .hero-stat-label{font-size:0.75rem;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
-        .hero-stat-value{font-size:1rem;font-weight:700}
-        .hero-loading{display:flex;align-items:center;justify-content:center;height:100%;color:var(--text2);font-size:1.1rem}
-        .container{max-width:700px;margin:0 auto}
-        .section-title{text-align:center;font-size:1.6rem;font-weight:700;margin-bottom:10px}
-        .section-subtitle{text-align:center;color:var(--text2);margin-bottom:30px}
-        .input-box{background:var(--bg2);padding:35px;border-radius:16px;border:1px solid var(--border);margin-bottom:40px}
-        .tabs{display:flex;gap:15px;margin-bottom:25px}
-        .tab{flex:1;padding:16px;background:transparent;border:2px solid var(--border);border-radius:10px;color:var(--text2);font-weight:700;text-transform:uppercase;cursor:pointer;transition:all 0.3s;font-size:1rem}
-        .tab.active{border-color:var(--accent);color:var(--accent);box-shadow:0 0 20px rgba(91,124,255,0.15)}
-        .search-wrapper{position:relative}
-        .search-input{width:100%;padding:18px 20px 18px 55px;background:var(--bg3);border:2px solid var(--border);border-radius:10px;color:var(--text);font-size:1.1rem;transition:all 0.3s}
-        .search-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px rgba(91,124,255,0.1)}
-        .search-icon{position:absolute;left:20px;top:50%;transform:translateY(-50%);font-size:1.3rem}
-        .generate-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--accent),#8b5cf6);border:none;color:#fff;font-size:1.05rem;font-weight:700;border-radius:10px;cursor:pointer;text-transform:uppercase;transition:all 0.3s;margin-top:20px}
-        .generate-btn:hover{transform:translateY(-3px);box-shadow:0 8px 25px rgba(91,124,255,0.3)}
-        .generate-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
-        .dropdown{position:absolute;top:calc(100% + 5px);left:0;right:0;background:var(--bg3);border:2px solid var(--accent);border-radius:10px;max-height:350px;overflow-y:auto;z-index:1000;display:none}
-        .dropdown.show{display:block}
-        .dropdown-item{padding:15px 20px 15px 55px;cursor:pointer;border-bottom:1px solid var(--border)}
-        .dropdown-item:hover{background:rgba(91,124,255,0.1)}
-        .dropdown-symbol{font-weight:700;display:block;margin-bottom:3px}
-        .result{display:none;margin-bottom:40px}
-        .result.show{display:block}
-        .snapshot-widget{max-width:700px;min-height:550px;margin:0 auto 25px;background:linear-gradient(135deg,var(--bg3),#1f1f30);border:3px solid var(--border);border-radius:24px;padding:60px;box-shadow:0 20px 60px rgba(0,0,0,0.5);transition:all 0.4s;display:flex;flex-direction:column;justify-content:space-between}
-        .snapshot-widget.positive{border-color:var(--green);box-shadow:0 0 50px rgba(34,197,94,0.5),0 20px 60px rgba(0,0,0,0.5)}
-        .snapshot-widget.negative{border-color:var(--red);box-shadow:0 0 50px rgba(239,68,68,0.5),0 20px 60px rgba(0,0,0,0.5)}
-        .snapshot-badge{display:inline-block;padding:12px 28px;background:rgba(91,124,255,0.15);border:2px solid var(--accent);border-radius:30px;color:var(--accent);font-size:1.2rem;font-weight:800;margin-bottom:40px;letter-spacing:1.5px}
-        .snapshot-price-section{text-align:center;margin:40px 0}
-        .snapshot-price-label{font-size:1rem;color:var(--text2);margin-bottom:12px;text-transform:uppercase;letter-spacing:1.5px;font-weight:700}
-        .snapshot-price{font-size:5rem;font-weight:900;line-height:1;margin-bottom:24px;letter-spacing:-3px}
-        .snapshot-change{font-size:1.8rem;font-weight:700;display:flex;align-items:center;justify-content:center;gap:12px}
-        .snapshot-change.positive{color:var(--green)}
-        .snapshot-change.negative{color:var(--red)}
-        .snapshot-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;margin:40px 0;padding:32px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-        .snapshot-stat{text-align:center}
-        .snapshot-stat-label{font-size:0.85rem;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;font-weight:600}
-        .snapshot-stat-value{font-size:1.6rem;font-weight:800}
-        .snapshot-footer{text-align:center;margin-top:30px}
-        .snapshot-time{color:var(--text2);font-size:0.95rem;margin-bottom:12px}
-        .snapshot-brand{color:var(--text2);font-size:1rem;font-weight:800;text-transform:uppercase;letter-spacing:3px}
-        .export-btn{width:100%;padding:18px;background:linear-gradient(135deg,var(--green),#16a34a);border:none;color:#fff;font-size:1.1rem;font-weight:700;border-radius:10px;cursor:pointer;text-transform:uppercase;transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:10px}
-        .export-btn:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(34,197,94,0.3)}
-        .error{background:rgba(239,68,68,0.1);border:1px solid var(--red);padding:20px;border-radius:10px;color:var(--red);text-align:center;margin-bottom:30px;display:none;font-weight:600}
-        .error.show{display:block}
-    </style>
+        :root {
+            --bg-dark: #0a0a0f;
+            --bg-dark-2: #15151f;
+            --bg-dark-3: #1a1a28;
+            --text-dark: #ffffff;
+            --text-dark-2: #a0a0b0;
+            --accent: #5b7cff;
+            --green: #22c55e;
+            --red: #ef4444;
+            --border-dark: #2a2a3a;
+        }
+
+```
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: var(--bg-dark);
+        color: var(--text-dark);
+        line-height: 1.6;
+        overflow-x: hidden;
+    }
+
+    /* Version Badge */
+    .version-badge {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        padding: 8px 16px;
+        background: rgba(91, 124, 255, 0.2);
+        border: 2px solid var(--accent);
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--accent);
+        z-index: 9999;
+        letter-spacing: 0.5px;
+    }
+
+    /* Hero Section */
+    .hero {
+        text-align: center;
+        padding: 80px 20px 60px;
+        background: linear-gradient(135deg, var(--bg-dark-2), var(--bg-dark-3));
+    }
+
+    .hero-title {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 16px;
+        background: linear-gradient(135deg, var(--accent), #8b5cf6, #ec4899);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+        color: var(--text-dark-2);
+        margin-bottom: 40px;
+    }
+
+    .hero-widget-container {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    /* Section */
+    .section-title {
+        text-align: center;
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 60px 0 40px;
+    }
+
+    /* Carousel */
+    .carousel-section {
+        padding: 20px;
+        max-width: 100%;
+        margin: 0 auto;
+    }
+
+    .carousel-container {
+        position: relative;
+        overflow: hidden;
+        padding: 20px 0;
+    }
+
+    .carousel-track {
+        display: flex;
+        gap: 24px;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        scrollbar-width: thin;
+        scrollbar-color: var(--accent) transparent;
+        padding: 20px 60px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .carousel-track::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .carousel-track::-webkit-scrollbar-thumb {
+        background: var(--accent);
+        border-radius: 4px;
+    }
+
+    .carousel-item {
+        min-width: 400px;
+        flex-shrink: 0;
+    }
+
+    .carousel-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        border: 2px solid var(--border-dark);
+        background: var(--bg-dark-2);
+        color: var(--text-dark);
+        font-size: 24px;
+        cursor: pointer;
+        transition: all 0.3s;
+        z-index: 10;
+    }
+
+    .carousel-btn:hover {
+        border-color: var(--accent);
+        background: var(--accent);
+    }
+
+    .carousel-btn-prev {
+        left: 10px;
+    }
+
+    .carousel-btn-next {
+        right: 10px;
+    }
+
+    /* Widget Card */
+    .widget-card {
+        background: linear-gradient(135deg, var(--bg-dark-3), #1f1f30);
+        border: 3px solid var(--border-dark);
+        border-radius: 24px;
+        padding: 40px;
+        width: 400px;
+        height: 550px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: all 0.3s;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    .widget-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .widget-card.positive {
+        border-color: var(--green);
+        box-shadow: 0 0 40px rgba(34, 197, 94, 0.4);
+    }
+
+    .widget-card.negative {
+        border-color: var(--red);
+        box-shadow: 0 0 40px rgba(239, 68, 68, 0.4);
+    }
+
+    .widget-header {
+        margin-bottom: 24px;
+    }
+
+    .widget-symbol-group {
+        margin-bottom: 8px;
+    }
+
+    .widget-symbol {
+        font-size: 2rem;
+        font-weight: 900;
+        letter-spacing: -0.5px;
+        margin-bottom: 4px;
+    }
+
+    .widget-pair {
+        font-size: 1rem;
+        color: var(--accent);
+        font-weight: 600;
+    }
+
+    .widget-chart {
+        flex: 1;
+        margin: 24px 0;
+        position: relative;
+        min-height: 250px;
+    }
+
+    .widget-chart canvas {
+        width: 100%;
+        height: 100%;
+    }
+
+    .widget-footer {
+        padding-top: 24px;
+        border-top: 2px solid var(--border-dark);
+    }
+
+    .widget-price {
+        font-size: 3rem;
+        font-weight: 900;
+        letter-spacing: -2px;
+        margin-bottom: 12px;
+        line-height: 1;
+    }
+
+    .widget-change {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .widget-change.positive {
+        color: var(--green);
+    }
+
+    .widget-change.negative {
+        color: var(--red);
+    }
+
+    .widget-timestamp {
+        font-size: 0.85rem;
+        color: var(--text-dark-2);
+        margin-bottom: 8px;
+    }
+
+    .widget-branding {
+        font-size: 0.8rem;
+        color: var(--text-dark-2);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-weight: 700;
+    }
+
+    .widget-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 16px;
+    }
+
+    .widget-actions button {
+        flex: 1;
+        padding: 12px;
+        border: 2px solid var(--border-dark);
+        background: transparent;
+        color: var(--text-dark);
+        border-radius: 12px;
+        font-size: 0.9rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .widget-actions button:hover {
+        border-color: var(--accent);
+        background: var(--accent);
+    }
+
+    /* Generator Section */
+    .generator-section {
+        padding: 40px 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .generator-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        align-items: start;
+    }
+
+    .generator-controls {
+        background: var(--bg-dark-2);
+        padding: 40px;
+        border-radius: 20px;
+        border: 1px solid var(--border-dark);
+    }
+
+    .control-group {
+        margin-bottom: 28px;
+    }
+
+    .control-group label {
+        display: block;
+        font-size: 0.95rem;
+        font-weight: 700;
+        margin-bottom: 12px;
+        color: var(--text-dark-2);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .autocomplete-wrapper {
+        position: relative;
+    }
+
+    input[type="text"] {
+        width: 100%;
+        padding: 16px 20px;
+        background: var(--bg-dark-3);
+        border: 2px solid var(--border-dark);
+        border-radius: 12px;
+        color: var(--text-dark);
+        font-size: 1.1rem;
+        transition: all 0.3s;
+    }
+
+    input[type="text"]:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 4px rgba(91, 124, 255, 0.1);
+    }
+
+    .autocomplete-results {
+        position: absolute;
+        top: calc(100% + 8px);
+        left: 0;
+        right: 0;
+        background: var(--bg-dark-3);
+        border: 2px solid var(--accent);
+        border-radius: 12px;
+        max-height: 300px;
+        overflow-y: auto;
+        z-index: 100;
+        display: none;
+    }
+
+    .autocomplete-results.show {
+        display: block;
+    }
+
+    .autocomplete-item {
+        padding: 14px 20px;
+        cursor: pointer;
+        border-bottom: 1px solid var(--border-dark);
+        transition: background 0.2s;
+    }
+
+    .autocomplete-item:hover {
+        background: rgba(91, 124, 255, 0.1);
+    }
+
+    .autocomplete-item:last-child {
+        border-bottom: none;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .btn-option {
+        flex: 1;
+        min-width: 80px;
+        padding: 12px 16px;
+        background: transparent;
+        border: 2px solid var(--border-dark);
+        border-radius: 10px;
+        color: var(--text-dark-2);
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+    }
+
+    .btn-option:hover {
+        border-color: var(--accent);
+    }
+
+    .btn-option.active {
+        border-color: var(--accent);
+        color: var(--accent);
+        background: rgba(91, 124, 255, 0.1);
+    }
+
+    .btn-primary {
+        width: 100%;
+        padding: 18px;
+        background: linear-gradient(135deg, var(--accent), #8b5cf6);
+        border: none;
+        border-radius: 12px;
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        text-transform: uppercase;
+        transition: all 0.3s;
+        margin-top: 12px;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(91, 124, 255, 0.4);
+    }
+
+    .btn-primary:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .generator-preview {
+        position: sticky;
+        top: 20px;
+    }
+
+    .preview-widget-container {
+        margin-bottom: 20px;
+        min-height: 550px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .preview-actions {
+        display: flex;
+        gap: 12px;
+    }
+
+    .btn-secondary {
+        flex: 1;
+        padding: 16px;
+        background: linear-gradient(135deg, var(--green), #16a34a);
+        border: none;
+        border-radius: 12px;
+        color: white;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-secondary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(34, 197, 94, 0.4);
+    }
+
+    .btn-secondary:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    /* Loading State */
+    .loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 300px;
+        color: var(--text-dark-2);
+        font-size: 1.1rem;
+    }
+
+    .loading::after {
+        content: '...';
+        animation: dots 1.5s steps(4, end) infinite;
+    }
+
+    @keyframes dots {
+        0%, 20% { content: '.'; }
+        40% { content: '..'; }
+        60%, 100% { content: '...'; }
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .generator-container {
+            grid-template-columns: 1fr;
+        }
+
+        .generator-preview {
+            position: relative;
+            top: 0;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2rem;
+        }
+
+        .carousel-item {
+            min-width: 320px;
+        }
+
+        .widget-card {
+            width: 320px;
+            height: 480px;
+            padding: 28px;
+        }
+
+        .widget-symbol {
+            font-size: 1.5rem;
+        }
+
+        .widget-price {
+            font-size: 2.2rem;
+        }
+
+        .version-badge {
+            font-size: 0.75rem;
+            padding: 6px 12px;
+        }
+    }
+</style>
+```
+
 </head>
 <body>
-    <div class="version">v3.0.0</div>
-    <header>
-        <h1>Ticker Snapshot</h1>
-        <p class="subtitle">Instant market prices, shareable as images</p>
-    </header>
-    <div class="carousel">
-        <div class="carousel-inner">
-            <div class="hero-card" id="hero-btc" onclick="quickGen('BTC','crypto')">
-                <div class="hero-loading">Loading Bitcoin...</div>
+    <!-- Version Badge -->
+    <div class="version-badge">v4.0.0</div>
+
+```
+<!-- Hero Section -->
+<header class="hero">
+    <h1 class="hero-title">Crypto Widget Generator</h1>
+    <p class="hero-subtitle">Create stunning crypto price snapshots for social media</p>
+    <div id="heroWidget" class="hero-widget-container">
+        <div class="loading">Loading hero widget</div>
+    </div>
+</header>
+
+<!-- Pre-loaded Carousel -->
+<section class="carousel-section">
+    <h2 class="section-title">Popular Cryptos</h2>
+    <div class="carousel-container">
+        <button class="carousel-btn carousel-btn-prev" id="carouselPrev" aria-label="Previous">‹</button>
+        <div class="carousel-track" id="carouselTrack"></div>
+        <button class="carousel-btn carousel-btn-next" id="carouselNext" aria-label="Next">›</button>
+    </div>
+</section>
+
+<!-- Widget Generator -->
+<section class="generator-section">
+    <h2 class="section-title">Generate Your Widget</h2>
+    <div class="generator-container">
+        <div class="generator-controls">
+            <!-- Symbol Input -->
+            <div class="control-group">
+                <label for="symbolInput">Crypto Symbol</label>
+                <div class="autocomplete-wrapper">
+                    <input 
+                        type="text" 
+                        id="symbolInput" 
+                        placeholder="BTC, ETH, SOL..." 
+                        autocomplete="off"
+                    >
+                    <div id="autocompleteResults" class="autocomplete-results"></div>
+                </div>
             </div>
-            <div class="hero-card" id="hero-eth" onclick="quickGen('ETH','crypto')">
-                <div class="hero-loading">Loading Ethereum...</div>
+
+            <!-- Time Range -->
+            <div class="control-group">
+                <label>Time Range</label>
+                <div class="button-group" id="rangeGroup">
+                    <button class="btn-option" data-range="1h">1H</button>
+                    <button class="btn-option active" data-range="24h">24H</button>
+                    <button class="btn-option" data-range="7d">7D</button>
+                    <button class="btn-option" data-range="30d">30D</button>
+                </div>
             </div>
-            <div class="hero-card" id="hero-sol" onclick="quickGen('SOL','crypto')">
-                <div class="hero-loading">Loading Solana...</div>
+
+            <!-- Chart Type -->
+            <div class="control-group">
+                <label>Chart Type</label>
+                <div class="button-group" id="chartGroup">
+                    <button class="btn-option active" data-chart="candle">Candlestick</button>
+                    <button class="btn-option" data-chart="line">Line</button>
+                </div>
             </div>
-            <div class="hero-card" id="hero-aapl" onclick="quickGen('AAPL','stock')">
-                <div class="hero-loading">Loading Apple...</div>
+
+            <!-- Generate Button -->
+            <button id="generateBtn" class="btn-primary">Generate Widget</button>
+        </div>
+
+        <!-- Live Preview -->
+        <div class="generator-preview">
+            <div id="previewWidget" class="preview-widget-container">
+                <div class="loading">Enter a symbol to generate</div>
+            </div>
+            <div class="preview-actions">
+                <button id="saveImageBtn" class="btn-secondary" disabled>
+                    <span>💾</span> Save Image
+                </button>
+                <button id="copyLinkBtn" class="btn-secondary" disabled>
+                    <span>🔗</span> Copy Link
+                </button>
             </div>
         </div>
     </div>
-    <div class="container">
-        <h2 class="section-title">Generate Snapshot</h2>
-        <p class="section-subtitle">Search any stock or cryptocurrency</p>
-        <div class="input-box">
-            <div class="tabs">
-                <button class="tab active" id="stockTab" onclick="setType('stock')">Stocks</button>
-                <button class="tab" id="cryptoTab" onclick="setType('crypto')">Crypto</button>
-            </div>
-            <div class="search-wrapper">
-                <span class="search-icon">🔍</span>
-                <input type="text" class="search-input" id="searchInput" placeholder="Type symbol (e.g., AAPL, BTC)..." autocomplete="off">
-                <div class="dropdown" id="dropdown"></div>
-            </div>
-            <button class="generate-btn" onclick="generate()">Create Snapshot</button>
-        </div>
-        <div class="error" id="error"></div>
-        <div class="result" id="result"></div>
-    </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script>
-let activeType='stock';
-const STOCKS=['AAPL','MSFT','GOOGL','AMZN','TSLA','META','NVDA','JPM','V','WMT'];
-const CRYPTO=['BTC','ETH','BNB','XRP','SOL','ADA','DOT','DOGE','MATIC','AVAX'];
-const COIN_MAP={'BTC':'bitcoin','ETH':'ethereum','SOL':'solana','BNB':'binancecoin','XRP':'ripple','ADA':'cardano','DOT':'polkadot','DOGE':'dogecoin','MATIC':'matic-network','AVAX':'avalanche-2'};
+</section>
 
-window.addEventListener(‘DOMContentLoaded’,()=>{
-loadHero(‘BTC’,‘Bitcoin’,‘btc’);
-loadHero(‘ETH’,‘Ethereum’,‘eth’);
-loadHero(‘SOL’,‘Solana’,‘sol’);
-loadHeroStock(‘AAPL’,‘Apple’,‘aapl’);
-});
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+    // ============================================
+    // API INTEGRATION MODULE
+    // ============================================
+    const API = {
+        cache: new Map(),
+        cacheDuration: 5 * 60 * 1000,
 
-async function loadHero(sym,name,id){
-try{
-const coinId=COIN_MAP[sym]||sym.toLowerCase();
-const res=await fetch(`https://api.coingecko.com/api/v3/coins/${coinId}?localization=false&tickers=false&community_data=false&developer_data=false`);
-const data=await res.json();
-const price=data.market_data.current_price.usd;
-const change=data.market_data.price_change_percentage_24h;
-const high=data.market_data.high_24h.usd;
-const low=data.market_data.low_24h.usd;
-const vol=data.market_data.total_volume.usd;
-renderHero(id,name,sym,price,change,high,low,vol);
-}catch(e){
-document.getElementById(‘hero-’+id).innerHTML=’<div class="hero-loading">Failed to load</div>’;
-}
-}
+        popularCryptos: [
+            'BTC', 'ETH', 'SOL', 'BNB', 'XRP', 'DOGE', 'ADA', 'MATIC', 'DOT', 'AVAX',
+            'LINK', 'UNI', 'LTC', 'ATOM', 'XLM', 'ALGO', 'VET', 'FIL', 'NEAR', 'HBAR'
+        ],
 
-async function loadHeroStock(sym,name,id){
-try{
-const res=await fetch(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${sym}&apikey=demo`);
-const data=await res.json();
-if(!data[‘Global Quote’])throw new Error(‘Failed’);
-const q=data[‘Global Quote’];
-const price=parseFloat(q[‘05. price’]);
-const change=parseFloat(q[‘10. change percent’].replace(’%’,’’));
-const high=parseFloat(q[‘03. high’]);
-const low=parseFloat(q[‘04. low’]);
-const vol=parseFloat(q[‘06. volume’]);
-renderHero(id,name,sym,price,change,high,low,vol);
-}catch(e){
-document.getElementById(‘hero-’+id).innerHTML=’<div class="hero-loading">Market Closed</div>’;
-}
-}
+        async getCached(key, fetcher) {
+            const cached = this.cache.get(key);
+            if (cached && Date.now() - cached.timestamp < this.cacheDuration) {
+                return cached.data;
+            }
+            const data = await fetcher();
+            this.cache.set(key, { data, timestamp: Date.now() });
+            return data;
+        },
 
-function renderHero(id,name,sym,price,change,high,low,vol){
-const card=document.getElementById(‘hero-’+id);
-const isPos=change>=0;
-card.className=’hero-card ’+(isPos?‘positive’:‘negative’);
-card.innerHTML=`<div class="hero-header"> <div class="hero-name">${name}</div> <div class="hero-symbol">${sym}</div> </div> <div> <div class="hero-price">$${fmt(price)}</div> <div class="hero-change ${isPos?'positive':'negative'}"> <span>${isPos?'▲':'▼'}</span> <span>${isPos?'+':''}${change.toFixed(2)}%</span> </div> <div class="hero-stats"> <div class="hero-stat"> <div class="hero-stat-label">High</div> <div class="hero-stat-value">$${fmt(high)}</div> </div> <div class="hero-stat"> <div class="hero-stat-label">Low</div> <div class="hero-stat-value">$${fmt(low)}</div> </div> </div> </div>`;
-}
+        async getPrice(symbol) {
+            const cacheKey = `price_${symbol}`;
+            return this.getCached(cacheKey, async () => {
+                try {
+                    const response = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${symbol}USDT`);
+                    if (!response.ok) throw new Error('Binance failed');
+                    
+                    const data = await response.json();
+                    return {
+                        price: parseFloat(data.lastPrice),
+                        change24h: parseFloat(data.priceChangePercent),
+                        high24h: parseFloat(data.highPrice),
+                        low24h: parseFloat(data.lowPrice),
+                        volume: parseFloat(data.volume)
+                    };
+                } catch (error) {
+                    return this.getPriceFromCoinGecko(symbol);
+                }
+            });
+        },
 
-function quickGen(sym,type){
-document.getElementById(‘searchInput’).value=sym;
-setType(type);
-generate();
-setTimeout(()=>window.scrollTo({top:document.body.scrollHeight,behavior:‘smooth’}),200);
-}
+        async getPriceFromCoinGecko(symbol) {
+            const coinMap = {
+                'BTC': 'bitcoin', 'ETH': 'ethereum', 'SOL': 'solana',
+                'BNB': 'binancecoin', 'XRP': 'ripple', 'DOGE': 'dogecoin',
+                'ADA': 'cardano', 'MATIC': 'matic-network', 'DOT': 'polkadot',
+                'AVAX': 'avalanche-2', 'LINK': 'chainlink', 'UNI': 'uniswap',
+                'LTC': 'litecoin', 'ATOM': 'cosmos', 'XLM': 'stellar',
+                'ALGO': 'algorand', 'VET': 'vechain', 'FIL': 'filecoin',
+                'NEAR': 'near', 'HBAR': 'hedera-hashgraph'
+            };
+            
+            const coinId = coinMap[symbol] || symbol.toLowerCase();
+            const response = await fetch(`https://api.coingecko.com/api/v3/coins/${coinId}?localization=false&tickers=false&community_data=false&developer_data=false`);
+            const data = await response.json();
+            
+            return {
+                price: data.market_data.current_price.usd,
+                change24h: data.market_data.price_change_percentage_24h,
+                high24h: data.market_data.high_24h.usd,
+                low24h: data.market_data.low_24h.usd,
+                volume: data.market_data.total_volume.usd
+            };
+        },
 
-function setType(type){
-activeType=type;
-document.getElementById(‘stockTab’).classList.remove(‘active’);
-document.getElementById(‘cryptoTab’).classList.remove(‘active’);
-document.getElementById(type+‘Tab’).classList.add(‘active’);
-document.getElementById(‘dropdown’).classList.remove(‘show’);
-}
+        async getCandles(symbol, interval, limit) {
+            const cacheKey = `candles_${symbol}_${interval}_${limit}`;
+            return this.getCached(cacheKey, async () => {
+                try {
+                    const response = await fetch(`https://api.binance.com/api/v3/klines?symbol=${symbol}USDT&interval=${interval}&limit=${limit}`);
+                    if (!response.ok) throw new Error('Binance failed');
+                    
+                    const data = await response.json();
+                    return data.map(candle => ({
+                        time: candle[0],
+                        open: parseFloat(candle[1]),
+                        high: parseFloat(candle[2]),
+                        low: parseFloat(candle[3]),
+                        close: parseFloat(candle[4]),
+                        volume: parseFloat(candle[5])
+                    }));
+                } catch (error) {
+                    console.error('Failed to fetch candles:', error);
+                    return [];
+                }
+            });
+        },
 
-document.getElementById(‘searchInput’).addEventListener(‘input’,function(e){
-const q=e.target.value.trim().toUpperCase();
-const dd=document.getElementById(‘dropdown’);
-if(q.length<1){dd.classList.remove(‘show’);return}
-const list=activeType===‘stock’?STOCKS:CRYPTO;
-const matches=list.filter(s=>s.includes(q));
-if(matches.length){
-dd.innerHTML=matches.map(s=>’<div class="dropdown-item" onclick="pick(\''+s+'\')"><span class="dropdown-symbol">’+s+’</span></div>’).join(’’);
-dd.classList.add(‘show’);
-}else{dd.classList.remove(‘show’)}
-});
+        getRangeInterval(range) {
+            const map = {
+                '1h': { interval: '1m', limit: 60 },
+                '24h': { interval: '15m', limit: 96 },
+                '7d': { interval: '1h', limit: 168 },
+                '30d': { interval: '4h', limit: 180 }
+            };
+            return map[range] || map['24h'];
+        }
+    };
 
-document.getElementById(‘searchInput’).addEventListener(‘keypress’,function(e){
-if(e.key===‘Enter’)generate()
-});
+    // ============================================
+    // CHART RENDERING MODULE
+    // ============================================
+    const ChartRenderer = {
+        drawCandlestick(canvas, candles) {
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            if (!candles || candles.length === 0) {
+                ctx.fillStyle = '#666';
+                ctx.font = '16px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('No data available', width / 2, height / 2);
+                return;
+            }
+            
+            const prices = candles.flatMap(c => [c.high, c.low]);
+            const minPrice = Math.min(...prices);
+            const maxPrice = Math.max(...prices);
+            const priceRange = maxPrice - minPrice || 1;
+            const padding = 20;
+            
+            const candleWidth = Math.max(2, (width - padding * 2) / candles.length - 2);
+            const candleSpacing = (width - padding * 2) / candles.length;
+            
+            candles.forEach((candle, i) => {
+                const x = padding + i * candleSpacing + candleSpacing / 2;
+                const isGreen = candle.close >= candle.open;
+                const color = isGreen ? '#22c55e' : '#ef4444';
+                
+                const openY = padding + ((maxPrice - candle.open) / priceRange) * (height - padding * 2);
+                const closeY = padding + ((maxPrice - candle.close) / priceRange) * (height - padding * 2);
+                const highY = padding + ((maxPrice - candle.high) / priceRange) * (height - padding * 2);
+                const lowY = padding + ((maxPrice - candle.low) / priceRange) * (height - padding * 2);
+                
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(x, highY);
+                ctx.lineTo(x, lowY);
+                ctx.stroke();
+                
+                ctx.fillStyle = color;
+                const bodyTop = Math.min(openY, closeY);
+                const bodyHeight = Math.abs(closeY - openY) || 1;
+                ctx.fillRect(x - candleWidth / 2, bodyTop, candleWidth, bodyHeight);
+            });
+        },
 
-function pick(s){
-document.getElementById(‘searchInput’).value=s;
-document.getElementById(‘dropdown’).classList.remove(‘show’);
-}
+        drawLine(canvas, candles) {
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            if (!candles || candles.length === 0) {
+                ctx.fillStyle = '#666';
+                ctx.font = '16px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('No data available', width / 2, height / 2);
+                return;
+            }
+            
+            const prices = candles.map(c => c.close);
+            const minPrice = Math.min(...prices);
+            const maxPrice = Math.max(...prices);
+            const priceRange = maxPrice - minPrice || 1;
+            const padding = 20;
+            
+            const firstPrice = candles[0].close;
+            const lastPrice = candles[candles.length - 1].close;
+            const color = lastPrice >= firstPrice ? '#22c55e' : '#ef4444';
+            
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            
+            candles.forEach((candle, i) => {
+                const x = padding + (i / (candles.length - 1)) * (width - padding * 2);
+                const y = padding + ((maxPrice - candle.close) / priceRange) * (height - padding * 2);
+                
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+            
+            ctx.stroke();
+            
+            ctx.lineTo(width - padding, height - padding);
+            ctx.lineTo(padding, height - padding);
+            ctx.closePath();
+            
+            const gradient = ctx.createLinearGradient(0, padding, 0, height - padding);
+            gradient.addColorStop(0, color + '40');
+            gradient.addColorStop(1, color + '00');
+            ctx.fillStyle = gradient;
+            ctx.fill();
+        }
+    };
 
-async function generate(){
-const sym=document.getElementById(‘searchInput’).value.trim().toUpperCase();
-if(!sym){
-document.getElementById(‘error’).textContent=‘Please enter a symbol’;
-document.getElementById(‘error’).classList.add(‘show’);
-return;
-}
+    // ============================================
+    // WIDGET BUILDER MODULE
+    // ============================================
+    const WidgetBuilder = {
+        async buildWidget(config) {
+            const { symbol, range, chartType } = config;
+            
+            const priceData = await API.getPrice(symbol);
+            const { interval, limit } = API.getRangeInterval(range);
+            const candles = await API.getCandles(symbol, interval, limit);
+            
+            const widget = document.createElement('div');
+            widget.className = `widget-card ${priceData.change24h >= 0 ? 'positive' : 'negative'}`;
+            widget.innerHTML = `
+                <div class="widget-header">
+                    <div class="widget-symbol-group">
+                        <div class="widget-symbol">${symbol}</div>
+                        <div class="widget-pair">${symbol}/USDT</div>
+                    </div>
+                </div>
+                <div class="widget-chart">
+                    <canvas></canvas>
+                </div>
+                <div class="widget-footer">
+                    <div class="widget-price">$${this.formatPrice(priceData.price)}</div>
+                    <div class="widget-change ${priceData.change24h >= 0 ? 'positive' : 'negative'}">
+                        <span>${priceData.change24h >= 0 ? '▲' : '▼'}</span>
+                        <span>${priceData.change24h >= 0 ? '+' : ''}${priceData.change24h.toFixed(2)}%</span>
+                    </div>
+                    <div class="widget-timestamp">Snapshot: ${this.getTimestamp()}</div>
+                    <div class="widget-branding">Crypto Widget</div>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                const canvas = widget.querySelector('canvas');
+                if (canvas) {
+                    canvas.width = canvas.offsetWidth * 2;
+                    canvas.height = canvas.offsetHeight * 2;
+                    
+                    if (chartType === 'candle') {
+                        ChartRenderer.drawCandlestick(canvas, candles);
+                    } else {
+                        ChartRenderer.drawLine(canvas, candles);
+                    }
+                }
+            }, 100);
+            
+            return widget;
+        },
 
-```
-document.getElementById('error').classList.remove('show');
-document.getElementById('result').innerHTML='<div style="text-align:center;padding:40px;color:#a0a0b0;">Loading...</div>';
-document.getElementById('result').classList.add('show');
+        formatPrice(price) {
+            if (price >= 1) {
+                return price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            } else if (price >= 0.01) {
+                return price.toLocaleString('en-US', { minimumFractionDigits: 4, maximumFractionDigits: 4 });
+            } else {
+                return price.toLocaleString('en-US', { minimumFractionDigits: 6, maximumFractionDigits: 6 });
+            }
+        },
 
-try{
-    let price,change,high,low,vol,mcap;
-    
-    if(activeType==='crypto'){
-        const coinId=COIN_MAP[sym]||sym.toLowerCase();
-        const res=await fetch(`https://api.coingecko.com/api/v3/coins/${coinId}?localization=false&tickers=false&community_data=false&developer_data=false`);
-        const data=await res.json();
-        price=data.market_data.current_price.usd;
-        change=data.market_data.price_change_percentage_24h;
-        high=data.market_data.high_24h.usd;
-        low=data.market_data.low_24h.usd;
-        vol=data.market_data.total_volume.usd;
-        mcap=data.market_data.market_cap.usd;
-    }else{
-        const res=await fetch(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${sym}&apikey=demo`);
-        const data=await res.json();
-        if(!data['Global Quote'])throw new Error('Stock not found');
-        const q=data['Global Quote'];
-        price=parseFloat(q['05. price']);
-        change=parseFloat(q['10. change percent'].replace('%',''));
-        high=parseFloat(q['03. high']);
-        low=parseFloat(q['04. low']);
-        vol=parseFloat(q['06. volume']);
-        mcap=0;
-    }
-    
-    renderSnapshot(sym,price,change,high,low,vol,mcap);
-}catch(e){
-    document.getElementById('error').textContent='Failed to load: '+e.message;
-    document.getElementById('error').classList.add('show');
-    document.getElementById('result').classList.remove('show');
-}
-```
+        getTimestamp() {
+            const d = new Date();
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const h = d.getUTCHours().toString().padStart(2, '0');
+            const m = d.getUTCMinutes().toString().padStart(2, '0');
+            const s = d.getUTCSeconds().toString().padStart(2, '0');
+            return `${months[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()} at ${h}:${m}:${s} UTC`;
+        }
+    };
 
-}
+    // ============================================
+    // URL STATE MANAGER
+    // ============================================
+    const URLState = {
+        encode(config) {
+            const params = new URLSearchParams({
+                s: config.symbol,
+                r: config.range,
+                c: config.chartType
+            });
+            return `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+        },
 
-function renderSnapshot(sym,price,change,high,low,vol,mcap){
-const isPos=change>=0;
-const html=`<div class="snapshot-widget ${isPos?'positive':'negative'}" id="snapshot"> <div> <div class="snapshot-badge">${sym}</div> </div> <div class="snapshot-price-section"> <div class="snapshot-price-label">Current Price</div> <div class="snapshot-price">$${fmt(price)}</div> <div class="snapshot-change ${isPos?'positive':'negative'}"> <span>${isPos?'▲':'▼'}</span> <span>${isPos?'+':''}${change.toFixed(2)}%</span> </div> </div> <div class="snapshot-stats"> <div class="snapshot-stat"> <div class="snapshot-stat-label">24h High</div> <div class="snapshot-stat-value">$${fmt(high)}</div> </div> <div class="snapshot-stat"> <div class="snapshot-stat-label">24h Low</div> <div class="snapshot-stat-value">$${fmt(low)}</div> </div> <div class="snapshot-stat"> <div class="snapshot-stat-label">Volume</div> <div class="snapshot-stat-value">${fmtVol(vol)}</div> </div> </div> <div class="snapshot-footer"> <div class="snapshot-time">Snapshot: ${getTime()}</div> <div class="snapshot-brand">Ticker Snapshot</div> </div> </div> <button class="export-btn" onclick="save()"> <span>💾</span> <span>Save as Image</span> </button>`;
-document.getElementById(‘result’).innerHTML=html;
-}
+        decode() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                symbol: params.get('s') || 'BTC',
+                range: params.get('r') || '24h',
+                chartType: params.get('c') || 'candle'
+            };
+        }
+    };
 
-function save(){
-const btn=event.target;
-btn.disabled=true;
-btn.innerHTML=’<span>⏳</span> Saving…’;
-html2canvas(document.getElementById(‘snapshot’),{scale:2,backgroundColor:’#1a1a28’}).then(canvas=>{
-canvas.toBlob(blob=>{
-const url=URL.createObjectURL(blob);
-const a=document.createElement(‘a’);
-a.href=url;
-a.download=‘ticker-’+document.getElementById(‘searchInput’).value+’-’+new Date().toISOString().slice(0,19).replace(/:/g,’-’)+’.png’;
-a.click();
-URL.revokeObjectURL(url);
-btn.disabled=false;
-btn.innerHTML=’<span>💾</span><span>Save as Image</span>’;
-});
-});
-}
+    // ============================================
+    // APP INITIALIZATION
+    // ============================================
+    const App = {
+        currentConfig: {
+            symbol: 'BTC',
+            range: '24h',
+            chartType: 'candle'
+        },
 
-function fmt(p){
-if(p>=1)return p.toLocaleString(‘en-US’,{minimumFractionDigits:2,maximumFractionDigits:2});
-if(p>=0.01)return p.toLocaleString(‘en-US’,{minimumFractionDigits:4,maximumFractionDigits:4});
-return p.toLocaleString(‘en-US’,{minimumFractionDigits:6,maximumFractionDigits:6});
-}
+        async init() {
+            this.setupEventListeners();
+            await this.loadHeroWidget();
+            await this.loadCarousel();
+            this.checkURLParams();
+        },
 
-function fmtVol(v){
-if(v>=1e9)return ‘$’+(v/1e9).toFixed(2)+‘B’;
-if(v>=1e6)return ‘$’+(v/1e6).toFixed(2)+‘M’;
-if(v>=1e3)return ‘$’+(v/1e3).toFixed(2)+‘K’;
-return ‘$’+v.toFixed(0);
-}
+        setupEventListeners() {
+            // Symbol input with autocomplete
+            const symbolInput = document.getElementById('symbolInput');
+            const autocompleteResults = document.getElementById('autocompleteResults');
+            
+            symbolInput.addEventListener('input', (e) => {
+                const value = e.target.value.toUpperCase();
+                if (value.length === 0) {
+                    autocompleteResults.classList.remove('show');
+                    return;
+                }
+                
+                const matches = API.popularCryptos.filter(crypto => crypto.includes(value));
+                if (matches.length > 0) {
+                    autocompleteResults.innerHTML = matches.map(crypto => 
+                        `<div class="autocomplete-item" onclick="App.selectSymbol('${crypto}')">${crypto}</div>`
+                    ).join('');
+                    autocompleteResults.classList.add('show');
+                } else {
+                    autocompleteResults.classList.remove('show');
+                }
+            });
 
-function getTime(){
-const d=new Date(),m=[‘Jan’,‘Feb’,‘Mar’,‘Apr’,‘May’,‘Jun’,‘Jul’,‘Aug’,‘Sep’,‘Oct’,‘Nov’,‘Dec’];
-let h=d.getHours();
-const mm=d.getMinutes().toString().padStart(2,‘0’),s=d.getSeconds().toString().padStart(2,‘0’),ap=h>=12?‘PM’:‘AM’;
-h=h%12||12;
-return m[d.getMonth()]+’ ‘+d.getDate()+’, ‘+d.getFullYear()+’ at ‘+h+’:’+mm+’:’+s+’ ’+ap;
-}
+            // Range buttons
+            document.getElementById('rangeGroup').addEventListener('click', (e) => {
+                if (e.target.classList.contains('btn-option')) {
+                    document.querySelectorAll('#rangeGroup .btn-option').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    this.currentConfig.range = e.target.dataset.range;
+                }
+            });
+
+            // Chart type buttons
+            document.getElementById('chartGroup').addEventListener('click', (e) => {
+                if (e.target.classList.contains('btn-option')) {
+                    document.querySelectorAll('#chartGroup .btn-option').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    this.currentConfig.chartType = e.target.dataset.chart;
+                }
+            });
+
+            // Generate button
+            document.getElementById('generateBtn').addEventListener('click', () => this.generateWidget());
+
+            // Save image button
+            document.getElementById('saveImageBtn').addEventListener('click', () => this.saveImage());
+
+            // Copy link button
+            document.getElementById('copyLinkBtn').addEventListener('click', () => this.copyLink());
+
+            // Carousel navigation
+            document.getElementById('carouselPrev').addEventListener('click', () => {
+                document.getElementById('carouselTrack').scrollBy({ left: -400, behavior: 'smooth' });
+            });
+            document.getElementById('carouselNext').addEventListener('click', () => {
+                document.getElementById('carouselTrack').scrollBy({ left: 400, behavior: 'smooth' });
+            });
+        },
+
+        selectSymbol(symbol) {
+            document.getElementById('symbolInput').value = symbol;
+            document.getElementById('autocompleteResults').classList.remove('show');
+            this.currentConfig.symbol = symbol;
+        },
+
+        async loadHeroWidget() {
+            const container = document.getElementById('heroWidget');
+            const widget = await WidgetBuilder.buildWidget({ symbol: 'BTC', range: '24h', chartType: 'candle' });
+            container.innerHTML = '';
+            container.appendChild(widget);
+        },
+
+        async loadCarousel() {
+            const track = document.getElementById('carouselTrack');
+            const symbols = ['BTC', 'ETH', 'SOL', 'BNB', 'XRP', 'DOGE'];
+            
+            for (const symbol of symbols) {
+                const item = document.createElement('div');
+                item.className = 'carousel-item';
+                track.appendChild(item);
+                
+                const widget = await WidgetBuilder.buildWidget({ symbol, range: '24h', chartType: 'candle' });
+                
+                const actions = document.createElement('div');
+                actions.className = 'widget-actions';
+                actions.innerHTML = `
+                    <button onclick="App.saveCarouselWidget(this, '${symbol}')">💾 Save</button>
+                    <button onclick="App.copyCarouselLink('${symbol}')">🔗 Link</button>
+                `;
+                widget.appendChild(actions);
+                
+                item.appendChild(widget);
+            }
+        },
+
+        async generateWidget() {
+            const symbol = document.getElementById('symbolInput').value.trim().toUpperCase();
+            if (!symbol) {
+                alert('Please enter a crypto symbol');
+                return;
+            }
+            
+            this.currentConfig.symbol = symbol;
+            
+            const container = document.getElementById('previewWidget');
+            container.innerHTML = '<div class="loading">Generating widget</div>';
+            
+            try {
+                const widget = await WidgetBuilder.buildWidget(this.currentConfig);
+                container.innerHTML = '';
+                container.appendChild(widget);
+                
+                document.getElementById('saveImageBtn').disabled = false;
+                document.getElementById('copyLinkBtn').disabled = false;
+            } catch (error) {
+                container.innerHTML = `<div class="loading">Failed to generate: ${error.message}</div>`;
+            }
+        },
+
+        async saveImage() {
+            const widget = document.querySelector('#previewWidget .widget-card');
+            if (!widget) return;
+            
+            const btn = document.getElementById('saveImageBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span>⏳</span> Saving...';
+            
+            try {
+                const canvas = await html2canvas(widget, {
+                    scale: 2,
+                    backgroundColor: '#1a1a28',
+                    logging: false
+                });
+                
+                canvas.toBlob(blob => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${this.currentConfig.symbol}-${this.currentConfig.range}-snapshot.png`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>💾</span> Save Image';
+                });
+            } catch (error) {
+                alert('Failed to save image: ' + error.message);
+                btn.disabled = false;
+                btn.innerHTML = '<span>💾</span> Save Image';
+            }
+        },
+
+        copyLink() {
+            const url = URLState.encode(this.currentConfig);
+            navigator.clipboard.writeText(url).then(() => {
+                const btn = document.getElementById('copyLinkBtn');
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<span>✓</span> Copied!';
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                }, 2000);
+            });
+        },
+
+        async saveCarouselWidget(button, symbol) {
+            const widget = button.closest('.widget-card');
+            if (!widget) return;
+            
+            button.disabled = true;
+            button.textContent = '⏳ Saving...';
+            
+            try {
+                const canvas = await html2canvas(widget, {
+                    scale: 2,
+                    backgroundColor: '#1a1a28',
+                    logging: false
+                });
+                
+                canvas.toBlob(blob => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${symbol}-24h-snapshot.png`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    
+                    button.disabled = false;
+                    button.textContent = '💾 Save';
+                });
+            } catch (error) {
+                alert('Failed to save: ' + error.message);
+                button.disabled = false;
+                button.textContent = '💾 Save';
+            }
+        },
+
+        copyCarouselLink(symbol) {
+            const url = URLState.encode({ symbol, range: '24h', chartType: 'candle' });
+            navigator.clipboard.writeText(url).then(() => {
+                alert('Link copied to clipboard!');
+            });
+        },
+
+        checkURLParams() {
+            const config = URLState.decode();
+            if (config.symbol !== 'BTC' || config.range !== '24h' || config.chartType !== 'candle') {
+                this.currentConfig = config;
+                document.getElementById('symbolInput').value = config.symbol;
+                
+                document.querySelectorAll('#rangeGroup .btn-option').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.range === config.range);
+                });
+                
+                document.querySelectorAll('#chartGroup .btn-option').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.chart === config.chartType);
+                });
+                
+                this.generateWidget();
+            }
+        }
+    };
+
+    // Initialize app when DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+        App.init();
+    });
 </script>
+```
 
 </body>
 </html>
