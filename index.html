@@ -74,22 +74,35 @@ color:var(--accent);
 letter-spacing:-.03em;
 }
 
-p{
-max-width:620px;
-margin-top:18px;
-font-size:1.1rem;
-line-height:1.6;
+.tagline{
+margin-top:14px;
+font-size:1.05rem;
 color:var(--muted);
+max-width:640px;
+line-height:1.6;
 }
 
-a.primary{
+.cta-row{
 margin-top:36px;
-padding:16px 28px;
+display:flex;
+gap:16px;
+}
+
+.cta{
+padding:16px 26px;
 border-radius:18px;
+font-weight:900;
+text-decoration:none;
+}
+
+.cta.primary{
 background:linear-gradient(135deg,var(--accent),#8b5cf6);
 color:white;
-text-decoration:none;
-font-weight:900;
+}
+
+.cta.secondary{
+border:1px solid var(--border);
+color:var(--muted);
 }
 
 /* FOOTER FLOAT */
@@ -129,9 +142,18 @@ cursor:pointer;
 
 <div class="container">
 <h1>BlockState</h1>
-<p>A fast, visual snapshot of the current state of anything — designed to be shared.</p>
-<a class="primary" href="crypto.html">Crypto</a>
+<div class="tagline">
+Create a clean, visual snapshot of the current state of something —
+built to be saved, shared, and understood instantly.
 </div>
+
+<div class="cta-row">
+<a class="cta primary" href="crypto.html">Crypto</a>
+<a class="cta secondary" href="#bottom">About</a>
+</div>
+</div>
+
+<div id="bottom"></div>
 
 <div class="footer-float" id="footer">
 <div class="badge">v1.0</div>
