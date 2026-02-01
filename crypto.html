@@ -32,7 +32,7 @@ color:var(--text);
 overflow-x:hidden;
 }
 
-/* NAV (HIDES ON SCROLL) */
+/* NAV */
 nav{
 position:fixed;
 top:0;
@@ -139,25 +139,28 @@ cursor:pointer;
 }
 
 /* BUTTONS */
-.primary{
-width:100%;
+.primary,.secondary{
 padding:14px;
 border-radius:14px;
-border:none;
 font-weight:900;
 cursor:pointer;
-background:linear-gradient(135deg,var(--accent),#8b5cf6);
-color:white;
-margin-bottom:14px;
-}
-.secondary{
-padding:14px;
-border-radius:14px;
 border:1px solid var(--border);
 background:#0b0c1b;
 color:white;
-font-weight:800;
-cursor:pointer;
+}
+.primary{
+background:linear-gradient(135deg,var(--accent),#8b5cf6);
+border:none;
+}
+.actions{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin-bottom:12px;
+}
+.secondary.copied{
+border-color:var(--up);
+color:var(--up);
 }
 
 /* TOGGLE */
@@ -281,12 +284,6 @@ line-height:1.4;
 }
 
 /* SHARE */
-.share{
-display:flex;
-flex-direction:column;
-gap:12px;
-margin-top:12px;
-}
 .caption{
 background:#0b0c1b;
 border:1px solid var(--border);
@@ -295,7 +292,7 @@ padding:14px;
 font-size:.85rem;
 }
 
-/* FAQ (BOTTOM) */
+/* FAQ */
 .faq{
 position:absolute;
 bottom:24px;
@@ -308,7 +305,20 @@ font-size:.7rem;
 letter-spacing:.25em;
 color:var(--muted);
 }
-.faq a{color:var(--muted);text-decoration:none}
+.faq a{color:var(--muted);text-decoration:none;cursor:pointer}
+
+.modal{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.6);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:20;
+}
+.modal .panel{max-width:520px;text-align:left}
+.modal h3{margin-bottom:10px}
+.modal p{font-size:.85rem;color:var(--muted);margin-bottom:12px}
 
 @media(max-width:900px){
 .main{grid-template-columns:1fr}
@@ -358,25 +368,36 @@ color:var(--muted);
 <div id="output"></div>
 
 <div class="section" style="margin-top:34px;">SHARE</div>
-<div class="panel share">
+<div class="panel">
+<div class="actions">
 <button class="primary" onclick="App.save()">Save BlockState</button>
-<div class="caption" id="caption"></div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-<button class="secondary" onclick="App.copy()">Copy Caption</button>
+<button class="secondary" id="copyBtn" onclick="App.copy()">Copy Caption</button>
 </div>
+<div class="caption" id="caption"></div>
 </div>
 </div>
 
 </div>
 
 <div class="faq">
-<a href="#">CRYPTO FAQ</a>
-<a href="#">DATA</a>
+<a onclick="FAQ.open()">CRYPTO FAQ</a>
+</div>
+</div>
+
+<!-- FAQ MODAL -->
+<div class="modal" id="faq">
+<div class="panel">
+<h3>What is a Crypto BlockState?</h3>
+<p>A Crypto BlockState is a visual snapshot of current market conditions for a cryptocurrency at a specific moment in time.</p>
+<h3>Where does the data come from?</h3>
+<p>All pricing and market data is provided by CoinGecko. Data is informational only and not financial advice.</p>
+<h3>Can I share this?</h3>
+<p>Yes. You can save the image and share it freely on social media.</p>
+<button class="primary" onclick="FAQ.close()">Close</button>
 </div>
 </div>
 
 <script>
-/* NAV HIDE */
 let last=0;
 addEventListener("scroll",()=>{
 const n=document.getElementById("nav");
@@ -403,6 +424,12 @@ x.beginPath();x.arc(o.x,o.y,o.r,0,Math.PI*2);x.fill();
 requestAnimationFrame(t);
 })();
 
+/* FAQ */
+const FAQ={
+open(){document.getElementById("faq").style.display="flex"},
+close(){document.getElementById("faq").style.display="none"}
+};
+
 /* APP */
 const App={
 coins:[],current:null,
@@ -417,9 +444,9 @@ if(v>=1e12)return (v/1e12).toFixed(2)+" T";
 if(v>=1e9)return (v/1e9).toFixed(2)+" B";
 return (v/1e6).toFixed(2)+" M";
 },
-delta(v){
-if(v>=1)return v.toFixed(2);
-if(v>=.01)return v.toFixed(4);
+delta(v,price){
+if(price>=1)return v.toFixed(2);
+if(price>=.01)return v.toFixed(4);
 return v.toFixed(8);
 },
 makeCaption(){
@@ -507,7 +534,7 @@ output.innerHTML=`
 
 <div class="change" style="color:${up?'var(--up)':'var(--down)'}">
 ${arrow} ${Math.abs(c.price_change_percentage_24h).toFixed(2)}%
-($${this.delta(delta)})
+($${this.delta(delta,c.current_price)})
 </div>
 
 <div class="stats">
@@ -537,6 +564,9 @@ a.click();
 
 copy(){
 navigator.clipboard.writeText(caption.textContent);
+copyBtn.classList.add("copied");
+copyBtn.textContent="Copied ✓";
+setTimeout(()=>{copyBtn.classList.remove("copied");copyBtn.textContent="Copy Caption"},1600);
 }
 };
 
