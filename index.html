@@ -18,24 +18,27 @@
 
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{
+width:100%;
+height:100%;
+overflow:hidden;
 background:var(--bg);
 font-family:Inter,system-ui,sans-serif;
 color:var(--text);
-overflow-x:hidden;
 }
+
+/* VERSION */
+#version{display:none}
 
 /* NAV */
 nav{
-position:fixed;
+position:absolute;
 top:0;
 width:100%;
-z-index:10;
 display:flex;
 justify-content:center;
 gap:20px;
 padding:14px;
-background:rgba(7,7,12,.6);
-backdrop-filter:blur(8px);
+z-index:5;
 }
 nav a{
 color:var(--muted);
@@ -44,11 +47,10 @@ font-weight:800;
 font-size:.75rem;
 letter-spacing:.2em;
 }
-nav a:hover{color:white}
 
 /* PARTICLES */
 canvas{
-position:fixed;
+position:absolute;
 inset:0;
 z-index:0;
 pointer-events:none;
@@ -58,7 +60,7 @@ pointer-events:none;
 .container{
 position:relative;
 z-index:2;
-min-height:100vh;
+height:100%;
 display:flex;
 flex-direction:column;
 align-items:center;
@@ -71,7 +73,6 @@ h1{
 font-size:3.6rem;
 font-weight:900;
 color:var(--accent);
-letter-spacing:-.03em;
 }
 
 .tagline{
@@ -79,7 +80,6 @@ margin-top:14px;
 font-size:1.05rem;
 color:var(--muted);
 max-width:640px;
-line-height:1.6;
 }
 
 .cta{
@@ -92,19 +92,14 @@ text-decoration:none;
 font-weight:900;
 }
 
-/* FOOTER FLOAT */
-.footer-float{
-position:fixed;
+/* FOOTER */
+.footer{
+position:absolute;
 bottom:16px;
 left:16px;
 display:flex;
 gap:8px;
-opacity:0;
-pointer-events:none;
-transition:.3s;
-z-index:5;
 }
-.footer-float.show{opacity:1;pointer-events:auto}
 
 .badge{
 padding:8px 12px;
@@ -130,19 +125,20 @@ cursor:pointer;
 <div class="container">
 <h1>BlockState</h1>
 <div class="tagline">
-Create a clean, visual snapshot of the current state of something —
-built to be saved and shared instantly.
+A clean, visual snapshot of the current state of something — built to be shared.
 </div>
-
 <a class="cta" href="crypto.html">Crypto</a>
 </div>
 
-<div class="footer-float" id="footer">
-<div class="badge">v1.0</div>
-<div class="badge" onclick="alert('BlockState creates shareable visual snapshots of live data.')">FAQ</div>
+<div class="footer">
+<div class="badge" id="versionBadge"></div>
+<div class="badge" onclick="alert('BlockState creates shareable visual snapshots.')">FAQ</div>
 </div>
 
 <script>
+const VERSION = "v1.0.1";
+versionBadge.textContent = VERSION;
+
 /* PARTICLES */
 const c=document.getElementById("particles"),ctx=c.getContext("2d");
 let w,h,p=[];
@@ -160,13 +156,6 @@ ctx.beginPath();ctx.arc(o.x,o.y,o.r,0,7);ctx.fill();
 });
 requestAnimationFrame(tick);
 })();
-
-/* FOOTER VISIBILITY */
-addEventListener("scroll",()=>{
-(window.innerHeight+scrollY)>=document.body.offsetHeight-200
-?footer.classList.add("show")
-:footer.classList.remove("show");
-});
 </script>
 
 </body>
