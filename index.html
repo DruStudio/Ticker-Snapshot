@@ -28,7 +28,6 @@ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 overflow-x:hidden;
 }
 
-/* PARTICLES */
 canvas#particles{
 position:fixed;
 inset:0;
@@ -36,7 +35,6 @@ z-index:0;
 pointer-events:none;
 }
 
-/* VERSION */
 .bottom-left{
 position:fixed;
 bottom:14px;
@@ -55,7 +53,6 @@ font-weight:700;
 cursor:pointer;
 }
 
-/* LAYOUT */
 .container{
 position:relative;
 z-index:2;
@@ -80,7 +77,6 @@ letter-spacing:.4em;
 color:var(--muted);
 }
 
-/* GRID */
 .main{
 display:grid;
 grid-template-columns:420px 420px;
@@ -89,7 +85,6 @@ justify-content:center;
 align-items:start;
 }
 
-/* PANELS */
 .panel{
 background:linear-gradient(135deg,var(--panel),#1d1d32);
 border:1px solid var(--border);
@@ -144,7 +139,6 @@ color:white;
 margin-bottom:12px;
 }
 
-/* TRENDING */
 .trending h3{
 font-size:.75rem;
 margin-bottom:8px;
@@ -162,7 +156,6 @@ cursor:pointer;
 .up{color:var(--green)}
 .down{color:var(--red)}
 
-/* WIDGET */
 .widget{
 background:var(--panel2);
 border-radius:22px;
@@ -238,7 +231,6 @@ color:var(--muted);
 text-align:center;
 }
 
-/* SHARE OUTPUT */
 .share-output{
 margin-top:12px;
 font-size:.8rem;
@@ -266,7 +258,7 @@ h1{font-size:2.4rem}
 <canvas id="particles"></canvas>
 
 <div class="bottom-left">
-<div class="badge">v6.8.1</div>
+<div class="badge">v6.8.2</div>
 <div class="badge" onclick="FAQ.open()">FAQ</div>
 </div>
 
@@ -275,7 +267,6 @@ h1{font-size:2.4rem}
 
 <div class="main">
 
-<!-- CREATE -->
 <div>
 <div class="section-title">CREATE</div>
 <div class="panel">
@@ -294,7 +285,6 @@ h1{font-size:2.4rem}
 </div>
 </div>
 
-<!-- CAPTURE -->
 <div>
 <div class="section-title">CAPTURE</div>
 <div id="output"></div>
@@ -309,7 +299,6 @@ h1{font-size:2.4rem}
 </div>
 </div>
 
-<!-- FAQ -->
 <div class="faq-modal" id="faq" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);align-items:center;justify-content:center;z-index:20">
 <div class="panel" style="max-width:460px">
 <h3>What is BlockState?</h3>
@@ -321,40 +310,16 @@ h1{font-size:2.4rem}
 </div>
 
 <script>
-/* PARTICLES */
-const canvas=document.getElementById("particles");
-const ctx=canvas.getContext("2d");
-let w,h,particles=[];
-function resize(){
-w=canvas.width=window.innerWidth;
-h=canvas.height=window.innerHeight;
-}
-window.addEventListener("resize",resize);
-resize();
-
-for(let i=0;i<80;i++){
-particles.push({
-x:Math.random()*w,
-y:Math.random()*h,
-vx:(Math.random()-.5)*.3,
-vy:(Math.random()-.5)*.3,
-r:Math.random()*1.2+0.3
+/* IMAGE → BASE64 FIX */
+async function toBase64(url){
+const r = await fetch(url);
+const b = await r.blob();
+return new Promise(res=>{
+const reader=new FileReader();
+reader.onload=()=>res(reader.result);
+reader.readAsDataURL(b);
 });
 }
-function tick(){
-ctx.clearRect(0,0,w,h);
-ctx.fillStyle="rgba(108,124,255,.35)";
-particles.forEach(p=>{
-p.x+=p.vx;p.y+=p.vy;
-if(p.x<0)p.x=w;if(p.x>w)p.x=0;
-if(p.y<0)p.y=h;if(p.y>h)p.y=0;
-ctx.beginPath();
-ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-ctx.fill();
-});
-requestAnimationFrame(tick);
-}
-tick();
 
 /* APP */
 const App={
@@ -416,14 +381,15 @@ list.appendChild(li);
 });
 },
 
-build(c){
+async build(c){
 this.current=c;
+const img = await toBase64(c.image);
 const up=c.price_change_percentage_24h>=0;
 return `
 <div class="widget ${up?'positive':'negative'}" id="widget">
 <div class="header">
 <div class="left">
-<img class="coin-img" src="${c.image}" crossorigin="anonymous">
+<img class="coin-img" src="${img}">
 <div>
 <div class="name">${c.name}</div>
 <div class="symbol">${c.symbol.toUpperCase()}</div>
@@ -449,8 +415,8 @@ Captured • ${new Date().toUTCString()}<br>BLOCKSTATE.LIVE
 </div>`;
 },
 
-show(c){
-document.getElementById("output").innerHTML=this.build(c);
+async show(c){
+document.getElementById("output").innerHTML = await this.build(c);
 },
 
 generate(){
@@ -465,7 +431,7 @@ this.showCaption();
 },
 
 saveImage(){
-html2canvas(document.getElementById("widget"),{backgroundColor:null,useCORS:true}).then(c=>{
+html2canvas(document.getElementById("widget"),{backgroundColor:null}).then(c=>{
 const a=document.createElement("a");
 a.download="blockstate.png";
 a.href=c.toDataURL();
@@ -492,6 +458,12 @@ close(){document.getElementById("faq").style.display="none"}
 
 document.addEventListener("DOMContentLoaded",()=>App.load());
 </script>
+
+<!--
+Version History
+v6.8.2 – Fixed coin images not rendering/saving in exports (base64 conversion)
+v6.8.1 – Stable widget + sharing flow
+-->
 
 </body>
 </html>
