@@ -214,8 +214,8 @@ justify-content:center;
 gap:10px;
 margin:0 auto;
 }
-.widget.up{box-shadow:0 0 40px rgba(34,197,94,.3)}
-.widget.down{box-shadow:0 0 40px rgba(239,68,68,.3)}
+.widget.up{box-shadow:0 0 28px rgba(34,197,94,.25)}
+.widget.down{box-shadow:0 0 28px rgba(239,68,68,.25)}
 
 .asset{
 display:flex;
@@ -227,7 +227,7 @@ gap:6px;
 width:54px;
 height:54px;
 border-radius:50%;
-margin-bottom:-4px;
+margin-bottom:-6px;
 }
 .asset-name{
 font-size:2.2rem;
@@ -365,7 +365,7 @@ addEventListener("resize",r);r();
 for(let i=0;i<120;i++)p.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,r:Math.random()*1.6+.4});
 (function t(){
 x.clearRect(0,0,w,h);
-x.fillStyle="rgba(108,124,255,.45)";
+x.fillStyle="rgba(108,124,255,.4)";
 p.forEach(o=>{
 o.x+=o.vx;o.y+=o.vy;
 if(o.x<0)o.x=w;if(o.x>w)o.x=0;
@@ -382,12 +382,17 @@ coins:[],current:null,
 fmt(v){
 if(v>=1)return v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
 if(v>=.01)return v.toFixed(4);
-return v.toFixed(6);
+return v.toFixed(8);
 },
 cap(v){
 if(v>=1e12)return (v/1e12).toFixed(2)+" T";
 if(v>=1e9)return (v/1e9).toFixed(2)+" B";
 return (v/1e6).toFixed(2)+" M";
+},
+delta(v){
+if(v>=1)return v.toFixed(2);
+if(v>=.01)return v.toFixed(4);
+return v.toFixed(6);
 },
 
 async load(){
@@ -452,8 +457,8 @@ if(c)this.show(c,true);
 show(c,scroll){
 this.current=c;
 const up=c.price_change_percentage_24h>=0;
-const delta=c.current_price*(c.price_change_percentage_24h/100);
 const arrow=up?'▲':'▼';
+const delta=Math.abs(c.price_change_24h);
 
 output.innerHTML=`
 <div class="widget ${up?'up':'down'}" id="widget">
@@ -466,7 +471,7 @@ output.innerHTML=`
 
 <div class="change" style="color:${up?'var(--up)':'var(--down)'}">
 ${arrow} ${Math.abs(c.price_change_percentage_24h).toFixed(2)}%
-($${Math.abs(delta).toLocaleString(undefined,{maximumFractionDigits:2})})
+($${this.delta(delta)})
 </div>
 
 <div class="stats">
@@ -499,8 +504,8 @@ const c=this.current;
 const up=c.price_change_percentage_24h>=0;
 const arrow=up?'▲':'▼';
 caption.textContent=
-`${c.name} (${c.symbol.toUpperCase()}) is ${up?'up':'down'} ${Math.abs(c.price_change_percentage_24h).toFixed(2)}% over the last 24 hours ${arrow}. 
-Price: $${this.fmt(c.current_price)} • Market Cap: ${this.cap(c.market_cap)}.`;
+`${c.name} (${c.symbol.toUpperCase()}) is ${up?'up':'down'} ${Math.abs(c.price_change_percentage_24h).toFixed(2)}% over the last 24 hours ${arrow}
+Price: $${this.fmt(c.current_price)} • Market Cap: ${this.cap(c.market_cap)}`;
 },
 
 copy(){
