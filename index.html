@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>BlockState</title>
 
-<!-- html2canvas for image export -->
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <style>
@@ -30,9 +29,7 @@ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 overflow-x:hidden;
 }
 
-/* ===============================
-   PARTICLES
-   =============================== */
+/* PARTICLES */
 canvas#particles{
 position:fixed;
 inset:0;
@@ -40,9 +37,7 @@ z-index:0;
 pointer-events:none;
 }
 
-/* ===============================
-   VERSION + FAQ
-   =============================== */
+/* VERSION */
 .bottom-left{
 position:fixed;
 bottom:14px;
@@ -51,7 +46,6 @@ z-index:10;
 display:flex;
 gap:8px;
 }
-
 .badge{
 background:#10101a;
 border:1px solid var(--border);
@@ -61,9 +55,7 @@ font-size:.75rem;
 font-weight:700;
 }
 
-/* ===============================
-   LAYOUT
-   =============================== */
+/* LAYOUT */
 .container{
 position:relative;
 z-index:2;
@@ -88,9 +80,7 @@ letter-spacing:.4em;
 color:var(--muted);
 }
 
-/* ===============================
-   GRID
-   =============================== */
+/* GRID */
 .main{
 display:grid;
 grid-template-columns:420px 420px;
@@ -99,9 +89,7 @@ justify-content:center;
 align-items:start;
 }
 
-/* ===============================
-   PANELS
-   =============================== */
+/* PANELS */
 .panel{
 background:linear-gradient(135deg,var(--panel),#1d1d32);
 border:1px solid var(--border);
@@ -156,19 +144,13 @@ color:white;
 margin-bottom:18px;
 }
 
-/* ===============================
-   TRENDING
-   =============================== */
+/* TRENDING */
 .trending h3{
 font-size:.75rem;
 margin-bottom:8px;
 color:var(--muted);
 }
-
-.trending ul{
-list-style:none;
-}
-
+.trending ul{list-style:none}
 .trending li{
 display:flex;
 justify-content:space-between;
@@ -176,14 +158,11 @@ padding:10px 6px;
 border-bottom:1px solid var(--border);
 cursor:pointer;
 }
-
 .trending li:last-child{border-bottom:none}
 .up{color:var(--green)}
 .down{color:var(--red)}
 
-/* ===============================
-   WIDGET
-   =============================== */
+/* WIDGET */
 .widget{
 background:var(--panel2);
 border-radius:22px;
@@ -191,27 +170,16 @@ padding:22px;
 border:2px solid var(--border);
 position:relative;
 overflow:hidden;
+animation:widgetIn .25s ease;
+}
+
+@keyframes widgetIn{
+from{opacity:0;transform:scale(.97)}
+to{opacity:1;transform:scale(1)}
 }
 
 .widget.positive{border-color:var(--green)}
 .widget.negative{border-color:var(--red)}
-
-.flash{
-position:absolute;
-inset:0;
-background:white;
-opacity:0;
-pointer-events:none;
-}
-
-.flash.active{
-animation:flash .35s ease;
-}
-
-@keyframes flash{
-0%{opacity:.8}
-100%{opacity:0}
-}
 
 .header{
 display:flex;
@@ -241,7 +209,6 @@ border-radius:50%;
 font-size:1.4rem;
 font-weight:900;
 }
-
 .change.positive{color:var(--green)}
 .change.negative{color:var(--red)}
 
@@ -264,7 +231,6 @@ border-radius:14px;
 padding:10px;
 text-align:center;
 }
-
 .stat span{
 display:block;
 font-size:.65rem;
@@ -299,19 +265,15 @@ color:var(--muted);
 text-align:center;
 }
 
-/* ===============================
-   SHARE EXAMPLES
-   =============================== */
+/* SHARE EXAMPLES */
 .share{
 margin-top:14px;
 }
-
 .share-carousel{
 position:relative;
 height:120px;
 overflow:hidden;
 }
-
 .share-card{
 position:absolute;
 inset:0;
@@ -326,12 +288,9 @@ color:var(--muted);
 opacity:0;
 transition:.6s;
 }
-
 .share-card.active{opacity:1}
 
-/* ===============================
-   MOBILE
-   =============================== */
+/* MOBILE */
 @media(max-width:900px){
 .main{grid-template-columns:1fr}
 h1{font-size:2.4rem}
@@ -344,7 +303,7 @@ h1{font-size:2.4rem}
 <canvas id="particles"></canvas>
 
 <div class="bottom-left">
-<div class="badge">v6.7.2</div>
+<div class="badge">v6.7.3</div>
 <div class="badge">FAQ</div>
 </div>
 
@@ -391,9 +350,7 @@ h1{font-size:2.4rem}
 </div>
 
 <script>
-/* ===============================
-   PARTICLES
-   =============================== */
+/* PARTICLES */
 const canvas=document.getElementById("particles");
 const ctx=canvas.getContext("2d");
 let w,h,particles=[];
@@ -429,9 +386,7 @@ requestAnimationFrame(tick);
 }
 tick();
 
-/* ===============================
-   APP
-   =============================== */
+/* APP */
 const App={
 coins:[],
 shareIndex:0,
@@ -492,8 +447,6 @@ build(c){
 const pos=c.price_change_percentage_24h>=0;
 return `
 <div class="widget ${pos?'positive':'negative'}" id="widget">
-<div class="flash"></div>
-
 <div class="header">
 <div class="left">
 <img class="coin-img" src="${c.image}">
@@ -529,9 +482,6 @@ Captured • ${new Date().toUTCString()}<br>BLOCKSTATE.LIVE
 
 show(c){
 document.getElementById("output").innerHTML=this.build(c);
-const flash=document.querySelector(".flash");
-flash.classList.add("active");
-setTimeout(()=>flash.classList.remove("active"),350);
 },
 
 generate(){
