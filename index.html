@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+# Revert to BlockState v6.8.1 exactly and save as a downloadable file
+
+html_content = """<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -28,6 +30,7 @@ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 overflow-x:hidden;
 }
 
+/* PARTICLES */
 canvas#particles{
 position:fixed;
 inset:0;
@@ -35,6 +38,7 @@ z-index:0;
 pointer-events:none;
 }
 
+/* VERSION */
 .bottom-left{
 position:fixed;
 bottom:14px;
@@ -53,6 +57,7 @@ font-weight:700;
 cursor:pointer;
 }
 
+/* LAYOUT */
 .container{
 position:relative;
 z-index:2;
@@ -77,6 +82,7 @@ letter-spacing:.4em;
 color:var(--muted);
 }
 
+/* GRID */
 .main{
 display:grid;
 grid-template-columns:420px 420px;
@@ -85,6 +91,7 @@ justify-content:center;
 align-items:start;
 }
 
+/* PANELS */
 .panel{
 background:linear-gradient(135deg,var(--panel),#1d1d32);
 border:1px solid var(--border);
@@ -139,6 +146,7 @@ color:white;
 margin-bottom:12px;
 }
 
+/* TRENDING */
 .trending h3{
 font-size:.75rem;
 margin-bottom:8px;
@@ -148,25 +156,15 @@ color:var(--muted);
 .trending li{
 display:flex;
 justify-content:space-between;
-align-items:center;
 padding:10px 6px;
 border-bottom:1px solid var(--border);
 cursor:pointer;
 }
 .trending li:last-child{border-bottom:none}
-.trending .left{
-display:flex;
-align-items:center;
-gap:8px;
-}
-.trending img{
-width:18px;
-height:18px;
-border-radius:50%;
-}
 .up{color:var(--green)}
 .down{color:var(--red)}
 
+/* WIDGET */
 .widget{
 background:var(--panel2);
 border-radius:22px;
@@ -196,6 +194,7 @@ align-items:center;
 width:36px;
 height:36px;
 border-radius:50%;
+background:#000;
 }
 
 .name{font-size:1.25rem;font-weight:900}
@@ -241,6 +240,7 @@ color:var(--muted);
 text-align:center;
 }
 
+/* SHARE OUTPUT */
 .share-output{
 margin-top:12px;
 font-size:.8rem;
@@ -268,7 +268,7 @@ h1{font-size:2.4rem}
 <canvas id="particles"></canvas>
 
 <div class="bottom-left">
-<div class="badge">v6.8.3</div>
+<div class="badge">v6.8.1</div>
 <div class="badge" onclick="FAQ.open()">FAQ</div>
 </div>
 
@@ -277,6 +277,7 @@ h1{font-size:2.4rem}
 
 <div class="main">
 
+<!-- CREATE -->
 <div>
 <div class="section-title">CREATE</div>
 <div class="panel">
@@ -295,6 +296,7 @@ h1{font-size:2.4rem}
 </div>
 </div>
 
+<!-- CAPTURE -->
 <div>
 <div class="section-title">CAPTURE</div>
 <div id="output"></div>
@@ -309,21 +311,57 @@ h1{font-size:2.4rem}
 </div>
 </div>
 
+<!-- FAQ -->
+<div class="faq-modal" id="faq" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);align-items:center;justify-content:center;z-index:20">
+<div class="panel" style="max-width:460px">
+<h3>What is BlockState?</h3>
+<p>BlockState creates verifiable snapshots of crypto market conditions you can save and share.</p>
+<h3>How do I share?</h3>
+<p>Click “Generate Shareables” to save the image and auto-generate a caption.</p>
+<button class="primary" onclick="FAQ.close()">Close</button>
+</div>
+</div>
+
 <script>
-async function toBase64(url){
-const r = await fetch(url);
-const b = await r.blob();
-return new Promise(res=>{
-const reader=new FileReader();
-reader.onload=()=>res(reader.result);
-reader.readAsDataURL(b);
+/* PARTICLES */
+const canvas=document.getElementById("particles");
+const ctx=canvas.getContext("2d");
+let w,h,particles=[];
+function resize(){
+w=canvas.width=window.innerWidth;
+h=canvas.height=window.innerHeight;
+}
+window.addEventListener("resize",resize);
+resize();
+
+for(let i=0;i<80;i++){
+particles.push({
+x:Math.random()*w,
+y:Math.random()*h,
+vx:(Math.random()-.5)*.3,
+vy:(Math.random()-.5)*.3,
+r:Math.random()*1.2+0.3
 });
 }
+function tick(){
+ctx.clearRect(0,0,w,h);
+ctx.fillStyle="rgba(108,124,255,.35)";
+particles.forEach(p=>{
+p.x+=p.vx;p.y+=p.vy;
+if(p.x<0)p.x=w;if(p.x>w)p.x=0;
+if(p.y<0)p.y=h;if(p.y>h)p.y=0;
+ctx.beginPath();
+ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+ctx.fill();
+});
+requestAnimationFrame(tick);
+}
+tick();
 
+/* APP */
 const App={
 coins:[],
 current:null,
-imageCache:{},
 
 fmt(v){
 if(v>=1)return v.toFixed(2);
@@ -340,16 +378,9 @@ return'$'+v.toLocaleString();
 async load(){
 const r=await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1");
 this.coins=await r.json();
-await this.preloadImages();
 this.populate();
 this.renderTrending();
 this.show(this.coins[0]);
-},
-
-async preloadImages(){
-for(const c of this.coins){
-this.imageCache[c.id] = await toBase64(c.image);
-}
 },
 
 populate(){
@@ -378,11 +409,7 @@ list.innerHTML="";
 .slice(0,10)
 .forEach(c=>{
 const li=document.createElement("li");
-li.innerHTML=`
-<div class="left">
-<img src="${this.imageCache[c.id]}">
-<span>${c.name}</span>
-</div>
+li.innerHTML=`<span>${c.name}</span>
 <span class="${c.price_change_percentage_24h>=0?'up':'down'}">
 ${c.price_change_percentage_24h>=0?'▲':'▼'} ${c.price_change_percentage_24h.toFixed(2)}%
 </span>`;
@@ -398,7 +425,7 @@ return `
 <div class="widget ${up?'positive':'negative'}" id="widget">
 <div class="header">
 <div class="left">
-<img class="coin-img" src="${this.imageCache[c.id]}">
+<img class="coin-img" src="${c.image}" crossorigin="anonymous">
 <div>
 <div class="name">${c.name}</div>
 <div class="symbol">${c.symbol.toUpperCase()}</div>
@@ -434,16 +461,18 @@ const c=this.coins.find(x=>v.includes(x.symbol)||v.includes(x.name.toLowerCase()
 if(c)this.show(c);
 },
 
-async generateShareables(){
-await document.fonts.ready;
-await new Promise(r=>requestAnimationFrame(r));
-html2canvas(document.getElementById("widget"),{backgroundColor:null}).then(c=>{
+generateShareables(){
+this.saveImage();
+this.showCaption();
+},
+
+saveImage(){
+html2canvas(document.getElementById("widget"),{backgroundColor:null,useCORS:true}).then(c=>{
 const a=document.createElement("a");
 a.download="blockstate.png";
 a.href=c.toDataURL();
 a.click();
 });
-this.showCaption();
 },
 
 showCaption(){
@@ -468,3 +497,10 @@ document.addEventListener("DOMContentLoaded",()=>App.load());
 
 </body>
 </html>
+"""
+
+path = "/mnt/data/blockstate_v6.8.1.html"
+with open(path, "w", encoding="utf-8") as f:
+    f.write(html_content)
+
+path
