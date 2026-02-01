@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BlockState</title>
 
-<!-- OG / Social -->
-<meta property="og:title" content="BlockState" />
-<meta property="og:description" content="Capture a moment in crypto markets. Generate and share BlockStates." />
-<meta property="og:image" content="https://blockstate.live/og.png" />
-<meta property="og:type" content="website" />
-<meta name="twitter:card" content="summary_large_image" />
+<meta property="og:title" content="BlockState">
+<meta property="og:description" content="Capture a single moment in crypto markets.">
+<meta property="og:image" content="https://blockstate.live/og.png">
+<meta name="twitter:card" content="summary_large_image">
 
 <style>
 :root{
@@ -32,10 +30,10 @@ html,body{background:var(--bg);color:var(--text);font-family:-apple-system,Blink
 position:fixed;
 top:14px;left:14px;
 z-index:9999;
-padding:8px 12px;
 background:#10101a;
 border:1px solid var(--border);
 border-radius:10px;
+padding:8px 12px;
 font-size:.75rem;
 font-weight:700;
 }
@@ -52,12 +50,12 @@ align-items:center;
 h1{
 font-size:3rem;
 font-weight:900;
+text-align:center;
 background:linear-gradient(120deg,#6c7cff,#8b5cf6,#22c55e,#6c7cff);
 background-size:400% 400%;
 animation:flow 160s linear infinite;
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
-text-align:center;
 }
 
 @keyframes flow{
@@ -66,12 +64,10 @@ text-align:center;
 }
 
 .bio{
-margin-top:12px;
-max-width:600px;
+margin-top:10px;
 text-align:center;
 color:var(--muted);
-font-size:.95rem;
-line-height:1.5;
+max-width:600px;
 }
 
 .section{
@@ -79,14 +75,6 @@ width:100%;
 margin-top:48px;
 display:flex;
 justify-content:center;
-}
-
-.stack{
-display:flex;
-flex-direction:column;
-align-items:center;
-gap:36px;
-width:100%;
 }
 
 .generator{
@@ -179,8 +167,8 @@ align-items:center;
 }
 
 .coin-img{
-width:34px;
-height:34px;
+width:36px;
+height:36px;
 border-radius:50%;
 }
 
@@ -251,6 +239,7 @@ cursor:pointer;
 .trending{
 max-width:420px;
 width:100%;
+margin-top:32px;
 }
 
 .trending select{
@@ -282,22 +271,17 @@ font-weight:700;
 </head>
 
 <body>
-<div class="version">v6.4.0</div>
+<div class="version">v6.5.0</div>
 
 <div class="container">
 <h1>BlockState</h1>
-<p class="bio">
-Capture a single moment in crypto markets.  
-Generate a BlockState and share it anywhere.
-</p>
+<p class="bio">Capture a single moment in crypto markets.</p>
 
 <div class="section">
-<div class="stack">
-
 <div class="generator">
 <div class="panel">
 <label>Search Crypto (Top 250)</label>
-<input id="search" list="coins" placeholder="BTC, SOL, BONK" />
+<input id="search" list="coins" placeholder="BTC, SOL, BONK">
 <datalist id="coins"></datalist>
 
 <div class="presets" id="presets"></div>
@@ -307,7 +291,9 @@ Generate a BlockState and share it anywhere.
 
 <div id="output"></div>
 </div>
+</div>
 
+<div class="section">
 <div class="trending panel">
 <select id="mode" onchange="App.renderTrending()">
 <option value="movers">Biggest Movers</option>
@@ -316,8 +302,6 @@ Generate a BlockState and share it anywhere.
 </select>
 <div id="list"></div>
 </div>
-
-</div>
 </div>
 </div>
 
@@ -325,6 +309,13 @@ Generate a BlockState and share it anywhere.
 <script>
 const App={
 coins:[],icons:{},current:null,
+
+fmtCap(v){
+if(v>=1e12) return '$'+(v/1e12).toFixed(2)+'T';
+if(v>=1e9) return '$'+(v/1e9).toFixed(2)+'B';
+if(v>=1e6) return '$'+(v/1e6).toFixed(2)+'M';
+return '$'+v.toLocaleString();
+},
 
 fmt(v){
 if(v>=1) return v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -339,7 +330,7 @@ this.coins=await r.json();
 await this.cacheIcons();
 this.populate();
 this.renderTrending();
-this.show(this.coins[0]);
+this.show(this.coins[0]); // BTC preload
 },
 
 async cacheIcons(){
@@ -387,7 +378,7 @@ return `
 <div class="stats">
 <div class="stat"><span>24h High</span>$${this.fmt(c.high_24h)}</div>
 <div class="stat"><span>24h Low</span>$${this.fmt(c.low_24h)}</div>
-<div class="stat"><span>Market Cap</span>$${(c.market_cap/1e9).toFixed(2)}B</div>
+<div class="stat"><span>Market Cap</span>${this.fmtCap(c.market_cap)}</div>
 <div class="stat"><span>MC Rank</span>#${c.market_cap_rank}</div>
 </div>
 
