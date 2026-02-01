@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BlockState — One block. One moment.</title>
+<title>BlockState</title>
 
 <style>
 :root{
@@ -22,97 +22,68 @@
 *{box-sizing:border-box;margin:0;padding:0}
 
 html,body{
-background:radial-gradient(1200px 600px at 70% -10%, #1d1d3a 0%, var(--bg) 60%);
+background:var(--bg);
 color:var(--text);
 font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 overflow-x:hidden;
 }
 
-/* ===== GLOBAL ===== */
-.container{
-max-width:1200px;
-margin:0 auto;
-padding:0 24px;
+/* ===== VERSION ===== */
+.version-badge{
+position:fixed;
+top:14px;
+left:14px;
+z-index:999;
+background:var(--bg3);
+border:1px solid var(--border);
+border-radius:10px;
+padding:8px 12px;
+font-size:.75rem;
+font-weight:700;
 }
 
-.section{
-padding:72px 0;
-}
-
-h1,h2,h3{
-font-weight:900;
-letter-spacing:-.4px;
-}
-
-p{
+.version-badge span{
+display:block;
+font-size:.65rem;
+font-weight:500;
 color:var(--muted);
-line-height:1.6;
+margin-top:2px;
 }
 
-/* ===== HEADER / TITLE ===== */
-.site-header{
-padding:36px 0 48px;
+/* ===== LAYOUT ===== */
+.container{
+max-width:1100px;
+margin:0 auto;
+padding:40px 20px 120px;
+}
+
+h1{
+font-size:3rem;
+font-weight:900;
 text-align:center;
-}
-
-.site-title{
-font-size:3.4rem;
 background:linear-gradient(120deg,#6c7cff,#8b5cf6,#22c55e);
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
 }
 
-.site-tagline{
-margin-top:10px;
-font-size:1.05rem;
-color:var(--muted);
-}
-
-/* ===== INFO / INSTRUCTIONS ===== */
-.info-card{
-max-width:900px;
-margin:0 auto;
-background:linear-gradient(135deg,var(--card),#1f1f30);
-border:1px solid var(--border);
-border-radius:26px;
-padding:36px;
-text-align:center;
-box-shadow:0 20px 60px rgba(0,0,0,.5);
-}
-
-.info-steps{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:24px;
-margin-top:28px;
-}
-
-.info-step{
-background:var(--bg3);
-border-radius:18px;
-padding:24px;
-}
-
-.info-step h3{
-margin-bottom:8px;
-font-size:1.1rem;
+.section{
+margin-top:60px;
 }
 
 /* ===== GENERATOR ===== */
-.generator-grid{
+.generator{
 display:grid;
-grid-template-columns:360px minmax(0,420px);
-gap:36px;
-justify-content:center;
+grid-template-columns:340px 1fr;
+gap:32px;
 align-items:flex-start;
-margin-top:48px;
+margin-top:32px;
 }
 
 .controls{
 background:linear-gradient(135deg,var(--card),#1f1f30);
 border:1px solid var(--border);
 border-radius:22px;
-padding:26px;
+padding:24px;
 }
 
 label{
@@ -130,7 +101,24 @@ border-radius:12px;
 border:2px solid var(--border);
 background:var(--bg3);
 color:var(--text);
-margin-bottom:18px;
+margin-bottom:14px;
+}
+
+.quick-buttons{
+display:flex;
+gap:8px;
+margin-bottom:16px;
+}
+
+.quick-buttons button{
+flex:1;
+padding:10px;
+border-radius:10px;
+border:1px solid var(--border);
+background:var(--bg3);
+color:white;
+font-weight:700;
+cursor:pointer;
 }
 
 button.primary{
@@ -144,12 +132,6 @@ background:linear-gradient(135deg,var(--accent),#8b5cf6);
 color:white;
 }
 
-.preview-wrap{
-display:flex;
-justify-content:center;
-align-items:flex-start;
-}
-
 /* ===== WIDGET ===== */
 .widget{
 background:linear-gradient(135deg,#1b1b2f,#12121d);
@@ -159,7 +141,13 @@ border:2px solid var(--border);
 box-shadow:0 20px 60px rgba(0,0,0,.6);
 width:100%;
 max-width:420px;
+animation:fadeUp .4s ease;
 position:relative;
+}
+
+@keyframes fadeUp{
+from{opacity:0;transform:translateY(12px)}
+to{opacity:1;transform:none}
 }
 
 .widget.positive{border-color:var(--green)}
@@ -244,7 +232,7 @@ font-size:.7rem;
 color:var(--muted);
 }
 
-/* share / export */
+/* share/export */
 .widget-actions{
 position:absolute;
 bottom:14px;
@@ -265,93 +253,76 @@ color:white;
 cursor:pointer;
 }
 
-/* ===== TRENDING ===== */
-.trending{
+/* ===== TRENDING LIST ===== */
+.trending-list{
+margin-top:28px;
+max-width:420px;
+margin-left:auto;
+margin-right:auto;
+}
+
+.trending-item{
+padding:14px 18px;
+border-bottom:1px solid var(--border);
+cursor:pointer;
 display:flex;
-gap:20px;
-overflow-x:auto;
-scroll-snap-type:x mandatory;
-padding-bottom:10px;
-cursor:grab;
-user-select:none;
+justify-content:space-between;
+font-weight:700;
 }
 
-.trending::-webkit-scrollbar{display:none}
-
-.trending .widget{
-flex:0 0 340px;
-scroll-snap-align:center;
+.trending-item:hover{
+background:var(--bg3);
 }
 
-/* ===== RESPONSIVE ===== */
+/* ===== MOBILE ===== */
 @media(max-width:900px){
-.info-steps{grid-template-columns:1fr}
-.generator-grid{grid-template-columns:1fr}
+.generator{grid-template-columns:1fr}
 }
 </style>
 </head>
 
 <body>
 
-<!-- SITE TITLE -->
-<header class="site-header container">
-<h1 class="site-title">BlockState</h1>
-<p class="site-tagline">One block. One moment.</p>
-</header>
+<div class="version-badge">
+v6.1.0
+<span>Auto-refreshes every 2 minutes</span>
+</div>
 
-<!-- WHAT IS BLOCKSTATE -->
-<section class="section container">
-<div class="info-card">
-<p>
-<strong>BlockState</strong> captures a crypto asset’s market state at a single moment in time —
-price, rank, and key metrics frozen for sharing.
-</p>
+<div class="container">
+<h1>BlockState</h1>
 
-<div class="info-steps">
-<div class="info-step">
-<h3>1. Generate</h3>
-<p>Create a BlockState for any major crypto.</p>
-</div>
-<div class="info-step">
-<h3>2. Capture</h3>
-<p>Lock in price, rank, and market context.</p>
-</div>
-<div class="info-step">
-<h3>3. Share</h3>
-<p>Export an image or post it anywhere.</p>
-</div>
-</div>
-</div>
-</section>
+<div class="section">
+<div class="generator">
 
-<!-- GENERATOR -->
-<section class="section container">
-<h2 style="text-align:center;margin-bottom:32px">Create a BlockState</h2>
-
-<div class="generator-grid">
 <div class="controls">
 <label>Search Crypto (Top 250)</label>
 <input id="coinInput" list="coinList" placeholder="BTC, SOL, BONK">
 <datalist id="coinList"></datalist>
 
+<div class="quick-buttons">
+<button onclick="App.generateById('bitcoin')">BTC</button>
+<button onclick="App.generateById('ethereum')">ETH</button>
+<button onclick="App.generateById('solana')">SOL</button>
+<button onclick="App.generateById('bonk')">BONK</button>
+<button onclick="App.generateById('bnb')">BNB</button>
+</div>
+
 <button class="primary" onclick="App.generate()">Generate BlockState</button>
 </div>
 
-<div id="preview" class="preview-wrap">
-<div style="opacity:.6">Your BlockState will appear here</div>
+<div id="preview">
+<div style="opacity:.5">Select a crypto to generate</div>
+</div>
+
 </div>
 </div>
-</section>
 
-<!-- TRENDING -->
-<section class="section container">
-<h2 style="text-align:center;margin-bottom:28px">Trending BlockStates</h2>
-<div id="trending" class="trending"></div>
-</section>
+<div class="section">
+<h2 style="text-align:center;margin-bottom:16px">Trending (Top 10)</h2>
+<div id="trending" class="trending-list"></div>
+</div>
 
-<footer class="section container" style="text-align:center;font-size:.75rem;color:var(--muted)">
-© BlockState.live
-</footer>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
@@ -366,7 +337,7 @@ if(v>=0.0001) return v.toFixed(6);
 return v.toFixed(8);
 },
 
-async init(){
+async load(){
 const r=await fetch(
 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1'
 );
@@ -377,6 +348,7 @@ this.renderTrending();
 
 populateList(){
 const list=document.getElementById('coinList');
+list.innerHTML='';
 this.coins.forEach(c=>{
 const o=document.createElement('option');
 o.value=`${c.symbol.toUpperCase()} — ${c.name}`;
@@ -411,15 +383,14 @@ ${pos?'▲':'▼'} ${c.price_change_percentage_24h.toFixed(2)}%
 </div>
 
 <div class="widget-footer">
-Captured • ${new Date().toUTCString()}<br>
-BLOCKSTATE.LIVE
+Captured • ${new Date().toUTCString()}<br>BLOCKSTATE.LIVE
 </div>
 
 <div class="widget-actions left">
-<button class="icon-btn">⤴</button>
+<button class="icon-btn" onclick="App.share()">⤴</button>
 </div>
 <div class="widget-actions right">
-<button class="icon-btn">⤓</button>
+<button class="icon-btn" onclick="App.export()">⤓</button>
 </div>
 </div>`;
 },
@@ -430,7 +401,13 @@ el.innerHTML='';
 [...this.coins]
 .sort((a,b)=>Math.abs(b.price_change_percentage_24h)-Math.abs(a.price_change_percentage_24h))
 .slice(0,10)
-.forEach(c=>el.innerHTML+=this.build(c));
+.forEach(c=>{
+const d=document.createElement('div');
+d.className='trending-item';
+d.innerHTML=`<span>${c.name}</span><span>${c.price_change_percentage_24h.toFixed(2)}%</span>`;
+d.onclick=()=>this.show(c);
+el.appendChild(d);
+});
 },
 
 findCoin(){
@@ -441,11 +418,34 @@ return this.coins.find(c=>v.includes(c.symbol)||v.includes(c.name.toLowerCase())
 generate(){
 const c=this.findCoin();
 if(!c){alert('Select a crypto');return;}
+this.show(c);
+},
+
+generateById(id){
+const c=this.coins.find(x=>x.id===id);
+this.show(c);
+},
+
+show(c){
 document.getElementById('preview').innerHTML=this.build(c);
+},
+
+async export(){
+const w=document.querySelector('.widget');
+const canvas=await html2canvas(w,{scale:2,backgroundColor:'#12121d'});
+const a=document.createElement('a');
+a.href=canvas.toDataURL();
+a.download='blockstate.png';
+a.click();
+},
+
+share(){
+alert('Share API hook ready');
 }
 };
 
-App.init();
+App.load();
+setInterval(()=>App.load(),120000);
 </script>
 
 </body>
