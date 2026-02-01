@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>BlockState — Crypto</title>
+<title>BlockState</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
@@ -37,51 +37,94 @@ z-index:0;
 pointer-events:none;
 }
 
-/* VERSION */
-.bottom-left{
+/* NAV */
+nav{
 position:fixed;
-bottom:14px;
-left:14px;
-z-index:10;
+top:0;
+width:100%;
+z-index:20;
 display:flex;
-gap:8px;
+justify-content:center;
+gap:20px;
+padding:14px;
+background:rgba(7,7,12,.6);
+backdrop-filter:blur(8px);
 }
-.badge{
-background:#0e0e18;
-border:1px solid var(--border);
-border-radius:12px;
-padding:8px 12px;
-font-size:.7rem;
-font-weight:700;
+nav a{
+color:var(--muted);
+text-decoration:none;
+font-weight:800;
+font-size:.75rem;
+letter-spacing:.2em;
 }
+nav a:hover{color:white}
 
-/* LAYOUT */
-.container{
+/* SECTIONS */
+section{
 position:relative;
 z-index:2;
-max-width:1200px;
-margin:0 auto;
-padding:70px 20px 120px;
-text-align:center;
+min-height:100vh;
+padding:120px 20px;
+display:flex;
+justify-content:center;
+align-items:center;
 }
 
-h1{
-font-size:3.1rem;
+/* LANDING */
+.hero{
+text-align:center;
+max-width:720px;
+}
+.hero h1{
+font-size:3.4rem;
 font-weight:900;
+color:var(--accent);
 letter-spacing:-.02em;
+}
+.hero p{
+margin-top:16px;
+font-size:1.05rem;
+color:var(--muted);
+line-height:1.6;
+}
+.hero .primary{
+margin-top:30px;
+padding:16px 26px;
+border-radius:16px;
+border:none;
+font-weight:900;
+cursor:pointer;
+background:linear-gradient(135deg,var(--accent),#8b5cf6);
+color:white;
+font-size:.9rem;
+}
+
+/* CRYPTO PAGE */
+.container{
+max-width:1200px;
+width:100%;
+margin:0 auto;
+}
+
+.header-title{
+text-align:center;
+margin-bottom:50px;
+}
+.header-title h2{
+font-size:2.8rem;
+font-weight:900;
 color:var(--accent);
 }
-
-.subtitle{
+.header-title span{
+display:block;
 margin-top:6px;
-font-size:.75rem;
+font-size:.7rem;
 letter-spacing:.35em;
 color:var(--muted);
 }
 
 /* GRID */
 .main{
-margin-top:50px;
 display:grid;
 grid-template-columns:420px 420px;
 gap:36px;
@@ -95,7 +138,6 @@ background:linear-gradient(180deg,var(--panel),var(--panel2));
 border:1px solid var(--border);
 border-radius:20px;
 padding:22px;
-text-align:left;
 }
 
 label{
@@ -168,14 +210,26 @@ border-radius:50%;
 .up{color:var(--up)}
 .down{color:var(--down)}
 
-/* WIDGET */
+/* SWIPEABLE SHARE */
+.swipe-wrap{
+overflow-x:auto;
+display:flex;
+gap:16px;
+scroll-snap-type:x mandatory;
+padding-bottom:6px;
+}
+.swipe-wrap::-webkit-scrollbar{display:none}
+
 .widget{
+min-width:360px;
+scroll-snap-align:center;
 background:linear-gradient(180deg,#14142a,#0e0e1c);
 border-radius:22px;
 padding:24px;
 border:1px solid var(--border);
 }
 
+/* WIDGET CONTENT */
 .header{
 display:flex;
 justify-content:space-between;
@@ -207,14 +261,12 @@ letter-spacing:.12em;
 color:var(--muted);
 }
 
-/* BIG CHANGE */
 .change{
 font-size:2.6rem;
 font-weight:900;
 line-height:1;
 }
 
-/* PRICE */
 .price{
 text-align:center;
 font-size:2.6rem;
@@ -222,7 +274,6 @@ font-weight:900;
 margin:22px 0 18px;
 }
 
-/* STATS */
 .stats{
 display:grid;
 grid-template-columns:1fr 1fr;
@@ -249,32 +300,20 @@ font-size:.95rem;
 font-weight:700;
 }
 
-.footer{
-border-top:1px solid var(--border);
-padding-top:12px;
-margin-top:14px;
-font-size:.6rem;
-text-align:center;
-color:var(--muted);
-letter-spacing:.08em;
-}
-
-/* SHARE (REDESIGNED) */
+/* SHARE */
 .share{
-margin-top:18px;
+margin-top:16px;
 display:flex;
 flex-direction:column;
-gap:14px;
+gap:12px;
 }
 
 .caption-card{
 background:#0b0b18;
 border:1px solid var(--border);
-border-radius:18px;
-padding:16px;
+border-radius:16px;
+padding:14px;
 font-size:.85rem;
-line-height:1.5;
-color:var(--text);
 white-space:pre-wrap;
 }
 
@@ -302,6 +341,7 @@ color:var(--up);
 /* MOBILE */
 @media(max-width:900px){
 .main{grid-template-columns:1fr}
+.hero h1{font-size:2.6rem}
 }
 </style>
 </head>
@@ -310,20 +350,35 @@ color:var(--up);
 
 <canvas id="particles"></canvas>
 
-<div class="bottom-left">
-<div class="badge">v6.9.3</div>
-</div>
+<nav>
+<a href="#home">HOME</a>
+<a href="#crypto">CRYPTO</a>
+</nav>
 
-<div class="container">
+<!-- LANDING -->
+<section id="home">
+<div class="hero">
 <h1>BlockState</h1>
-<div class="subtitle">CRYPTO</div>
+<p>A fast, visual snapshot of the current state of anything — designed to be shared.</p>
+<button class="primary" onclick="location.href='#crypto'">Create Crypto BlockState</button>
+</div>
+</section>
+
+<!-- CRYPTO -->
+<section id="crypto">
+<div class="container">
+
+<div class="header-title">
+<h2>BlockState</h2>
+<span>CRYPTO</span>
+</div>
 
 <div class="main">
 
 <!-- CREATE -->
 <div>
 <div class="panel">
-<label>Search Crypto (Top 250)</label>
+<label>Search Crypto</label>
 <input id="search" list="coins" placeholder="e.g. Bitcoin">
 <datalist id="coins"></datalist>
 
@@ -340,17 +395,12 @@ color:var(--up);
 </div>
 </div>
 
-<!-- CAPTURE / SHARE -->
+<!-- SWIPE SHARE -->
 <div>
-<div id="output"></div>
+<div class="swipe-wrap" id="output"></div>
 
 <div class="panel share">
-<button class="primary" onclick="App.saveImage()">Save BlockState</button>
-
-<div class="caption-card" id="caption">
-Generate a caption to share this BlockState.
-</div>
-
+<div class="caption-card" id="caption">Generate a caption to share this BlockState.</div>
 <div class="share-actions">
 <button class="secondary" onclick="App.makeCaption()">Generate Caption</button>
 <button class="secondary" id="copyBtn" onclick="App.copyCaption()">Copy Caption</button>
@@ -360,6 +410,7 @@ Generate a caption to share this BlockState.
 
 </div>
 </div>
+</section>
 
 <script>
 /* PARTICLES */
@@ -385,7 +436,11 @@ tick();
 /* APP */
 const App={
 coins:[],current:null,
-fmt(v){return Number(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});},
+fmtPrice(v){
+if(v>=1)return v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+if(v>=0.01)return v.toFixed(4);
+return v.toFixed(6);
+},
 fmtCap(v){
 if(v>=1e12)return (v/1e12).toFixed(2)+' T';
 if(v>=1e9)return (v/1e9).toFixed(2)+' B';
@@ -425,8 +480,17 @@ if(c)this.show(c);
 },
 show(c){
 this.current=c;
+output.innerHTML=`
+<div class="widget">
+${this.cardHTML(c,true)}
+</div>
+<div class="widget">
+${this.cardHTML(c,false)}
+</div>`;
+},
+cardHTML(c,full){
 const up=c.price_change_percentage_24h>=0;
-output.innerHTML=`<div class="widget" id="widget">
+return `
 <div class="header">
 <div class="asset">
 <img src="${c.image}">
@@ -439,31 +503,20 @@ output.innerHTML=`<div class="widget" id="widget">
 ${up?'▲':'▼'} ${Math.abs(c.price_change_percentage_24h).toFixed(2)}%
 </div>
 </div>
-
-<div class="price">$${this.fmt(c.current_price)}</div>
-
+<div class="price">$${this.fmtPrice(c.current_price)}</div>
+${full?`
 <div class="stats">
-<div class="stat"><span>24H HIGH</span><strong>$${this.fmt(c.high_24h)}</strong></div>
-<div class="stat"><span>24H LOW</span><strong>$${this.fmt(c.low_24h)}</strong></div>
+<div class="stat"><span>24H HIGH</span><strong>$${this.fmtPrice(c.high_24h)}</strong></div>
+<div class="stat"><span>24H LOW</span><strong>$${this.fmtPrice(c.low_24h)}</strong></div>
 <div class="stat"><span>MARKET CAP</span><strong>${this.fmtCap(c.market_cap)}</strong></div>
 <div class="stat"><span>MC RANK</span><strong>#${c.market_cap_rank}</strong></div>
-</div>
-
-<div class="footer">CAPTURED • ${new Date().toUTCString()}</div>
-</div>`;
-},
-saveImage(){
-html2canvas(widget,{backgroundColor:null,useCORS:true}).then(c=>{
-const a=document.createElement("a");
-a.download="blockstate.png";
-a.href=c.toDataURL();
-a.click();
-});
+</div>`:""}`;
 },
 makeCaption(){
-const c=this.current;if(!c)return;
+const c=this.current;
 caption.textContent=
-`${c.name} is ${c.price_change_percentage_24h>=0?'up':'down'} ${Math.abs(c.price_change_percentage_24h).toFixed(2)}% in the last 24 hours, trading at $${this.fmt(c.current_price)}.
+`${c.name} is ${c.price_change_percentage_24h>=0?'up':'down'} ${Math.abs(c.price_change_percentage_24h).toFixed(2)}% in the last 24 hours.
+Price: $${this.fmtPrice(c.current_price)}.
 #${c.symbol.toUpperCase()} #Crypto #BlockState`;
 },
 copyCaption(){
