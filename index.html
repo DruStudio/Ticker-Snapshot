@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>BlockState</title>
 
+<!-- html2canvas for image export -->
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <style>
@@ -29,7 +30,9 @@ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 overflow-x:hidden;
 }
 
-/* PARTICLES */
+/* ===============================
+   PARTICLES
+   =============================== */
 canvas#particles{
 position:fixed;
 inset:0;
@@ -37,7 +40,9 @@ z-index:0;
 pointer-events:none;
 }
 
-/* VERSION */
+/* ===============================
+   VERSION + FAQ
+   =============================== */
 .bottom-left{
 position:fixed;
 bottom:14px;
@@ -46,6 +51,7 @@ z-index:10;
 display:flex;
 gap:8px;
 }
+
 .badge{
 background:#10101a;
 border:1px solid var(--border);
@@ -55,7 +61,9 @@ font-size:.75rem;
 font-weight:700;
 }
 
-/* LAYOUT */
+/* ===============================
+   LAYOUT
+   =============================== */
 .container{
 position:relative;
 z-index:2;
@@ -80,6 +88,9 @@ letter-spacing:.4em;
 color:var(--muted);
 }
 
+/* ===============================
+   GRID
+   =============================== */
 .main{
 display:grid;
 grid-template-columns:420px 420px;
@@ -88,12 +99,22 @@ justify-content:center;
 align-items:start;
 }
 
-/* PANELS */
+/* ===============================
+   PANELS
+   =============================== */
 .panel{
 background:linear-gradient(135deg,var(--panel),#1d1d32);
 border:1px solid var(--border);
 border-radius:20px;
 padding:22px;
+}
+
+label{
+font-size:.7rem;
+font-weight:700;
+color:var(--muted);
+margin-bottom:6px;
+display:block;
 }
 
 input{
@@ -135,13 +156,19 @@ color:white;
 margin-bottom:18px;
 }
 
-/* TRENDING */
+/* ===============================
+   TRENDING
+   =============================== */
 .trending h3{
 font-size:.75rem;
 margin-bottom:8px;
 color:var(--muted);
 }
-.trending ul{list-style:none}
+
+.trending ul{
+list-style:none;
+}
+
 .trending li{
 display:flex;
 justify-content:space-between;
@@ -149,25 +176,42 @@ padding:10px 6px;
 border-bottom:1px solid var(--border);
 cursor:pointer;
 }
+
+.trending li:last-child{border-bottom:none}
 .up{color:var(--green)}
 .down{color:var(--red)}
 
-/* WIDGET */
+/* ===============================
+   WIDGET
+   =============================== */
 .widget{
 background:var(--panel2);
 border-radius:22px;
 padding:22px;
 border:2px solid var(--border);
-animation:enter .25s ease;
-}
-
-@keyframes enter{
-from{opacity:0;transform:scale(.97)}
-to{opacity:1;transform:scale(1)}
+position:relative;
+overflow:hidden;
 }
 
 .widget.positive{border-color:var(--green)}
 .widget.negative{border-color:var(--red)}
+
+.flash{
+position:absolute;
+inset:0;
+background:white;
+opacity:0;
+pointer-events:none;
+}
+
+.flash.active{
+animation:flash .35s ease;
+}
+
+@keyframes flash{
+0%{opacity:.8}
+100%{opacity:0}
+}
 
 .header{
 display:flex;
@@ -197,6 +241,7 @@ border-radius:50%;
 font-size:1.4rem;
 font-weight:900;
 }
+
 .change.positive{color:var(--green)}
 .change.negative{color:var(--red)}
 
@@ -219,11 +264,30 @@ border-radius:14px;
 padding:10px;
 text-align:center;
 }
+
 .stat span{
 display:block;
 font-size:.65rem;
 color:var(--muted);
 margin-bottom:4px;
+}
+
+.actions{
+display:flex;
+justify-content:space-between;
+margin-top:14px;
+}
+
+.action-btn{
+width:40px;
+height:40px;
+border-radius:50%;
+background:#10101a;
+border:1px solid var(--border);
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
 }
 
 .footer{
@@ -235,27 +299,39 @@ color:var(--muted);
 text-align:center;
 }
 
-/* SHARE */
+/* ===============================
+   SHARE EXAMPLES
+   =============================== */
 .share{
 margin-top:14px;
 }
-.share-actions{
-display:flex;
-justify-content:center;
-gap:12px;
-margin-top:14px;
-}
-.share-actions button{
-padding:10px 16px;
-border-radius:999px;
-background:#10101a;
-border:1px solid var(--border);
-color:white;
-font-weight:800;
-cursor:pointer;
+
+.share-carousel{
+position:relative;
+height:120px;
+overflow:hidden;
 }
 
-/* MOBILE */
+.share-card{
+position:absolute;
+inset:0;
+background:linear-gradient(135deg,var(--panel),#1d1d32);
+border:1px dashed var(--border);
+border-radius:18px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:.8rem;
+color:var(--muted);
+opacity:0;
+transition:.6s;
+}
+
+.share-card.active{opacity:1}
+
+/* ===============================
+   MOBILE
+   =============================== */
 @media(max-width:900px){
 .main{grid-template-columns:1fr}
 h1{font-size:2.4rem}
@@ -268,7 +344,7 @@ h1{font-size:2.4rem}
 <canvas id="particles"></canvas>
 
 <div class="bottom-left">
-<div class="badge">v6.7.3</div>
+<div class="badge">v6.7.2</div>
 <div class="badge">FAQ</div>
 </div>
 
@@ -281,7 +357,9 @@ h1{font-size:2.4rem}
 <div>
 <div class="section-title">CREATE</div>
 <div class="panel">
-<input id="search" placeholder="e.g BTC">
+<label>Search Crypto (Top 250)</label>
+<input id="search" list="coins" placeholder="BTC, SOL, BONK">
+<datalist id="coins"></datalist>
 
 <div class="presets" id="presets"></div>
 
@@ -301,10 +379,10 @@ h1{font-size:2.4rem}
 
 <div class="section-title">SHARE</div>
 <div class="share">
-<div class="share-actions">
-<button onclick="App.shareX()">X</button>
-<button onclick="App.shareIG()">Instagram</button>
-<button onclick="App.shareMsg()">Messages</button>
+<div class="share-carousel" id="shareCarousel">
+<div class="share-card active">Instagram Story</div>
+<div class="share-card">X / Twitter</div>
+<div class="share-card">Save & Send</div>
 </div>
 </div>
 </div>
@@ -313,15 +391,17 @@ h1{font-size:2.4rem}
 </div>
 
 <script>
-/* PARTICLES */
+/* ===============================
+   PARTICLES
+   =============================== */
 const canvas=document.getElementById("particles");
 const ctx=canvas.getContext("2d");
 let w,h,particles=[];
 function resize(){
-w=canvas.width=innerWidth;
-h=canvas.height=innerHeight;
+w=canvas.width=window.innerWidth;
+h=canvas.height=window.innerHeight;
 }
-addEventListener("resize",resize);
+window.addEventListener("resize",resize);
 resize();
 
 for(let i=0;i<80;i++){
@@ -333,7 +413,8 @@ vy:(Math.random()-.5)*.3,
 r:Math.random()*1.2+0.3
 });
 }
-(function tick(){
+
+function tick(){
 ctx.clearRect(0,0,w,h);
 ctx.fillStyle="rgba(108,124,255,.35)";
 particles.forEach(p=>{
@@ -345,11 +426,15 @@ ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
 ctx.fill();
 });
 requestAnimationFrame(tick);
-})();
+}
+tick();
 
-/* APP */
+/* ===============================
+   APP
+   =============================== */
 const App={
 coins:[],
+shareIndex:0,
 
 fmtCap(v){
 if(v>=1e12)return'$'+(v/1e12).toFixed(2)+'T';
@@ -372,7 +457,13 @@ this.show(this.coins[0]);
 },
 
 populate(){
+const dl=document.getElementById("coins");
 const p=document.getElementById("presets");
+this.coins.forEach(c=>{
+const o=document.createElement("option");
+o.value=`${c.symbol.toUpperCase()} — ${c.name}`;
+dl.appendChild(o);
+});
 this.coins.slice(0,5).forEach(c=>{
 const b=document.createElement("button");
 b.textContent=c.symbol.toUpperCase();
@@ -383,7 +474,6 @@ p.appendChild(b);
 
 renderTrending(){
 const list=document.getElementById("trendList");
-list.innerHTML="";
 this.coins
 .sort((a,b)=>b.price_change_percentage_24h-a.price_change_percentage_24h)
 .slice(0,10)
@@ -401,7 +491,9 @@ list.appendChild(li);
 build(c){
 const pos=c.price_change_percentage_24h>=0;
 return `
-<div class="widget ${pos?'positive':'negative'}">
+<div class="widget ${pos?'positive':'negative'}" id="widget">
+<div class="flash"></div>
+
 <div class="header">
 <div class="left">
 <img class="coin-img" src="${c.image}">
@@ -424,6 +516,11 @@ ${pos?'▲':'▼'} ${c.price_change_percentage_24h.toFixed(2)}%
 <div class="stat"><span>MC Rank</span>#${c.market_cap_rank}</div>
 </div>
 
+<div class="actions">
+<div class="action-btn" onclick="App.share()">↗</div>
+<div class="action-btn" onclick="App.save()">⬇</div>
+</div>
+
 <div class="footer">
 Captured • ${new Date().toUTCString()}<br>BLOCKSTATE.LIVE
 </div>
@@ -432,6 +529,9 @@ Captured • ${new Date().toUTCString()}<br>BLOCKSTATE.LIVE
 
 show(c){
 document.getElementById("output").innerHTML=this.build(c);
+const flash=document.querySelector(".flash");
+flash.classList.add("active");
+setTimeout(()=>flash.classList.remove("active"),350);
 },
 
 generate(){
@@ -440,29 +540,36 @@ const c=this.coins.find(x=>v.includes(x.symbol)||v.includes(x.name.toLowerCase()
 if(c)this.show(c);
 },
 
-capture(){
-return html2canvas(document.querySelector(".widget"),{backgroundColor:null});
+save(){
+const widget=document.getElementById("widget");
+document.querySelectorAll(".action-btn").forEach(b=>b.style.display="none");
+html2canvas(widget,{backgroundColor:null}).then(c=>{
+const a=document.createElement("a");
+a.download="blockstate.png";
+a.href=c.toDataURL();
+a.click();
+document.querySelectorAll(".action-btn").forEach(b=>b.style.display="flex");
+});
 },
 
-shareX(){
-window.open("https://twitter.com/intent/tweet?text=Captured%20with%20BlockState%20https://blockstate.live","_blank");
-},
-shareIG(){
-alert("Image ready — upload to Instagram.");
-},
-shareMsg(){
-this.capture().then(c=>{
-c.toBlob(b=>{
-navigator.share({
-files:[new File([b],"blockstate.png",{type:"image/png"})],
-title:"BlockState",
-url:"https://blockstate.live"
-});
-});
+share(){
+if(navigator.share){
+navigator.share({title:"BlockState",url:location.href});
+}else{
+alert("Sharing supported on mobile devices.");
+}
 }
 };
 
-document.addEventListener("DOMContentLoaded",()=>App.load());
+document.addEventListener("DOMContentLoaded",()=>{
+App.load();
+setInterval(()=>{
+const cards=document.querySelectorAll(".share-card");
+cards.forEach(c=>c.classList.remove("active"));
+App.shareIndex=(App.shareIndex+1)%cards.length;
+cards[App.shareIndex].classList.add("active");
+},3000);
+});
 </script>
 
 </body>
