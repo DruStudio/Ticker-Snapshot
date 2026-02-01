@@ -1,3 +1,6 @@
+<!-- =========================
+index.html — FULL WORKING FILE
+========================= -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,11 +13,11 @@
 <style>
 :root{
 --bg:#07070c;
+--panel:#0b0b18;
+--border:#24243a;
 --text:#ffffff;
 --muted:#a3a8c2;
 --accent:#6c7cff;
---border:#24243a;
---panel:#0b0b18;
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
@@ -34,14 +37,14 @@ top:0;
 width:100%;
 display:flex;
 justify-content:center;
-gap:24px;
+gap:28px;
 padding:14px;
 z-index:5;
 }
 nav a{
 color:var(--muted);
 text-decoration:none;
-font-weight:800;
+font-weight:900;
 font-size:.75rem;
 letter-spacing:.25em;
 }
@@ -80,36 +83,9 @@ color:var(--muted);
 max-width:640px;
 }
 
-/* CRYPTO CTA (LIVE PULSE) */
-.cta{
-margin-top:30px;
-padding:16px 34px;
-border-radius:18px;
-background:linear-gradient(135deg,var(--accent),#8b5cf6);
-color:white;
-text-decoration:none;
-font-weight:900;
-position:relative;
-}
-
-.cta::after{
-content:"";
-position:absolute;
-inset:-4px;
-border-radius:22px;
-box-shadow:0 0 0 rgba(108,124,255,.7);
-animation:pulse 2.4s infinite;
-}
-
-@keyframes pulse{
-0%{box-shadow:0 0 0 0 rgba(108,124,255,.65)}
-70%{box-shadow:0 0 0 18px rgba(108,124,255,0)}
-100%{box-shadow:0 0 0 0 rgba(108,124,255,0)}
-}
-
 /* ICON GRID */
 .icons{
-margin-top:44px;
+margin-top:42px;
 width:100%;
 max-width:560px;
 display:grid;
@@ -125,6 +101,25 @@ padding:18px;
 font-weight:900;
 font-size:.9rem;
 text-align:center;
+cursor:pointer;
+position:relative;
+}
+
+/* LIVE GLOW */
+.icon.live::after{
+content:"";
+position:absolute;
+inset:-4px;
+border-radius:22px;
+box-shadow:0 0 0 rgba(108,124,255,.7);
+animation:pulse 2.4s infinite;
+pointer-events:none;
+}
+
+@keyframes pulse{
+0%{box-shadow:0 0 0 0 rgba(108,124,255,.65)}
+70%{box-shadow:0 0 0 18px rgba(108,124,255,0)}
+100%{box-shadow:0 0 0 0 rgba(108,124,255,0)}
 }
 
 .icon span{
@@ -135,14 +130,9 @@ letter-spacing:.18em;
 color:var(--muted);
 }
 
-/* MOBILE */
 @media(max-width:520px){
+.icons{grid-template-columns:1fr;max-width:320px}
 h1{font-size:3rem}
-.tagline{font-size:.95rem}
-.icons{
-grid-template-columns:1fr;
-max-width:320px;
-}
 }
 </style>
 </head>
@@ -158,54 +148,46 @@ max-width:320px;
 
 <div class="container">
 <h1>BlockState</h1>
-
 <div class="tagline">
 A clean, visual snapshot of the current state of something — built to be shared.
 </div>
 
-<a class="cta" href="crypto.html">Crypto</a>
-
 <div class="icons">
-<div class="icon">Crypto<span>LIVE</span></div>
-<div class="icon">Stocks<span>UNDER CONSTRUCTION</span></div>
-<div class="icon">Ideas<span>UNDER CONSTRUCTION</span></div>
-<div class="icon">Memes<span>UNDER CONSTRUCTION</span></div>
+<div class="icon live" onclick="location.href='crypto.html'">
+Crypto
+<span>LIVE</span>
+</div>
+<div class="icon">
+Stocks
+<span>UNDER CONSTRUCTION</span>
+</div>
+<div class="icon">
+Ideas
+<span>UNDER CONSTRUCTION</span>
+</div>
+<div class="icon">
+Memes
+<span>UNDER CONSTRUCTION</span>
+</div>
 </div>
 </div>
 
 <script>
-const canvas=document.getElementById("particles");
-const ctx=canvas.getContext("2d");
-let w,h,particles=[];
-function resize(){
-w=canvas.width=window.innerWidth;
-h=canvas.height=window.innerHeight;
-}
-addEventListener("resize",resize);
-resize();
-
-for(let i=0;i<120;i++){
-particles.push({
-x:Math.random()*w,
-y:Math.random()*h,
-vx:(Math.random()-.5)*.25,
-vy:(Math.random()-.5)*.25,
-r:Math.random()*1.6+.4
+const c=document.getElementById("particles"),x=c.getContext("2d");
+let w,h,p=[];
+function r(){w=c.width=innerWidth;h=c.height=innerHeight}
+addEventListener("resize",r);r();
+for(let i=0;i<120;i++)p.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,r:Math.random()*1.6+.4});
+(function t(){
+x.clearRect(0,0,w,h);
+x.fillStyle="rgba(108,124,255,.45)";
+p.forEach(o=>{
+o.x+=o.vx;o.y+=o.vy;
+if(o.x<0)o.x=w;if(o.x>w)o.x=0;
+if(o.y<0)o.y=h;if(o.y>h)o.y=0;
+x.beginPath();x.arc(o.x,o.y,o.r,0,Math.PI*2);x.fill();
 });
-}
-
-(function tick(){
-ctx.clearRect(0,0,w,h);
-ctx.fillStyle="rgba(108,124,255,.45)";
-particles.forEach(p=>{
-p.x+=p.vx;p.y+=p.vy;
-if(p.x<0)p.x=w;if(p.x>w)p.x=0;
-if(p.y<0)p.y=h;if(p.y>h)p.y=0;
-ctx.beginPath();
-ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-ctx.fill();
-});
-requestAnimationFrame(tick);
+requestAnimationFrame(t);
 })();
 </script>
 
