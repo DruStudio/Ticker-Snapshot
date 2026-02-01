@@ -254,25 +254,6 @@ font-weight:800;
 margin-bottom:6px;
 }
 
-/* FAQ */
-.faq-modal{
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.65);
-display:none;
-align-items:center;
-justify-content:center;
-z-index:20;
-}
-.faq-box{
-background:var(--panel);
-border:1px solid var(--border);
-border-radius:20px;
-padding:24px;
-max-width:480px;
-line-height:1.5;
-}
-
 @media(max-width:900px){
 .main{grid-template-columns:1fr}
 h1{font-size:2.4rem}
@@ -285,7 +266,7 @@ h1{font-size:2.4rem}
 <canvas id="particles"></canvas>
 
 <div class="bottom-left">
-<div class="badge">v6.8.3</div>
+<div class="badge">v6.8.1</div>
 <div class="badge" onclick="FAQ.open()">FAQ</div>
 </div>
 
@@ -329,12 +310,12 @@ h1{font-size:2.4rem}
 </div>
 
 <!-- FAQ -->
-<div class="faq-modal" id="faq">
-<div class="faq-box">
+<div class="faq-modal" id="faq" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);align-items:center;justify-content:center;z-index:20">
+<div class="panel" style="max-width:460px">
 <h3>What is BlockState?</h3>
 <p>BlockState creates verifiable snapshots of crypto market conditions you can save and share.</p>
-<h3>How do I use it?</h3>
-<p>Select a coin, generate a BlockState, then click Generate Shareables.</p>
+<h3>How do I share?</h3>
+<p>Click “Generate Shareables” to save the image and auto-generate a caption.</p>
 <button class="primary" onclick="FAQ.close()">Close</button>
 </div>
 </div>
@@ -395,29 +376,9 @@ return'$'+v.toLocaleString();
 async load(){
 const r=await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1");
 this.coins=await r.json();
-
-/* 🔒 FIX: convert images to base64 */
-for(const c of this.coins){
-c.img64 = await this.toBase64(c.image);
-}
-
 this.populate();
 this.renderTrending();
 this.show(this.coins[0]);
-},
-
-toBase64(url){
-return new Promise(res=>{
-const img=new Image();
-img.crossOrigin="anonymous";
-img.onload=()=>{
-const c=document.createElement("canvas");
-c.width=img.width;c.height=img.height;
-c.getContext("2d").drawImage(img,0,0);
-res(c.toDataURL("image/png"));
-};
-img.src=url;
-});
 },
 
 populate(){
@@ -462,7 +423,7 @@ return `
 <div class="widget ${up?'positive':'negative'}" id="widget">
 <div class="header">
 <div class="left">
-<img class="coin-img" src="${c.img64}">
+<img class="coin-img" src="${c.image}" crossorigin="anonymous">
 <div>
 <div class="name">${c.name}</div>
 <div class="symbol">${c.symbol.toUpperCase()}</div>
@@ -504,7 +465,7 @@ this.showCaption();
 },
 
 saveImage(){
-html2canvas(document.getElementById("widget"),{backgroundColor:null}).then(c=>{
+html2canvas(document.getElementById("widget"),{backgroundColor:null,useCORS:true}).then(c=>{
 const a=document.createElement("a");
 a.download="blockstate.png";
 a.href=c.toDataURL();
@@ -515,6 +476,7 @@ a.click();
 showCaption(){
 const out=document.getElementById("shareOutput");
 const c=this.current;
+if(!c)return;
 const up=c.price_change_percentage_24h>=0;
 const text=`${c.name} is ${up?'up':'down'} ${Math.abs(c.price_change_percentage_24h).toFixed(2)}% in 24 hours. #${c.symbol.toUpperCase()} #BlockState`;
 navigator.clipboard.writeText(text);
