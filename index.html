@@ -15,18 +15,27 @@
         h1{font-size:2.5rem;font-weight:800;background:linear-gradient(135deg,var(--accent),#8b5cf6,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px}
         .subtitle{color:var(--text2);font-size:1.1rem}
         .carousel{width:100%;margin:0 auto 60px;overflow:hidden}
-        .carousel-inner{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;padding:20px 0;scrollbar-width:thin;scrollbar-color:var(--accent) transparent}
+        .carousel-inner{display:flex;gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;padding:24px 0;scrollbar-width:thin;scrollbar-color:var(--accent) transparent}
         .carousel-inner::-webkit-scrollbar{height:8px}
         .carousel-inner::-webkit-scrollbar-track{background:transparent}
         .carousel-inner::-webkit-scrollbar-thumb{background:var(--accent);border-radius:4px}
-        .card{min-width:360px;max-width:360px;height:200px;background:var(--bg3);border:3px solid var(--border);border-radius:16px;padding:22px;cursor:pointer;transition:all 0.4s;flex-shrink:0;scroll-snap-align:start;position:relative}
-        .card:hover{transform:translateY(-5px)}
-        .card-positive{border-color:#22c55e;box-shadow:0 0 40px rgba(34,197,94,0.4),0 10px 30px rgba(34,197,94,0.3)}
-        .card-negative{border-color:#ef4444;box-shadow:0 0 40px rgba(239,68,68,0.4),0 10px 30px rgba(239,68,68,0.3)}
-        .card-name{font-size:1.3rem;font-weight:700;margin-bottom:6px}
-        .card-symbol{font-size:0.9rem;color:var(--accent);font-weight:600;margin-bottom:16px}
-        .card-widget{width:100%;height:100px}
-        .container{max-width:650px;margin:0 auto}
+        .hero-card{min-width:380px;max-width:380px;height:280px;background:linear-gradient(135deg,var(--bg3),#1f1f30);border:3px solid var(--border);border-radius:20px;padding:32px;cursor:pointer;transition:all 0.4s;flex-shrink:0;scroll-snap-align:start;position:relative;display:flex;flex-direction:column;justify-content:space-between}
+        .hero-card:hover{transform:translateY(-8px);border-color:var(--accent)}
+        .hero-card.positive{border-color:var(--green);box-shadow:0 0 40px rgba(34,197,94,0.4),0 12px 35px rgba(34,197,94,0.3)}
+        .hero-card.negative{border-color:var(--red);box-shadow:0 0 40px rgba(239,68,68,0.4),0 12px 35px rgba(239,68,68,0.3)}
+        .hero-header{margin-bottom:20px}
+        .hero-name{font-size:1.4rem;font-weight:800;margin-bottom:6px;letter-spacing:-0.3px}
+        .hero-symbol{font-size:0.95rem;color:var(--accent);font-weight:600;letter-spacing:0.5px}
+        .hero-price{font-size:2.8rem;font-weight:900;margin-bottom:12px;letter-spacing:-1px;line-height:1}
+        .hero-change{font-size:1.1rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:6px}
+        .hero-change.positive{color:var(--green)}
+        .hero-change.negative{color:var(--red)}
+        .hero-stats{display:flex;justify-content:space-between;padding-top:16px;border-top:1px solid var(--border)}
+        .hero-stat{text-align:center}
+        .hero-stat-label{font-size:0.75rem;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+        .hero-stat-value{font-size:1rem;font-weight:700}
+        .hero-loading{display:flex;align-items:center;justify-content:center;height:100%;color:var(--text2);font-size:1.1rem}
+        .container{max-width:700px;margin:0 auto}
         .section-title{text-align:center;font-size:1.6rem;font-weight:700;margin-bottom:10px}
         .section-subtitle{text-align:center;color:var(--text2);margin-bottom:30px}
         .input-box{background:var(--bg2);padding:35px;border-radius:16px;border:1px solid var(--border);margin-bottom:40px}
@@ -47,66 +56,48 @@
         .dropdown-symbol{font-weight:700;display:block;margin-bottom:3px}
         .result{display:none;margin-bottom:40px}
         .result.show{display:block}
-        .widget{max-width:650px;height:500px;margin:0 auto 25px;background:var(--bg3);border:3px solid var(--border);border-radius:20px;padding:50px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 20px 60px rgba(0,0,0,0.5);transition:all 0.4s}
-        .widget-positive{border-color:#22c55e;box-shadow:0 0 50px rgba(34,197,94,0.5),0 20px 60px rgba(0,0,0,0.5)}
-        .widget-negative{border-color:#ef4444;box-shadow:0 0 50px rgba(239,68,68,0.5),0 20px 60px rgba(0,0,0,0.5)}
-        .widget-symbol-badge{display:inline-block;padding:10px 24px;background:rgba(91,124,255,0.15);border:1px solid var(--accent);border-radius:25px;color:var(--accent);font-size:1.1rem;font-weight:700;margin-bottom:25px;letter-spacing:1px}
-        .widget-content{width:100%;height:300px}
-        .widget-timestamp{text-align:center;color:var(--text2);font-size:0.9rem;margin-top:20px}
-        .widget-brand{text-align:center;color:var(--text2);font-size:0.95rem;font-weight:700;margin-top:10px;text-transform:uppercase;letter-spacing:2px}
+        .snapshot-widget{max-width:700px;min-height:550px;margin:0 auto 25px;background:linear-gradient(135deg,var(--bg3),#1f1f30);border:3px solid var(--border);border-radius:24px;padding:60px;box-shadow:0 20px 60px rgba(0,0,0,0.5);transition:all 0.4s;display:flex;flex-direction:column;justify-content:space-between}
+        .snapshot-widget.positive{border-color:var(--green);box-shadow:0 0 50px rgba(34,197,94,0.5),0 20px 60px rgba(0,0,0,0.5)}
+        .snapshot-widget.negative{border-color:var(--red);box-shadow:0 0 50px rgba(239,68,68,0.5),0 20px 60px rgba(0,0,0,0.5)}
+        .snapshot-badge{display:inline-block;padding:12px 28px;background:rgba(91,124,255,0.15);border:2px solid var(--accent);border-radius:30px;color:var(--accent);font-size:1.2rem;font-weight:800;margin-bottom:40px;letter-spacing:1.5px}
+        .snapshot-price-section{text-align:center;margin:40px 0}
+        .snapshot-price-label{font-size:1rem;color:var(--text2);margin-bottom:12px;text-transform:uppercase;letter-spacing:1.5px;font-weight:700}
+        .snapshot-price{font-size:5rem;font-weight:900;line-height:1;margin-bottom:24px;letter-spacing:-3px}
+        .snapshot-change{font-size:1.8rem;font-weight:700;display:flex;align-items:center;justify-content:center;gap:12px}
+        .snapshot-change.positive{color:var(--green)}
+        .snapshot-change.negative{color:var(--red)}
+        .snapshot-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;margin:40px 0;padding:32px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+        .snapshot-stat{text-align:center}
+        .snapshot-stat-label{font-size:0.85rem;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;font-weight:600}
+        .snapshot-stat-value{font-size:1.6rem;font-weight:800}
+        .snapshot-footer{text-align:center;margin-top:30px}
+        .snapshot-time{color:var(--text2);font-size:0.95rem;margin-bottom:12px}
+        .snapshot-brand{color:var(--text2);font-size:1rem;font-weight:800;text-transform:uppercase;letter-spacing:3px}
         .export-btn{width:100%;padding:18px;background:linear-gradient(135deg,var(--green),#16a34a);border:none;color:#fff;font-size:1.1rem;font-weight:700;border-radius:10px;cursor:pointer;text-transform:uppercase;transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:10px}
         .export-btn:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(34,197,94,0.3)}
-        .error{background:rgba(239,68,68,0.1);border:1px solid var(--red);padding:20px;border-radius:10px;color:var(--red);text-align:center;margin-bottom:30px;display:none}
+        .error{background:rgba(239,68,68,0.1);border:1px solid var(--red);padding:20px;border-radius:10px;color:var(--red);text-align:center;margin-bottom:30px;display:none;font-weight:600}
         .error.show{display:block}
     </style>
 </head>
 <body>
-    <div class="version">v2.2.0</div>
+    <div class="version">v3.0.0</div>
     <header>
         <h1>Ticker Snapshot</h1>
         <p class="subtitle">Instant market prices, shareable as images</p>
     </header>
     <div class="carousel">
         <div class="carousel-inner">
-            <div class="card" id="card-btc" onclick="loadQuick('BTC','Bitcoin','crypto')">
-                <div class="card-name">Bitcoin</div>
-                <div class="card-symbol">BTC</div>
-                <div class="tradingview-widget-container card-widget">
-                    <div class="tradingview-widget-container__widget"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js" async>
-                    {"symbol":"BINANCE:BTCUSDT","width":"100%","locale":"en","colorTheme":"dark","isTransparent":true}
-                    </script>
-                </div>
+            <div class="hero-card" id="hero-btc" onclick="quickGen('BTC','crypto')">
+                <div class="hero-loading">Loading Bitcoin...</div>
             </div>
-            <div class="card" id="card-eth" onclick="loadQuick('ETH','Ethereum','crypto')">
-                <div class="card-name">Ethereum</div>
-                <div class="card-symbol">ETH</div>
-                <div class="tradingview-widget-container card-widget">
-                    <div class="tradingview-widget-container__widget"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js" async>
-                    {"symbol":"BINANCE:ETHUSDT","width":"100%","locale":"en","colorTheme":"dark","isTransparent":true}
-                    </script>
-                </div>
+            <div class="hero-card" id="hero-eth" onclick="quickGen('ETH','crypto')">
+                <div class="hero-loading">Loading Ethereum...</div>
             </div>
-            <div class="card" id="card-sol" onclick="loadQuick('SOL','Solana','crypto')">
-                <div class="card-name">Solana</div>
-                <div class="card-symbol">SOL</div>
-                <div class="tradingview-widget-container card-widget">
-                    <div class="tradingview-widget-container__widget"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js" async>
-                    {"symbol":"BINANCE:SOLUSDT","width":"100%","locale":"en","colorTheme":"dark","isTransparent":true}
-                    </script>
-                </div>
+            <div class="hero-card" id="hero-sol" onclick="quickGen('SOL','crypto')">
+                <div class="hero-loading">Loading Solana...</div>
             </div>
-            <div class="card" id="card-aapl" onclick="loadQuick('AAPL','Apple','stock')">
-                <div class="card-name">Apple</div>
-                <div class="card-symbol">AAPL</div>
-                <div class="tradingview-widget-container card-widget">
-                    <div class="tradingview-widget-container__widget"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js" async>
-                    {"symbol":"NASDAQ:AAPL","width":"100%","locale":"en","colorTheme":"dark","isTransparent":true}
-                    </script>
-                </div>
+            <div class="hero-card" id="hero-aapl" onclick="quickGen('AAPL','stock')">
+                <div class="hero-loading">Loading Apple...</div>
             </div>
         </div>
     </div>
@@ -123,60 +114,70 @@
                 <input type="text" class="search-input" id="searchInput" placeholder="Type symbol (e.g., AAPL, BTC)..." autocomplete="off">
                 <div class="dropdown" id="dropdown"></div>
             </div>
-            <button class="generate-btn" onclick="createSnapshot()">Create Snapshot</button>
+            <button class="generate-btn" onclick="generate()">Create Snapshot</button>
         </div>
         <div class="error" id="error"></div>
-        <div class="result" id="result">
-            <div class="widget" id="widget">
-                <div>
-                    <div class="widget-symbol-badge" id="wSymbol">---</div>
-                </div>
-                <div class="tradingview-widget-container widget-content">
-                    <div class="tradingview-widget-container__widget" id="wContent"></div>
-                </div>
-                <div>
-                    <div class="widget-timestamp" id="wTime">---</div>
-                    <div class="widget-brand">Ticker Snapshot</div>
-                </div>
-            </div>
-            <button class="export-btn" onclick="saveImage()">
-                <span>💾</span>
-                <span>Save as Image</span>
-            </button>
-        </div>
+        <div class="result" id="result"></div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
 let activeType='stock';
 const STOCKS=['AAPL','MSFT','GOOGL','AMZN','TSLA','META','NVDA','JPM','V','WMT'];
 const CRYPTO=['BTC','ETH','BNB','XRP','SOL','ADA','DOT','DOGE','MATIC','AVAX'];
+const COIN_MAP={'BTC':'bitcoin','ETH':'ethereum','SOL':'solana','BNB':'binancecoin','XRP':'ripple','ADA':'cardano','DOT':'polkadot','DOGE':'dogecoin','MATIC':'matic-network','AVAX':'avalanche-2'};
 
-window.addEventListener(‘load’,()=>{
-setTimeout(()=>{
-applyGlowToCards();
-setInterval(applyGlowToCards,5000);
-},4000);
+window.addEventListener(‘DOMContentLoaded’,()=>{
+loadHero(‘BTC’,‘Bitcoin’,‘btc’);
+loadHero(‘ETH’,‘Ethereum’,‘eth’);
+loadHero(‘SOL’,‘Solana’,‘sol’);
+loadHeroStock(‘AAPL’,‘Apple’,‘aapl’);
 });
 
-function applyGlowToCards(){
-[‘btc’,‘eth’,‘sol’,‘aapl’].forEach(id=>{
-const card=document.getElementById(‘card-’+id);
-if(!card)return;
-const widget=card.querySelector(’.tradingview-widget-container’);
-if(!widget)return;
-const iframes=widget.getElementsByTagName(‘iframe’);
-if(iframes.length>0){
+async function loadHero(sym,name,id){
 try{
-const text=widget.textContent||widget.innerText||’’;
-card.classList.remove(‘card-positive’,‘card-negative’);
-if(text.includes(’+’)||text.includes(‘▲’)){
-card.classList.add(‘card-positive’);
-}else if(text.includes(’-’)||text.includes(‘▼’)){
-card.classList.add(‘card-negative’);
+const coinId=COIN_MAP[sym]||sym.toLowerCase();
+const res=await fetch(`https://api.coingecko.com/api/v3/coins/${coinId}?localization=false&tickers=false&community_data=false&developer_data=false`);
+const data=await res.json();
+const price=data.market_data.current_price.usd;
+const change=data.market_data.price_change_percentage_24h;
+const high=data.market_data.high_24h.usd;
+const low=data.market_data.low_24h.usd;
+const vol=data.market_data.total_volume.usd;
+renderHero(id,name,sym,price,change,high,low,vol);
+}catch(e){
+document.getElementById(‘hero-’+id).innerHTML=’<div class="hero-loading">Failed to load</div>’;
 }
-}catch(e){}
 }
-});
+
+async function loadHeroStock(sym,name,id){
+try{
+const res=await fetch(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${sym}&apikey=demo`);
+const data=await res.json();
+if(!data[‘Global Quote’])throw new Error(‘Failed’);
+const q=data[‘Global Quote’];
+const price=parseFloat(q[‘05. price’]);
+const change=parseFloat(q[‘10. change percent’].replace(’%’,’’));
+const high=parseFloat(q[‘03. high’]);
+const low=parseFloat(q[‘04. low’]);
+const vol=parseFloat(q[‘06. volume’]);
+renderHero(id,name,sym,price,change,high,low,vol);
+}catch(e){
+document.getElementById(‘hero-’+id).innerHTML=’<div class="hero-loading">Market Closed</div>’;
+}
+}
+
+function renderHero(id,name,sym,price,change,high,low,vol){
+const card=document.getElementById(‘hero-’+id);
+const isPos=change>=0;
+card.className=’hero-card ’+(isPos?‘positive’:‘negative’);
+card.innerHTML=`<div class="hero-header"> <div class="hero-name">${name}</div> <div class="hero-symbol">${sym}</div> </div> <div> <div class="hero-price">$${fmt(price)}</div> <div class="hero-change ${isPos?'positive':'negative'}"> <span>${isPos?'▲':'▼'}</span> <span>${isPos?'+':''}${change.toFixed(2)}%</span> </div> <div class="hero-stats"> <div class="hero-stat"> <div class="hero-stat-label">High</div> <div class="hero-stat-value">$${fmt(high)}</div> </div> <div class="hero-stat"> <div class="hero-stat-label">Low</div> <div class="hero-stat-value">$${fmt(low)}</div> </div> </div> </div>`;
+}
+
+function quickGen(sym,type){
+document.getElementById(‘searchInput’).value=sym;
+setType(type);
+generate();
+setTimeout(()=>window.scrollTo({top:document.body.scrollHeight,behavior:‘smooth’}),200);
 }
 
 function setType(type){
@@ -187,13 +188,6 @@ document.getElementById(type+‘Tab’).classList.add(‘active’);
 document.getElementById(‘dropdown’).classList.remove(‘show’);
 }
 
-function loadQuick(sym,name,type){
-document.getElementById(‘searchInput’).value=sym;
-setType(type);
-createSnapshot();
-setTimeout(()=>window.scrollTo({top:document.body.scrollHeight,behavior:‘smooth’}),100);
-}
-
 document.getElementById(‘searchInput’).addEventListener(‘input’,function(e){
 const q=e.target.value.trim().toUpperCase();
 const dd=document.getElementById(‘dropdown’);
@@ -201,21 +195,21 @@ if(q.length<1){dd.classList.remove(‘show’);return}
 const list=activeType===‘stock’?STOCKS:CRYPTO;
 const matches=list.filter(s=>s.includes(q));
 if(matches.length){
-dd.innerHTML=matches.map(s=>’<div class="dropdown-item" onclick="pickSymbol(\''+s+'\')"><span class="dropdown-symbol">’+s+’</span></div>’).join(’’);
+dd.innerHTML=matches.map(s=>’<div class="dropdown-item" onclick="pick(\''+s+'\')"><span class="dropdown-symbol">’+s+’</span></div>’).join(’’);
 dd.classList.add(‘show’);
 }else{dd.classList.remove(‘show’)}
 });
 
 document.getElementById(‘searchInput’).addEventListener(‘keypress’,function(e){
-if(e.key===‘Enter’)createSnapshot()
+if(e.key===‘Enter’)generate()
 });
 
-function pickSymbol(s){
+function pick(s){
 document.getElementById(‘searchInput’).value=s;
 document.getElementById(‘dropdown’).classList.remove(‘show’);
 }
 
-function createSnapshot(){
+async function generate(){
 const sym=document.getElementById(‘searchInput’).value.trim().toUpperCase();
 if(!sym){
 document.getElementById(‘error’).textContent=‘Please enter a symbol’;
@@ -225,67 +219,62 @@ return;
 
 ```
 document.getElementById('error').classList.remove('show');
-document.getElementById('wSymbol').textContent=sym;
-document.getElementById('wTime').textContent='Snapshot: '+getTimestamp();
-
-const exchange=activeType==='crypto'?'BINANCE':'NASDAQ';
-const pair=activeType==='crypto'?sym+'USDT':sym;
-const fullSymbol=exchange+':'+pair;
-
-const content=document.getElementById('wContent');
-content.innerHTML='';
-
-const script=document.createElement('script');
-script.type='text/javascript';
-script.src='https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js';
-script.async=true;
-script.textContent=JSON.stringify({
-    symbol:fullSymbol,
-    width:"100%",
-    locale:"en",
-    colorTheme:"dark",
-    isTransparent:true
-});
-
-content.appendChild(script);
-
+document.getElementById('result').innerHTML='<div style="text-align:center;padding:40px;color:#a0a0b0;">Loading...</div>';
 document.getElementById('result').classList.add('show');
 
-setTimeout(applyGlowToWidget,3000);
+try{
+    let price,change,high,low,vol,mcap;
+    
+    if(activeType==='crypto'){
+        const coinId=COIN_MAP[sym]||sym.toLowerCase();
+        const res=await fetch(`https://api.coingecko.com/api/v3/coins/${coinId}?localization=false&tickers=false&community_data=false&developer_data=false`);
+        const data=await res.json();
+        price=data.market_data.current_price.usd;
+        change=data.market_data.price_change_percentage_24h;
+        high=data.market_data.high_24h.usd;
+        low=data.market_data.low_24h.usd;
+        vol=data.market_data.total_volume.usd;
+        mcap=data.market_data.market_cap.usd;
+    }else{
+        const res=await fetch(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${sym}&apikey=demo`);
+        const data=await res.json();
+        if(!data['Global Quote'])throw new Error('Stock not found');
+        const q=data['Global Quote'];
+        price=parseFloat(q['05. price']);
+        change=parseFloat(q['10. change percent'].replace('%',''));
+        high=parseFloat(q['03. high']);
+        low=parseFloat(q['04. low']);
+        vol=parseFloat(q['06. volume']);
+        mcap=0;
+    }
+    
+    renderSnapshot(sym,price,change,high,low,vol,mcap);
+}catch(e){
+    document.getElementById('error').textContent='Failed to load: '+e.message;
+    document.getElementById('error').classList.add('show');
+    document.getElementById('result').classList.remove('show');
+}
 ```
 
 }
 
-function applyGlowToWidget(){
-const widget=document.getElementById(‘widget’);
-const content=document.getElementById(‘wContent’);
-const text=content.textContent||content.innerText||’’;
-
-```
-widget.classList.remove('widget-positive','widget-negative');
-
-if(text.includes('+')||text.includes('▲')){
-    widget.classList.add('widget-positive');
-}else if(text.includes('-')||text.includes('▼')){
-    widget.classList.add('widget-negative');
-}
-```
-
+function renderSnapshot(sym,price,change,high,low,vol,mcap){
+const isPos=change>=0;
+const html=`<div class="snapshot-widget ${isPos?'positive':'negative'}" id="snapshot"> <div> <div class="snapshot-badge">${sym}</div> </div> <div class="snapshot-price-section"> <div class="snapshot-price-label">Current Price</div> <div class="snapshot-price">$${fmt(price)}</div> <div class="snapshot-change ${isPos?'positive':'negative'}"> <span>${isPos?'▲':'▼'}</span> <span>${isPos?'+':''}${change.toFixed(2)}%</span> </div> </div> <div class="snapshot-stats"> <div class="snapshot-stat"> <div class="snapshot-stat-label">24h High</div> <div class="snapshot-stat-value">$${fmt(high)}</div> </div> <div class="snapshot-stat"> <div class="snapshot-stat-label">24h Low</div> <div class="snapshot-stat-value">$${fmt(low)}</div> </div> <div class="snapshot-stat"> <div class="snapshot-stat-label">Volume</div> <div class="snapshot-stat-value">${fmtVol(vol)}</div> </div> </div> <div class="snapshot-footer"> <div class="snapshot-time">Snapshot: ${getTime()}</div> <div class="snapshot-brand">Ticker Snapshot</div> </div> </div> <button class="export-btn" onclick="save()"> <span>💾</span> <span>Save as Image</span> </button>`;
+document.getElementById(‘result’).innerHTML=html;
 }
 
-function saveImage(){
+function save(){
 const btn=event.target;
 btn.disabled=true;
 btn.innerHTML=’<span>⏳</span> Saving…’;
-html2canvas(document.getElementById(‘widget’),{scale:2,backgroundColor:’#1a1a28’,logging:false}).then(function(canvas){
-canvas.toBlob(function(blob){
+html2canvas(document.getElementById(‘snapshot’),{scale:2,backgroundColor:’#1a1a28’}).then(canvas=>{
+canvas.toBlob(blob=>{
 const url=URL.createObjectURL(blob);
-const link=document.createElement(‘a’);
-link.href=url;
-const sym=document.getElementById(‘searchInput’).value;
-const timestamp=new Date().toISOString().slice(0,19).replace(/:/g,’-’);
-link.download=‘ticker-’+sym+’-’+timestamp+’.png’;
-link.click();
+const a=document.createElement(‘a’);
+a.href=url;
+a.download=‘ticker-’+document.getElementById(‘searchInput’).value+’-’+new Date().toISOString().slice(0,19).replace(/:/g,’-’)+’.png’;
+a.click();
 URL.revokeObjectURL(url);
 btn.disabled=false;
 btn.innerHTML=’<span>💾</span><span>Save as Image</span>’;
@@ -293,15 +282,25 @@ btn.innerHTML=’<span>💾</span><span>Save as Image</span>’;
 });
 }
 
-function getTimestamp(){
-const d=new Date();
-const months=[‘Jan’,‘Feb’,‘Mar’,‘Apr’,‘May’,‘Jun’,‘Jul’,‘Aug’,‘Sep’,‘Oct’,‘Nov’,‘Dec’];
+function fmt(p){
+if(p>=1)return p.toLocaleString(‘en-US’,{minimumFractionDigits:2,maximumFractionDigits:2});
+if(p>=0.01)return p.toLocaleString(‘en-US’,{minimumFractionDigits:4,maximumFractionDigits:4});
+return p.toLocaleString(‘en-US’,{minimumFractionDigits:6,maximumFractionDigits:6});
+}
+
+function fmtVol(v){
+if(v>=1e9)return ‘$’+(v/1e9).toFixed(2)+‘B’;
+if(v>=1e6)return ‘$’+(v/1e6).toFixed(2)+‘M’;
+if(v>=1e3)return ‘$’+(v/1e3).toFixed(2)+‘K’;
+return ‘$’+v.toFixed(0);
+}
+
+function getTime(){
+const d=new Date(),m=[‘Jan’,‘Feb’,‘Mar’,‘Apr’,‘May’,‘Jun’,‘Jul’,‘Aug’,‘Sep’,‘Oct’,‘Nov’,‘Dec’];
 let h=d.getHours();
-const m=d.getMinutes().toString().padStart(2,‘0’);
-const s=d.getSeconds().toString().padStart(2,‘0’);
-const ap=h>=12?‘PM’:‘AM’;
+const mm=d.getMinutes().toString().padStart(2,‘0’),s=d.getSeconds().toString().padStart(2,‘0’),ap=h>=12?‘PM’:‘AM’;
 h=h%12||12;
-return months[d.getMonth()]+’ ‘+d.getDate()+’, ‘+d.getFullYear()+’ at ‘+h+’:’+m+’:’+s+’ ’+ap;
+return m[d.getMonth()]+’ ‘+d.getDate()+’, ‘+d.getFullYear()+’ at ‘+h+’:’+mm+’:’+s+’ ’+ap;
 }
 </script>
 
