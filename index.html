@@ -27,7 +27,6 @@ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 overflow-x:hidden;
 }
 
-/* Version */
 .version-badge{
 position:fixed;
 top:16px;
@@ -39,59 +38,28 @@ background:rgba(108,124,255,.15);
 color:var(--accent);
 font-size:.75rem;
 font-weight:700;
-z-index:10;
+z-index:9999;
 }
+
+.exporting .no-export{display:none!important}
 
 /* Hero */
-.hero{
-text-align:center;
-padding:64px 20px 28px;
-}
-
+.hero{text-align:center;padding:64px 20px 28px}
 .hero-title{
-font-size:3rem;
-font-weight:900;
+font-size:3rem;font-weight:900;
 background:linear-gradient(135deg,var(--accent),#8b5cf6);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-}
+-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-subtitle{margin-top:6px;color:var(--muted)}
 
-.hero-subtitle{
-margin-top:6px;
-color:var(--muted);
-}
+.container{max-width:1200px;margin:0 auto;padding:0 20px 80px}
+.section-title{text-align:center;font-size:2rem;margin:36px 0 20px}
 
-/* Layout */
-.container{
-max-width:1200px;
-margin:0 auto;
-padding:0 20px 80px;
-}
-
-.section-title{
-text-align:center;
-font-size:2rem;
-margin:36px 0 20px;
-}
-
-/* Trending stack */
+/* Trending */
 .trending-stack{
-display:flex;
-gap:20px;
-overflow-x:auto;
-scroll-snap-type:x mandatory;
-padding-bottom:10px;
-}
-
-.trending-stack::-webkit-scrollbar{
-display:none;
-}
-
-.trending-stack .widget-card{
-scroll-snap-align:center;
-flex:0 0 86%;
-max-width:420px;
-}
+display:flex;gap:20px;overflow-x:auto;
+scroll-snap-type:x mandatory;padding-bottom:10px}
+.trending-stack::-webkit-scrollbar{display:none}
+.trending-stack .widget-card{scroll-snap-align:center;flex:0 0 86%;max-width:420px}
 
 /* Widget */
 .widget-card{
@@ -100,196 +68,68 @@ border:3px solid var(--border);
 border-radius:26px;
 padding:26px;
 box-shadow:0 18px 48px rgba(0,0,0,.5);
-position:relative;
-}
+position:relative}
 
 .widget-card.positive{border-color:var(--green)}
 .widget-card.negative{border-color:var(--red)}
 
-.refresh-btn{
-position:absolute;
-top:14px;
-right:14px;
-width:30px;
-height:30px;
-border-radius:50%;
-border:none;
-background:var(--bg2);
-color:var(--text);
-cursor:pointer;
-font-size:14px;
-}
+.refresh-btn,.export-btn,.share-btn{
+position:absolute;width:30px;height:30px;border-radius:50%;
+border:none;background:var(--bg2);color:var(--text);
+cursor:pointer;font-size:14px}
+
+.refresh-btn{top:14px;right:14px}
+.export-btn{bottom:14px;right:14px}
+.share-btn{bottom:14px;left:14px}
 
 /* Header */
 .widget-header{
-display:flex;
-align-items:center;
-gap:12px;
-padding-bottom:14px;
-border-bottom:1px solid var(--border);
-margin-bottom:18px;
-}
-
-.widget-header img{
-width:36px;
-height:36px;
-}
-
-.widget-name{
-font-size:1.4rem;
-font-weight:900;
-}
-
-.widget-symbol{
-font-size:.8rem;
-color:var(--accent);
-font-weight:700;
-}
+display:flex;align-items:center;gap:12px;
+padding-bottom:14px;border-bottom:1px solid var(--border);margin-bottom:18px}
+.widget-header img{width:36px;height:36px}
+.widget-name{font-size:1.4rem;font-weight:900}
+.widget-symbol{font-size:.8rem;color:var(--accent);font-weight:700}
 
 /* Price */
-.widget-price{
-text-align:center;
-font-size:3.1rem;
-font-weight:900;
-margin:14px 0 6px;
-}
-
-.widget-change{
-text-align:center;
-font-size:1.1rem;
-font-weight:800;
-margin-bottom:14px;
-}
-
+.widget-price{text-align:center;font-size:3.1rem;font-weight:900;margin:14px 0 6px}
+.widget-change{text-align:center;font-size:1.1rem;font-weight:800;margin-bottom:14px}
 .widget-change.positive{color:var(--green)}
 .widget-change.negative{color:var(--red)}
 
 /* Stats */
-.widget-stats{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:12px;
-margin-bottom:18px;
-}
-
-.widget-stat{
-background:var(--bg2);
-padding:12px;
-border-radius:14px;
-text-align:center;
-}
-
-.widget-stat-label{
-font-size:.7rem;
-opacity:.7;
-margin-bottom:4px;
-}
-
-.widget-stat-value{
-font-weight:800;
-font-size:.95rem;
-}
+.widget-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+.widget-stat{background:var(--bg2);padding:12px;border-radius:14px;text-align:center}
+.widget-stat-label{font-size:.7rem;opacity:.7;margin-bottom:4px}
+.widget-stat-value{font-weight:800;font-size:.95rem}
 
 /* Footer */
-.widget-footer{
-border-top:1px solid var(--border);
-padding-top:14px;
-text-align:center;
-}
-
-.widget-timestamp{
-font-size:.7rem;
-color:var(--muted);
-}
-
-.widget-branding{
-margin-top:6px;
-font-size:.65rem;
-letter-spacing:2px;
-opacity:.85;
-}
+.widget-footer{border-top:1px solid var(--border);padding-top:14px;text-align:center}
+.widget-timestamp{font-size:.7rem;color:var(--muted)}
+.widget-branding{margin-top:6px;font-size:.65rem;letter-spacing:2px;opacity:.85}
 
 /* Generator */
-.generator-grid{
-display:grid;
-grid-template-columns:360px 1fr;
-gap:40px;
-margin-top:10px;
-}
-
-.controls{
-background:var(--bg2);
-padding:28px;
-border-radius:22px;
-border:1px solid var(--border);
-}
-
-label{
-font-size:.8rem;
-color:var(--muted);
-font-weight:700;
-letter-spacing:1px;
-margin-bottom:8px;
-display:block;
-}
-
+.generator-grid{display:grid;grid-template-columns:360px 1fr;gap:40px}
+.controls{background:var(--bg2);padding:28px;border-radius:22px;border:1px solid var(--border)}
+label{font-size:.8rem;color:var(--muted);font-weight:700;margin-bottom:8px;display:block}
 input{
-width:100%;
-padding:16px;
-border-radius:12px;
-border:2px solid var(--border);
-background:var(--bg3);
-color:var(--text);
-font-size:1rem;
-margin-bottom:16px;
-}
-
-.quick-buttons{
-display:flex;
-gap:8px;
-margin-bottom:20px;
-}
-
+width:100%;padding:16px;border-radius:12px;border:2px solid var(--border);
+background:var(--bg3);color:var(--text);margin-bottom:16px}
+.quick-buttons{display:flex;gap:8px;margin-bottom:20px}
 .quick-buttons button{
-flex:1;
-padding:10px;
-border-radius:10px;
-border:2px solid var(--border);
-background:var(--bg3);
-color:white;
-font-weight:700;
-cursor:pointer;
-}
-
-.quick-buttons button:hover{border-color:var(--accent)}
-
+flex:1;padding:10px;border-radius:10px;border:2px solid var(--border);
+background:var(--bg3);color:white;font-weight:700;cursor:pointer}
 .btn-primary{
-width:100%;
-padding:18px;
-border:none;
-border-radius:12px;
-font-weight:800;
-background:linear-gradient(135deg,var(--accent),#8b5cf6);
-color:white;
-cursor:pointer;
-}
+width:100%;padding:18px;border:none;border-radius:12px;
+font-weight:800;background:linear-gradient(135deg,var(--accent),#8b5cf6);color:white}
 
-.preview-wrap{
-display:flex;
-justify-content:center;
-align-items:center;
-min-height:520px;
-}
-
-@media(max-width:900px){
-.generator-grid{grid-template-columns:1fr}
-}
+.preview-wrap{display:flex;justify-content:center;align-items:center;min-height:520px}
+@media(max-width:900px){.generator-grid{grid-template-columns:1fr}}
 </style>
 </head>
 
 <body>
 
-<div class="version-badge">v5.3.1-stable</div>
+<div class="version-badge">v5.3.4-stable</div>
 
 <header class="hero">
 <h1 class="hero-title">BlockState</h1>
@@ -298,16 +138,15 @@ min-height:520px;
 
 <div class="container">
 
-<h2 class="section-title">Trending — Biggest Movers (24h)</h2>
+<h2 class="section-title">Trending</h2>
 <div id="trending" class="trending-stack"></div>
 
 <h2 class="section-title">Create a BlockState</h2>
 
 <div class="generator-grid">
-
 <div class="controls">
 <label>Search Crypto (Top 250 by Market Cap)</label>
-<input id="coinInput" list="coinList" placeholder="BTC or Bitcoin">
+<input id="coinInput" list="coinList" placeholder="BONK, BTC, SOL">
 <datalist id="coinList"></datalist>
 
 <div class="quick-buttons">
@@ -315,28 +154,37 @@ min-height:520px;
 <button onclick="App.generateById('ethereum')">ETH</button>
 <button onclick="App.generateById('solana')">SOL</button>
 <button onclick="App.generateById('binancecoin')">BNB</button>
-<button onclick="App.generateById('ripple')">XRP</button>
+<button onclick="App.generateById('bonk')">BONK</button>
 </div>
 
 <button class="btn-primary" onclick="App.generate()">Generate BlockState</button>
 </div>
 
 <div id="preview" class="preview-wrap">
-<div style="opacity:.6">Search and generate a block state</div>
+<div style="opacity:.6">Generate a block state</div>
+</div>
+</div>
 </div>
 
-</div>
-</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script>
 const App={
-coins:[],
+coins:[],rankCache:{},
+
+formatPrice(v){
+if(v>=1) return v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+if(v>=0.01) return v.toFixed(4);
+if(v>=0.0001) return v.toFixed(6);
+return v.toFixed(8);
+},
 
 async init(){
 const r=await fetch(
 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1'
 );
 this.coins=await r.json();
+this.coins.forEach(c=>this.rankCache[c.id]=c.market_cap_rank);
 this.populateList();
 this.renderTrending();
 },
@@ -359,7 +207,9 @@ build(c){
 const pos=c.price_change_percentage_24h>=0;
 return `
 <div class="widget-card ${pos?'positive':'negative'}">
-<button class="refresh-btn" onclick="App.refresh('${c.id}')">↻</button>
+<button class="refresh-btn no-export" onclick="App.refresh('${c.id}')">↻</button>
+<button class="share-btn no-export" onclick="App.share(this)">⤴</button>
+<button class="export-btn no-export" onclick="App.export(this)">⤓</button>
 
 <div class="widget-header">
 <img src="${c.image}">
@@ -369,29 +219,17 @@ return `
 </div>
 </div>
 
-<div class="widget-price">$${c.current_price.toLocaleString()}</div>
+<div class="widget-price">$${this.formatPrice(c.current_price)}</div>
 
 <div class="widget-change ${pos?'positive':'negative'}">
 ${pos?'▲':'▼'} ${c.price_change_percentage_24h.toFixed(2)}%
 </div>
 
 <div class="widget-stats">
-<div class="widget-stat">
-<div class="widget-stat-label">24h High / Low</div>
-<div class="widget-stat-value">$${c.high_24h.toLocaleString()} / $${c.low_24h.toLocaleString()}</div>
-</div>
-<div class="widget-stat">
-<div class="widget-stat-label">24h Change</div>
-<div class="widget-stat-value">$${c.price_change_24h.toFixed(2)}</div>
-</div>
-<div class="widget-stat">
-<div class="widget-stat-label">Market Cap</div>
-<div class="widget-stat-value">$${(c.market_cap/1e9).toFixed(2)}B</div>
-</div>
-<div class="widget-stat">
-<div class="widget-stat-label">MC Rank</div>
-<div class="widget-stat-value">#${c.market_cap_rank}</div>
-</div>
+<div class="widget-stat"><div class="widget-stat-label">24h High</div><div class="widget-stat-value">$${this.formatPrice(c.high_24h)}</div></div>
+<div class="widget-stat"><div class="widget-stat-label">24h Low</div><div class="widget-stat-value">$${this.formatPrice(c.low_24h)}</div></div>
+<div class="widget-stat"><div class="widget-stat-label">Market Cap</div><div class="widget-stat-value">$${(c.market_cap/1e9).toFixed(2)}B</div></div>
+<div class="widget-stat"><div class="widget-stat-label">MC Rank</div><div class="widget-stat-value">#${c.market_cap_rank}</div></div>
 </div>
 
 <div class="widget-footer">
@@ -404,19 +242,16 @@ ${pos?'▲':'▼'} ${c.price_change_percentage_24h.toFixed(2)}%
 renderTrending(){
 const wrap=document.getElementById('trending');
 wrap.innerHTML='';
-const movers=[...this.coins]
+[...this.coins]
 .filter(c=>c.price_change_percentage_24h!==null)
 .sort((a,b)=>Math.abs(b.price_change_percentage_24h)-Math.abs(a.price_change_percentage_24h))
-.slice(0,10);
-
-movers.forEach(c=>{
-wrap.innerHTML+=this.build(c);
-});
+.slice(0,10)
+.forEach(c=>wrap.innerHTML+=this.build(c));
 },
 
 generate(){
 const c=this.findCoin();
-if(!c){alert('Select a crypto from the list');return;}
+if(!c){alert('Select a crypto');return;}
 document.getElementById('preview').innerHTML=this.build(c);
 },
 
@@ -431,6 +266,35 @@ const r=await fetch(
 );
 const c=(await r.json())[0];
 document.querySelector('.widget-card').outerHTML=this.build(c);
+},
+
+async export(btn){
+const widget=btn.closest('.widget-card');
+document.body.classList.add('exporting');
+const canvas=await html2canvas(widget,{scale:2,backgroundColor:'#1a1a28'});
+const a=document.createElement('a');
+a.href=canvas.toDataURL('image/png');
+a.download='blockstate.png';
+a.click();
+document.body.classList.remove('exporting');
+},
+
+async share(btn){
+const widget=btn.closest('.widget-card');
+document.body.classList.add('exporting');
+const canvas=await html2canvas(widget,{scale:2,backgroundColor:'#1a1a28'});
+document.body.classList.remove('exporting');
+
+if(navigator.share){
+const blob=await new Promise(r=>canvas.toBlob(r));
+const file=new File([blob],'blockstate.png',{type:'image/png'});
+navigator.share({files:[file],title:'BlockState'});
+}else{
+const a=document.createElement('a');
+a.href=canvas.toDataURL('image/png');
+a.download='blockstate.png';
+a.click();
+}
 }
 };
 
