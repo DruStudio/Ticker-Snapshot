@@ -28,6 +28,7 @@ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 overflow-x:hidden;
 }
 
+/* PARTICLES */
 canvas#particles{
 position:fixed;
 inset:0;
@@ -35,6 +36,7 @@ z-index:0;
 pointer-events:none;
 }
 
+/* VERSION */
 .bottom-left{
 position:fixed;
 bottom:14px;
@@ -52,6 +54,7 @@ font-size:.75rem;
 font-weight:700;
 }
 
+/* LAYOUT */
 .container{
 position:relative;
 z-index:2;
@@ -76,6 +79,7 @@ letter-spacing:.4em;
 color:var(--muted);
 }
 
+/* GRID */
 .main{
 display:grid;
 grid-template-columns:420px 420px;
@@ -84,11 +88,20 @@ justify-content:center;
 align-items:start;
 }
 
+/* PANELS */
 .panel{
 background:linear-gradient(135deg,var(--panel),#1d1d32);
 border:1px solid var(--border);
 border-radius:20px;
 padding:22px;
+}
+
+label{
+font-size:.7rem;
+font-weight:700;
+color:var(--muted);
+margin-bottom:6px;
+display:block;
 }
 
 input{
@@ -130,6 +143,7 @@ color:white;
 margin-bottom:18px;
 }
 
+/* TRENDING */
 .trending h3{
 font-size:.75rem;
 margin-bottom:8px;
@@ -147,6 +161,7 @@ cursor:pointer;
 .up{color:var(--green)}
 .down{color:var(--red)}
 
+/* WIDGET */
 .widget{
 background:var(--panel2);
 border-radius:22px;
@@ -223,6 +238,7 @@ color:var(--muted);
 text-align:center;
 }
 
+/* SHARE */
 .share-actions{
 display:flex;
 gap:14px;
@@ -240,6 +256,13 @@ align-items:center;
 justify-content:center;
 font-size:1.4rem;
 cursor:pointer;
+}
+
+.share-btn.primary{
+width:100%;
+font-size:.9rem;
+font-weight:900;
+background:linear-gradient(135deg,var(--accent),#8b5cf6);
 }
 
 @media(max-width:900px){
@@ -263,10 +286,12 @@ h1{font-size:2.4rem}
 
 <div class="main">
 
+<!-- CREATE -->
 <div>
 <div class="section-title">CREATE</div>
 <div class="panel">
-<input id="search" list="coins" placeholder="Search crypto (Top 250)">
+<label>Search Crypto (Top 250)</label>
+<input id="search" list="coins" placeholder="e.g Bitcoin">
 <datalist id="coins"></datalist>
 
 <div class="presets" id="presets"></div>
@@ -280,6 +305,7 @@ h1{font-size:2.4rem}
 </div>
 </div>
 
+<!-- CAPTURE -->
 <div>
 <div class="section-title">CAPTURE</div>
 <div id="output"></div>
@@ -298,6 +324,43 @@ h1{font-size:2.4rem}
 </div>
 
 <script>
+/* PARTICLES */
+const canvas=document.getElementById("particles");
+const ctx=canvas.getContext("2d");
+let w,h,particles=[];
+function resize(){
+w=canvas.width=window.innerWidth;
+h=canvas.height=window.innerHeight;
+}
+window.addEventListener("resize",resize);
+resize();
+
+for(let i=0;i<80;i++){
+particles.push({
+x:Math.random()*w,
+y:Math.random()*h,
+vx:(Math.random()-.5)*.3,
+vy:(Math.random()-.5)*.3,
+r:Math.random()*1.2+0.3
+});
+}
+
+function tick(){
+ctx.clearRect(0,0,w,h);
+ctx.fillStyle="rgba(108,124,255,.35)";
+particles.forEach(p=>{
+p.x+=p.vx;p.y+=p.vy;
+if(p.x<0)p.x=w;if(p.x>w)p.x=0;
+if(p.y<0)p.y=h;if(p.y>h)p.y=0;
+ctx.beginPath();
+ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+ctx.fill();
+});
+requestAnimationFrame(tick);
+}
+tick();
+
+/* APP */
 const App={
 coins:[],
 
@@ -309,7 +372,8 @@ return'$'+v.toLocaleString();
 fmt(v){
 if(v>=1)return v.toFixed(2);
 if(v>=0.01)return v.toFixed(4);
-return v.toFixed(6);
+if(v>=0.0001)return v.toFixed(6);
+return v.toFixed(8);
 },
 
 async load(){
@@ -323,11 +387,13 @@ this.show(this.coins[0]);
 populate(){
 const dl=document.getElementById("coins");
 const p=document.getElementById("presets");
+
 this.coins.forEach(c=>{
 const o=document.createElement("option");
 o.value=`${c.symbol.toUpperCase()} — ${c.name}`;
 dl.appendChild(o);
 });
+
 ["bitcoin","ethereum","binancecoin","ripple","dogecoin"].forEach(id=>{
 const c=this.coins.find(x=>x.id===id);
 if(!c)return;
@@ -397,7 +463,8 @@ if(c)this.show(c);
 },
 
 save(){
-html2canvas(document.getElementById("widget"),{backgroundColor:null}).then(c=>{
+const widget=document.getElementById("widget");
+html2canvas(widget,{backgroundColor:null}).then(c=>{
 const a=document.createElement("a");
 a.download="blockstate.png";
 a.href=c.toDataURL();
